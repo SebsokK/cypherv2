@@ -1,93 +1,70 @@
+![Cypher V2 for Foundry VTT](assets/cypherreadme.png)
+
 # Cypher V2 for Foundry VTT
 
-`cypherv2` is a new Foundry VTT v14 game system intended to support Cypher V2 with a modern, extensible architecture.
+> [!IMPORTANT]
+> ## AI-ASSISTED PROJECT
+> **This system was developed extensively with AI assistance, including ChatGPT and Codex.**
+>
+> If you do not want to use software made with AI assistance, **do not use this system.**
 
-This repository contains typed document models, Application V2 sheets, a
-rule-module registry, build tooling, and the first Core gameplay services. The
-Core layer currently covers derived Pools and Effort, Wounds, Pool Damage,
-Recovery, Rest, Rally, Skills, natural results, GM Intrusions, and Combat Core
-V1. Combat includes typed Weapons and Armor, native NPC targeting, structured
-NPC modifications, Block/Dodge defense requests, and controlled Chat actions
-for NPC Health damage and Character Wounds. Focus Tree Phases 1–2 add versioned
-graphs, pure progression evaluation, a reusable HTML/SVG renderer, idempotent
-Ability acquisition, explicit restoration of missing acquired Abilities, and a
-GM-only Focus Tree Editor with native Ability drag/drop and atomic saves.
-Character Advancement V1 adds four-purchase Tier cycles, structured Other
-Advancements, tier-based Resource Points, pending Focus/Genre choices, and
-choice-gated Focus acquisition. Skill Advancement can learn a world/custom
-Skill or improve an embedded Skill, with attack/defense training available at
-Tier 2 and specialization at Tier 4. Characters can attach multiple referenced
-Foci by native drag/drop or the Foci tab, with independent progression and two
-one-time initial choices per Focus. A minimal Core Character Setup initializes
-Pools and starting Skills without imposing Type, Descriptor, Focus, or genre.
-Type + Descriptor Automation V1 then attaches independent embedded package
-instances through native drag/drop. Their numerical benefits remain derived,
-while granted Abilities and Skills are embedded Items with exact grant
-provenance and snapshot fallback. Multiple Descriptors and a non-mandatory Type
-are supported without coupling Core Character creation to a genre structure.
-Species Automation V1 uses that same package pipeline for Pools, Wound
-capacities, Edge, familiarities, Cypher Limit, Skills, Abilities, and choices.
-A Species may grant a real embedded Descriptor with role `speciesGranted`; the
-recursive provenance chain supports exact removal or explicit retention without
-copying mechanics into the Character source data.
-Genre V1 adds one Character-owned source association, a data-driven Ability
-catalog, pending Genre Choice resolution, and a generic Core/Unlimited total
-Effort-cap option. Type Genre data is suggestion-only and never overrides an
-explicit Character Genre.
-It does not yet contain Focus auto-layout, graphical node dragging,
-full branch respec, optional rule modules, a complete Type/Descriptor/Focus
-creation wizard, or CRD compendiums.
+> [!WARNING]
+> ## BETA — NO COMPENDIUMS YET
+> **Cypher V2 is currently a BETA release.** Expect bugs, rough edges and changes while it is tested by real groups.
+>
+> **No ready-to-use Compendiums are bundled yet.** They are currently being written and will be added progressively.
 
-## Architectural principles
+**Cypher V2** (`cypherv2`) is an unofficial Foundry VTT v14 game system for the new edition of Cypher, built around Foundry Application V2 with a modern, compact interface and a rules engine designed to guide play without over-enforcing it.
 
-- Foundry VTT v14.360 or newer within major version 14.
-- TypeScript and strict type checking.
-- Foundry `TypeDataModel` schemas for Actor and Item data.
-- Application V2 sheets without global jQuery.
+![Cypher V2 character sheet](assets/cypher2screenshot.png)
+
+## Features
+
+- **Foundry VTT v14** native system using Application V2 sheets.
+- Modern dark Cypher interface with character accent colors and accessibility-conscious presentation.
+- Character, NPC and Item sheets for Abilities, Skills, Weapons, Armor, Shields, Equipment, Cyphers, Artifacts, Descriptors, Types, Foci, Genres and Species.
+- **Might, Speed and Intellect Pools**, Edge, Effort and derived package contributions.
+- **Wound system** with Minor, Moderate and Major Wounds, including Shield Wounds.
+- Recovery, Rest, Rally and Non-Rest Recovery workflows.
+- Skills with quick rolls, configured rolls and mastery levels.
+- Shared Roll Dialog and detailed Roll Cards with Effort, modifiers, costs, natural results and attack damage breakdowns.
+- Hidden/unknown difficulty support for GM-facing NPC difficulties.
+- Weapons, Armor and Shields with familiarity, ammo and optional depletion rolls.
+- Dodge, Block and Block With Shield defense workflows.
+- Manual, player-driven **Combat Tracker** with drag-and-drop ordering and `DONE` turns instead of automated initiative rolls.
+- GM Intrusions, Free GM Intrusions and Player Intrusions.
+- **Horror Mode** with a GM-controlled Intrusion Range from 1 to 20.
+- Descriptor, Type and Species package automation with provenance-aware grants and interactive choice dialogs.
+- Fixed and choice-based Pool bonuses, Skill grants, Ability grants and Edge choices.
+- Multiple Descriptors and multiple Foci per Character.
+- Focus progression graph, acquisition workflow and GM Focus Tree Editor.
+- Character Advancement with Tier progression and Resource Points.
+- Genre Ability catalogues and configurable Core/Unlimited total Effort cap.
+- Native ProseMirror rich-text editing on Application V2 sheets.
+- Custom Cypher default Actor/Item artwork, pause screen, turn marker and no-Scene lobby artwork.
+- English interface and localization catalogue.
+
+## Beta status
+
+This repository is being opened publicly so other GMs can test the system in real games and find the things its author and automated test suite did not.
+
+The current priority is **stability, feedback and Compendium authoring**, not adding large new feature sets. Existing data structures and UI may still evolve during the beta.
+
+Bug reports and useful feedback are welcome through GitHub Issues. You can also find **SokK** on the **Cypher Unlimited Discord**.
+
+## Design philosophy
+
+Cypher V2 generally follows a **“Guide, Don’t Enforce”** approach. The system automates repetitive bookkeeping and exposes useful rules information, but deliberately leaves room for the GM and players to make decisions at the table instead of trying to encode every possible Cypher ruling.
+
+Some important principles:
+
 - Source data is kept separate from derived data.
-- Rule modules contribute to pipelines; they do not cumulatively mutate source values.
-- Characters can own multiple Descriptors and multiple Foci.
-- Focus progression is independent for each Focus.
-- Character Focus associations retain the source Item UUID and never duplicate
-  the Focus graph into Actor data.
-- A Character Genre association likewise retains a single source Item UUID;
-  the Genre source remains authoritative for its Ability catalog and options.
-- Type, Descriptor, and Species definitions are copied as embedded Character Items. The
-  embedded instance is authoritative, retains its original source UUID and
-  personal choices, and never follows later source definition edits implicitly.
-- Character Package bonuses are recalculated from attached Items; only current
-  Pool values are adjusted to preserve their prior deficit when maxima change.
-- Package-granted Items use `grantedBy.kind/sourceUuid/instanceId/grantId/status`
-  plus stable content identity. Nested package instances also retain their
-  parent grant, allowing Species → Descriptor → Skill provenance to be followed
-  and removed exactly, while legacy Focus provenance remains available and
-  compatible.
-- Obvious duplicate Skill and Ability grants use one generic pre-transaction
-  resolver. It offers only provenance-backed package suggestions, existing
-  world/Compendium Items, custom Skills, or explicit suppression; replacements
-  retain the original package instance and grant identity. Focus conflicts use
-  the same dialog boundary but never substitute an arbitrary Ability for a node:
-  cancellation preserves the pending choice and the GM may explicitly override.
-- Duplicate grants never upgrade Skill ranks automatically. In V1, selecting an
-  off-list world/Compendium replacement is a direct GM workflow; no socket-based
-  player proposal/approval exchange is implemented yet.
-- Skill ranks are `inability`, `untrained`, `trained`, `specialized`, and `expert`.
-- Recovery and Rest remain distinct internal services composed by one Normal
-  Recovery workflow; Non-Rest Recoveries intentionally grant neither benefit.
+- Characters may own multiple Descriptors and multiple Foci.
+- Package bonuses are derived from attached package Items and retain provenance for safe removal/replacement.
+- NPCs use Health; Characters use Wounds.
+- Players roll defenses; NPC difficulty can remain hidden from public Chat data.
 - Hidden difficulties provide interface confidentiality, not hostile-client security.
-- Multi-target attacks share one action cost and d20, but resolve separately
-  against each target's private difficulty.
-- NPCs use Health; Characters use Wounds. Combat never projects Character
-  Wounds into hit points.
-- The distributed product UI and localization catalog are English-only.
-
-See [docs/architecture/DECISIONS.md](docs/architecture/DECISIONS.md) for the Phase 0 decisions.
-See [docs/architecture/ROLL-ENGINE.md](docs/architecture/ROLL-ENGINE.md) for the
-roll pipeline and hidden-difficulty Chat boundary.
-See [docs/architecture/COMBAT-CORE.md](docs/architecture/COMBAT-CORE.md) for the
-Combat V1 workflows and rule boundaries.
-See [docs/architecture/FOCUS-TREE.md](docs/architecture/FOCUS-TREE.md) for the
-Focus graph, evaluator states, renderer boundary, and acquisition lifecycle.
+- The distributed product UI is English-only for now.
 
 ## Development
 
@@ -115,23 +92,34 @@ pnpm build
 
 `pnpm dev` rebuilds the bundle when TypeScript or SCSS files change. Foundry must be restarted or refreshed to load a newly built JavaScript bundle.
 
-## Foundry installation
+For architecture notes, see:
 
-The repository directory must be named `cypherv2` and placed directly in the Foundry data directory under `Data/systems/cypherv2`.
+- [Architecture decisions](docs/architecture/DECISIONS.md)
+- [Roll Engine](docs/architecture/ROLL-ENGINE.md)
+- [Combat Core](docs/architecture/COMBAT-CORE.md)
+- [Focus Tree](docs/architecture/FOCUS-TREE.md)
 
-After `pnpm build`, the required runtime files are:
+## Manual development installation
 
-- `system.json`
-- `dist/cypherv2.mjs`
-- `dist/cypherv2.css`
-- `templates/`
-- `lang/`
-- `fixtures/` (development imports only)
+Clone or copy the repository as `cypherv2` directly under the Foundry data directory:
 
-Restart Foundry, open Setup, create a world, and select **Cypher V2** as its game system.
+```text
+Data/systems/cypherv2
+```
+
+Then run the build if required and restart Foundry. The repository already tracks the generated `dist` bundle used by the system.
+
+A normal beta installation/update manifest will be provided through GitHub releases as the release packaging is finalized.
 
 ## Content and licensing
 
-No Cypher Reference Document content is included at this phase. Future open content must record its provenance and comply with the current Cypher Open License.
+This is an **unofficial fan-made system** and is not an official Monte Cook Games or Foundry Virtual Tabletop product.
 
-The software is MIT licensed. See [LICENSE.md](LICENSE.md) and [legal/THIRD-PARTY-NOTICES.md](legal/THIRD-PARTY-NOTICES.md).
+The software is MIT licensed. Open game content and other third-party material must follow the provenance and licensing requirements documented in the repository.
+
+See:
+
+- [LICENSE.md](LICENSE.md)
+- [Content Sources](legal/CONTENT-SOURCES.md)
+- [Third-Party Notices](legal/THIRD-PARTY-NOTICES.md)
+- [Asset Licenses](legal/ASSET-LICENSES.md)
