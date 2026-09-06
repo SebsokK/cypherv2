@@ -14,6 +14,12 @@
 >
 > **No ready-to-use Compendiums are bundled yet.** They are currently being written and will be added progressively.
 
+> [!NOTE]
+> ## FORK & THANKS
+> **Cypher V2 is a fork of Marko's [Cypher System for Foundry VTT](https://github.com/mrkwnzl/cyphersystem-foundryvtt).**
+>
+> A huge thank you to **Marko (mrkwnzl)** for the original system, and for all the hours of happiness I had using it to run **The Magnus Archives**. ❤️
+
 **Cypher V2** (`cypherv2`) is an unofficial Foundry VTT v14 game system for the new edition of Cypher, built around Foundry Application V2 with a modern, compact interface and a rules engine designed to guide play without over-enforcing it.
 
 ![Cypher V2 character sheet](assets/cypher2screenshot.png)
