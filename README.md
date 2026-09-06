@@ -70,7 +70,7 @@ Some important principles:
 
 Requirements:
 
-- Node.js 20.19 or later.
+- Node.js 22.13 or later.
 - pnpm 9 or later.
 - Foundry VTT 14.360 for runtime testing.
 
