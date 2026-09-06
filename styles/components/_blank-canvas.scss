@@ -1,0 +1,18 @@
+/**
+ * Foundry hides its canvas element when no Scene is active. This page-level
+ * artwork is consequently visible only in that blank-canvas state; a drawn
+ * Scene remains the authoritative full-screen presentation above it.
+ */
+body.game:has(canvas#board[style*="display: none"]) {
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background-color: #000;
+  background-image: var(--cypherv2-blank-canvas-background-image, none);
+  background-attachment: fixed;
+  background-origin: border-box;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

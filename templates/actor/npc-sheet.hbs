@@ -1,0 +1,21 @@
+<div class="cypherv2-sheet cypherv2-npc">
+  <header class="npc-header">
+    <img class="portrait npc-avatar" src="{{actor.img}}" alt="{{actor.name}}" data-edit="img" {{#if editable}}data-action="editImage" role="button" tabindex="0" title="{{localize 'CYPHERV2.Common.EditImage'}}"{{/if}}>
+    <div class="npc-header-content">
+      <div class="npc-title-row">
+        <input class="document-name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'CYPHERV2.Common.Name'}}" {{#unless editable}}readonly{{/unless}}>
+        <span class="npc-level-field npc-stat-line"><label class="npc-level-label" for="npc-level-{{actor.id}}">{{localize "CYPHERV2.Npc.Level"}}</label><input id="npc-level-{{actor.id}}" class="npc-level-input" name="system.level" type="number" data-dtype="Number" value="{{system.level}}" min="0" {{#unless editable}}disabled{{/unless}}><output class="npc-tn-value" aria-label="{{localize 'CYPHERV2.Npc.TargetNumber'}}">({{targetNumber}})</output></span>
+      </div>
+      <div class="npc-health-row">
+        <span class="npc-armor-field"><label for="npc-armor-{{actor.id}}">{{localize "CYPHERV2.Npc.Armor"}}</label><input id="npc-armor-{{actor.id}}" class="npc-armor-input" name="system.armor" type="number" data-dtype="Number" value="{{system.armor}}" min="0" {{#unless editable}}disabled{{/unless}}></span>
+        <span class="npc-health-field npc-stat-line"><span class="npc-health-label">{{localize "CYPHERV2.Npc.Health"}}</span><input name="system.health.value" type="number" data-dtype="Number" value="{{system.health.value}}" min="0" aria-label="{{localize 'CYPHERV2.Npc.Health'}}" {{#unless editable}}disabled{{/unless}}><i>/</i><input name="system.health.baseMax" type="number" data-dtype="Number" value="{{system.health.baseMax}}" min="1" aria-label="{{localize 'CYPHERV2.Npc.HealthMax'}}" {{#unless editable}}disabled{{/unless}}></span>
+      </div>
+    </div>
+    <span class="npc-health-gauge is-{{healthGauge.state}}" style="--cypherv2-npc-health-ratio: {{healthGauge.ratio}}" aria-hidden="true"><i></i></span>
+  </header>
+
+  <section class="npc-notes-section">
+    <header class="npc-notes-heading"><h2>{{localize "CYPHERV2.Tabs.Notes"}}</h2></header>
+    <div class="cypherv2-rich-description npc-notes-editor">{{formInput systemFields.notes name="system.notes" value=source.system.notes enriched=enriched.notes elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=actor.uuid}}</div>
+  </section>
+</div>

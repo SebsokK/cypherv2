@@ -1,0 +1,430 @@
+.cypherv2-dialog {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--cypherv2-space-compact);
+  width: 100%;
+  min-width: 0;
+  padding: 0.15rem;
+  color: var(--cypherv2-text-primary);
+  background: var(--cypherv2-surface-primary);
+
+  .cypherv2-dialog-heading {
+    display: grid;
+    gap: 0.08rem;
+    margin: 0;
+    padding: 0.2rem 0.25rem 0.35rem;
+
+    span,
+    strong {
+      margin: 0;
+    }
+
+    span {
+      color: var(--cypherv2-text-muted);
+      font-size: 0.68rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+  }
+
+  .cypherv2-dialog-section {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.55rem;
+    background: var(--cypherv2-surface-secondary);
+    border: 1px solid var(--cypherv2-border);
+    border-radius: var(--cypherv2-radius);
+  }
+
+  .cypherv2-dialog-section-heading {
+    color: var(--cypherv2-text-muted);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cypherv2-dialog-value {
+    color: var(--cypherv2-text-primary);
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cypherv2-dialog-field-grid {
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  }
+
+  .cypherv2-dialog-field,
+  .cypherv2-dialog-fields label {
+    display: grid;
+    gap: 0.18rem;
+    min-width: 0;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.74rem;
+    font-weight: 600;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 1.75rem;
+    padding: 0.18rem 0.4rem;
+    color: var(--cypherv2-text-primary);
+    background: var(--cypherv2-surface-primary);
+    border: 1px solid var(--cypherv2-border);
+
+    &:focus-visible {
+      border-color: var(--cypherv2-accent);
+      outline: 1px solid var(--cypherv2-accent);
+      outline-offset: 1px;
+    }
+  }
+
+  .cypherv2-dialog-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .cypherv2-dialog-toggle {
+    position: relative;
+    display: inline-flex;
+    min-width: 0;
+    margin: 0;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.65rem;
+      padding: 0.18rem 0.5rem;
+      color: var(--cypherv2-text-muted);
+      background: var(--cypherv2-surface-primary);
+      border: 1px solid var(--cypherv2-border);
+      border-radius: calc(var(--cypherv2-radius) / 2);
+      font-size: 0.68rem;
+      font-weight: 750;
+      letter-spacing: 0.025em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    &:hover span,
+    input:focus-visible + span {
+      color: var(--cypherv2-text-primary);
+      border-color: var(--cypherv2-accent);
+    }
+
+    input:checked + span {
+      color: var(--cypherv2-text-primary);
+      background: color-mix(in srgb, var(--cypherv2-accent) 22%, var(--cypherv2-surface-primary));
+      border-color: var(--cypherv2-accent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cypherv2-accent) 55%, transparent);
+    }
+  }
+
+  .cypherv2-dialog-summary-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    align-items: baseline;
+    min-height: 1.3rem;
+
+    span {
+      min-width: 0;
+      color: var(--cypherv2-text-muted);
+      overflow-wrap: anywhere;
+    }
+
+    strong {
+      color: var(--cypherv2-text-primary);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+  }
+
+  .cypherv2-dialog-help {
+    margin: 0;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.72rem;
+  }
+
+  .cypherv2-dialog-callout {
+    margin: 0;
+    padding: 0.4rem 0.5rem;
+    color: var(--cypherv2-text-primary);
+    background: var(--cypherv2-surface-raised);
+    border-left: 2px solid var(--cypherv2-accent);
+
+    &.is-warning {
+      border-left-color: var(--cypherv2-color-warning);
+    }
+
+    &.is-success {
+      border-left-color: var(--cypherv2-success);
+    }
+
+    &.is-danger {
+      border-left-color: var(--cypherv2-danger);
+    }
+  }
+
+  .cypherv2-dialog-actions {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 0.2rem;
+  }
+
+  &.ability-payment-dialog {
+    .ability-payment-choices {
+      display: grid;
+      gap: 0.3rem;
+    }
+
+    .ability-payment-choice {
+      display: grid;
+      grid-template-columns: auto minmax(5rem, 1fr) repeat(3, max-content);
+      gap: 0.35rem;
+      align-items: center;
+      min-height: 1.85rem;
+      margin: 0;
+      padding: 0.25rem 0.4rem;
+      color: var(--cypherv2-text-muted);
+      background: var(--cypherv2-surface-secondary);
+      border: 1px solid var(--cypherv2-border);
+      border-radius: calc(var(--cypherv2-radius) / 2);
+      cursor: pointer;
+
+      strong {
+        color: var(--cypherv2-text-primary);
+      }
+
+      &:hover,
+      &:focus-within,
+      &:has(input:checked) {
+        border-color: var(--cypherv2-accent);
+      }
+    }
+
+    .ability-payment-whole-cost {
+      margin: 0;
+      color: var(--cypherv2-text-muted);
+      font-size: 0.68rem;
+    }
+  }
+
+  &.package-pool-choice-dialog,
+  &.package-pool-choice-authoring {
+    .package-pool-choice-options {
+      display: grid;
+      gap: 0.3rem;
+      grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    }
+
+    .package-pool-choice-option,
+    .package-pool-choice-options .cypherv2-dialog-toggle {
+      width: 100%;
+
+      span {
+        width: 100%;
+      }
+    }
+  }
+
+  &.package-choice-dialog {
+    gap: 0.4rem;
+    max-height: min(70vh, 42rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .package-choice-heading {
+      padding-bottom: 0.25rem;
+
+      strong {
+        color: var(--cypherv2-text-primary);
+        font-family: var(--cypherv2-font-heading);
+        font-size: 0.82rem;
+        letter-spacing: 0.065em;
+      }
+    }
+
+    .package-choice-prompt {
+      padding: 0 0.25rem 0.15rem;
+      color: var(--cypherv2-text-muted);
+      font-size: 0.74rem;
+    }
+
+    .package-choice-options {
+      display: grid;
+      gap: 0.28rem;
+      min-width: 0;
+    }
+
+    .package-choice-option {
+      display: grid;
+      grid-template-columns: 0.85rem minmax(0, 1fr);
+      gap: 0.35rem;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+      min-height: 2rem;
+      margin: 0;
+      padding: 0.3rem 0.5rem;
+      color: var(--cypherv2-text-primary);
+      background: var(--cypherv2-surface-secondary);
+      border: 1px solid var(--cypherv2-border);
+      border-radius: calc(var(--cypherv2-radius) / 2);
+      box-shadow: none;
+      font-size: 0.75rem;
+      line-height: 1.25;
+      text-align: left;
+      white-space: normal;
+      cursor: pointer;
+
+      span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      &:hover,
+      &:focus-visible {
+        color: var(--cypherv2-text-primary);
+        background: var(--cypherv2-surface-raised);
+        border-color: var(--cypherv2-accent);
+        outline: 1px solid var(--cypherv2-accent);
+        outline-offset: 1px;
+      }
+
+      &.is-selected {
+        background: color-mix(in srgb, var(--cypherv2-accent) 18%, var(--cypherv2-surface-secondary));
+        border-color: var(--cypherv2-accent);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cypherv2-accent) 45%, transparent);
+
+        .package-choice-check {
+          opacity: 1;
+        }
+      }
+    }
+
+    .package-choice-check {
+      color: var(--cypherv2-text-primary);
+      opacity: 0;
+    }
+
+    &.package-choice-single .package-choice-option {
+      grid-template-columns: minmax(0, 1fr);
+
+      .package-choice-check {
+        display: none;
+      }
+    }
+
+    .package-choice-selection-status {
+      display: flex;
+      justify-content: flex-end;
+      min-height: 1.2rem;
+      padding: 0.05rem 0.25rem 0;
+      color: var(--cypherv2-text-muted);
+      font-size: 0.68rem;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+@media (max-width: 520px) {
+  .cypherv2.cypherv2-dialog.ability-payment-dialog .ability-payment-choice {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    span {
+      grid-column: 2;
+    }
+  }
+}
+
+// Foundry's footer lives outside the supplied dialog content. :has() keeps this
+// skin strictly limited to DialogV2 applications containing Cypher V2 content.
+.application.dialog:has(.cypherv2-dialog, .cypherv2-dialog-fields) {
+  .window-content {
+    padding: 0.55rem;
+    color: var(--cypherv2-text-primary);
+    background: var(--cypherv2-surface-primary);
+  }
+
+  .cypherv2-dialog-fields:not(.cypherv2-dialog) {
+    display: grid;
+    gap: var(--cypherv2-space-compact);
+    min-width: 0;
+    color: var(--cypherv2-text-primary);
+
+    label {
+      display: grid;
+      gap: 0.18rem;
+      color: var(--cypherv2-text-muted);
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+      width: 100%;
+      min-width: 0;
+      color: var(--cypherv2-text-primary);
+      background: var(--cypherv2-surface-secondary);
+      border: 1px solid var(--cypherv2-border);
+    }
+  }
+
+  .form-footer {
+    gap: 0.35rem;
+    padding-top: 0.45rem;
+
+    button {
+      min-height: 1.85rem;
+      padding: 0.25rem 0.65rem;
+      color: var(--cypherv2-text-primary);
+      background: var(--cypherv2-surface-raised);
+      border: 1px solid var(--cypherv2-border);
+
+      &:hover,
+      &:focus-visible {
+        border-color: var(--cypherv2-accent);
+        outline-color: var(--cypherv2-accent);
+      }
+    }
+  }
+}
+
+.application.dialog:has(.package-choice-single) .form-footer {
+  display: none;
+}
+
+.application.dialog:has(.package-choice-multiple) .form-footer {
+  justify-content: flex-end;
+
+  button[data-action="confirm-package-choice"] {
+    width: auto;
+    min-width: 6rem;
+  }
+}

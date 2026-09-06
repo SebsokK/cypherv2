@@ -1,0 +1,21 @@
+.cypherv2 {
+  .pool-card,
+  .status-card {
+    padding: var(--cypherv2-space);
+    background: var(--cypherv2-color-surface);
+    border: 1px solid var(--cypherv2-color-border);
+    border-radius: var(--cypherv2-radius);
+  }
+
+  .pool-card h2,
+  .status-card h2 {
+    margin: 0 0 0.5rem;
+    color: var(--cypherv2-text-primary);
+    font-size: 1rem;
+  }
+
+  .placeholder {
+    color: var(--cypherv2-color-muted);
+    font-style: italic;
+  }
+}

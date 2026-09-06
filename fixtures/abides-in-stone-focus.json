@@ -1,0 +1,50 @@
+{
+  "name": "Abides in Stone",
+  "type": "focus",
+  "system": {
+    "graph": {
+      "version": 1,
+      "nodes": [
+        {"id": "intimidating-presence", "abilityUuid": "", "abilitySnapshot": {"name": "Intimidating Presence", "description": ""}, "tier": 1, "position": {"x": 24, "y": null}},
+        {"id": "stone-body", "abilityUuid": "", "abilitySnapshot": {"name": "Stone Body", "description": ""}, "tier": 1, "position": {"x": 228, "y": null}},
+        {"id": "stoneknowing", "abilityUuid": "", "abilitySnapshot": {"name": "Stoneknowing", "description": ""}, "tier": 1, "position": {"x": 432, "y": null}},
+        {"id": "stone-bash", "abilityUuid": "", "abilitySnapshot": {"name": "Stone Bash", "description": ""}, "tier": 2, "position": {"x": 24, "y": null}},
+        {"id": "golem-grip", "abilityUuid": "", "abilitySnapshot": {"name": "Golem Grip", "description": ""}, "tier": 2, "position": {"x": 228, "y": null}},
+        {"id": "field-of-stones", "abilityUuid": "", "abilitySnapshot": {"name": "Field of Stones", "description": ""}, "tier": 2, "position": {"x": 432, "y": null}},
+        {"id": "improved-stone-body", "abilityUuid": "", "abilitySnapshot": {"name": "Improved Stone Body", "description": ""}, "tier": 3, "position": {"x": 126, "y": null}},
+        {"id": "golem-stomp", "abilityUuid": "", "abilitySnapshot": {"name": "Golem Stomp", "description": ""}, "tier": 3, "position": {"x": 330, "y": null}},
+        {"id": "heavy-hands", "abilityUuid": "", "abilitySnapshot": {"name": "Heavy Hands", "description": ""}, "tier": 4, "position": {"x": 24, "y": null}},
+        {"id": "deep-reserves", "abilityUuid": "", "abilitySnapshot": {"name": "Deep Reserves", "description": ""}, "tier": 4, "position": {"x": 228, "y": null}},
+        {"id": "rolling-stone", "abilityUuid": "", "abilitySnapshot": {"name": "Rolling Stone", "description": ""}, "tier": 4, "position": {"x": 432, "y": null}},
+        {"id": "still-as-a-statue", "abilityUuid": "", "abilitySnapshot": {"name": "Still as a Statue", "description": ""}, "tier": 5, "position": {"x": 126, "y": null}},
+        {"id": "structural-brace", "abilityUuid": "", "abilitySnapshot": {"name": "Structural Brace", "description": ""}, "tier": 5, "position": {"x": 330, "y": null}},
+        {"id": "mineralization", "abilityUuid": "", "abilitySnapshot": {"name": "Mineralization", "description": ""}, "tier": 6, "position": {"x": 126, "y": null}},
+        {"id": "earthshake", "abilityUuid": "", "abilitySnapshot": {"name": "Earthshake", "description": ""}, "tier": 6, "position": {"x": 330, "y": null}}
+      ],
+      "connections": [
+        {"id": "ip-to-stone-body", "from": "intimidating-presence", "to": "stone-body"},
+        {"id": "stone-body-to-ip", "from": "stone-body", "to": "intimidating-presence"},
+        {"id": "stone-body-to-stoneknowing", "from": "stone-body", "to": "stoneknowing"},
+        {"id": "stoneknowing-to-stone-body", "from": "stoneknowing", "to": "stone-body"},
+        {"id": "ip-to-stone-bash", "from": "intimidating-presence", "to": "stone-bash"},
+        {"id": "stone-body-to-stone-bash", "from": "stone-body", "to": "stone-bash"},
+        {"id": "stone-body-to-golem-grip", "from": "stone-body", "to": "golem-grip"},
+        {"id": "stoneknowing-to-field", "from": "stoneknowing", "to": "field-of-stones"},
+        {"id": "stone-bash-to-improved", "from": "stone-bash", "to": "improved-stone-body"},
+        {"id": "golem-grip-to-improved", "from": "golem-grip", "to": "improved-stone-body"},
+        {"id": "golem-grip-to-stomp", "from": "golem-grip", "to": "golem-stomp"},
+        {"id": "field-to-stomp", "from": "field-of-stones", "to": "golem-stomp"},
+        {"id": "improved-to-heavy-hands", "from": "improved-stone-body", "to": "heavy-hands"},
+        {"id": "improved-to-deep-reserves", "from": "improved-stone-body", "to": "deep-reserves"},
+        {"id": "stomp-to-deep-reserves", "from": "golem-stomp", "to": "deep-reserves"},
+        {"id": "stomp-to-rolling-stone", "from": "golem-stomp", "to": "rolling-stone"},
+        {"id": "heavy-hands-to-statue", "from": "heavy-hands", "to": "still-as-a-statue"},
+        {"id": "deep-reserves-to-statue", "from": "deep-reserves", "to": "still-as-a-statue"},
+        {"id": "deep-reserves-to-brace", "from": "deep-reserves", "to": "structural-brace"},
+        {"id": "rolling-stone-to-brace", "from": "rolling-stone", "to": "structural-brace"},
+        {"id": "statue-to-mineralization", "from": "still-as-a-statue", "to": "mineralization"},
+        {"id": "brace-to-earthshake", "from": "structural-brace", "to": "earthshake"}
+      ]
+    }
+  }
+}

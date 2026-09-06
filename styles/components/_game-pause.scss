@@ -1,0 +1,23 @@
+#pause.cypherv2-game-pause {
+  gap: 0;
+
+  img {
+    width: min(70vw, 34rem);
+    height: auto;
+    max-height: 8rem;
+    object-fit: contain;
+  }
+
+  // The packaged artwork contains the visible GAME PAUSED text. Keep Foundry's caption for assistive technology.
+  figcaption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

@@ -1,0 +1,74 @@
+.cypherv2-combat-tracker {
+  .combatant[draggable="true"] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .combatant.cypherv2-combatant-dragging {
+    opacity: 0.55;
+  }
+
+  .combat-tracker .token-initiative.cypherv2-turn-action {
+    align-items: center;
+    display: flex;
+    flex: 0 0 3.4rem;
+    justify-content: center;
+    min-width: 3.4rem;
+  }
+
+  .combat-tracker .token-initiative button.cypherv2-done-control,
+  .combat-tracker .token-initiative .cypherv2-done-status {
+    align-items: center;
+    background: color-mix(in srgb, var(--cypherv2-danger) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--cypherv2-danger) 62%, transparent);
+    border-radius: 0.25rem;
+    color: var(--cypherv2-danger);
+    display: inline-flex;
+    font-size: var(--font-size-10, 0.625rem);
+    font-weight: 700;
+    filter: none;
+    gap: 0.18rem;
+    height: auto;
+    justify-content: center;
+    line-height: 1;
+    min-height: 1.45rem;
+    padding: 0.18rem 0.3rem;
+    text-transform: uppercase;
+    transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, color 120ms ease;
+    width: 100%;
+
+  }
+
+  .combat-tracker .token-initiative button.cypherv2-done-control {
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: color-mix(in srgb, var(--cypherv2-danger) 28%, transparent);
+      border-color: var(--cypherv2-danger);
+      box-shadow: 0 0 0.45rem color-mix(in srgb, var(--cypherv2-danger) 32%, transparent);
+      color: var(--cypherv2-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--cypherv2-danger);
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+  }
+
+  .combat-tracker .token-initiative .cypherv2-done-status {
+    background: color-mix(in srgb, var(--cypherv2-danger) 9%, transparent);
+    border-color: color-mix(in srgb, var(--cypherv2-danger) 38%, transparent);
+    cursor: default;
+    opacity: 0.78;
+    pointer-events: none;
+  }
+}

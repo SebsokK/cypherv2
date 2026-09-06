@@ -1,0 +1,144 @@
+.cypherv2.cypherv2-dialog.cypherv2-horror-dialog {
+  --cypherv2-horror-color: var(--cypherv2-text-muted);
+  --cypherv2-horror-glow: 0%;
+
+  min-width: 0;
+
+  &[data-horror-band="low"] {
+    --cypherv2-horror-color: var(--cypherv2-pool-gauge-high);
+    --cypherv2-horror-glow: 18%;
+  }
+
+  &[data-horror-band="elevated"] {
+    --cypherv2-horror-color: color-mix(in srgb, var(--cypherv2-color-warning) 76%, var(--cypherv2-text-primary));
+    --cypherv2-horror-glow: 26%;
+  }
+
+  &[data-horror-band="severe"] {
+    --cypherv2-horror-color: color-mix(in srgb, var(--cypherv2-color-warning) 64%, var(--cypherv2-danger));
+    --cypherv2-horror-glow: 34%;
+  }
+
+  &[data-horror-band="extreme"] {
+    --cypherv2-horror-color: var(--cypherv2-danger);
+    --cypherv2-horror-glow: 43%;
+  }
+
+  &[data-horror-band="catastrophic"] {
+    --cypherv2-horror-color: color-mix(in srgb, var(--cypherv2-danger) 86%, var(--cypherv2-text-primary));
+    --cypherv2-horror-glow: 57%;
+  }
+
+  &[data-horror-band="maximum"] {
+    --cypherv2-horror-color: color-mix(in srgb, var(--cypherv2-danger) 72%, var(--cypherv2-text-primary));
+    --cypherv2-horror-glow: 72%;
+  }
+
+  .cypherv2-dialog-heading strong {
+    color: var(--cypherv2-horror-color);
+  }
+
+  .horror-range-control {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.1rem;
+    gap: var(--cypherv2-space-compact);
+    align-items: center;
+    min-width: 0;
+    padding-block: 0.25rem;
+  }
+
+  input[type="range"].horror-range-input {
+    appearance: none;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 1rem;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+
+    &::-webkit-slider-runnable-track {
+      height: 0.32rem;
+      background: linear-gradient(
+        to right,
+        var(--cypherv2-horror-color) 0 var(--cypherv2-horror-fill),
+        var(--cypherv2-surface-raised) var(--cypherv2-horror-fill) 100%
+      );
+      border: 1px solid color-mix(in srgb, var(--cypherv2-border) 72%, transparent);
+      border-radius: 999px;
+      box-shadow: 0 0 0.42rem color-mix(
+        in srgb,
+        var(--cypherv2-horror-color) var(--cypherv2-horror-glow),
+        transparent
+      );
+    }
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 0.86rem;
+      height: 0.86rem;
+      margin-top: calc((0.32rem - 0.86rem) / 2);
+      background: var(--cypherv2-surface-primary);
+      border: 2px solid var(--cypherv2-horror-color);
+      border-radius: 50%;
+      box-shadow: 0 0 0.38rem color-mix(
+        in srgb,
+        var(--cypherv2-horror-color) var(--cypherv2-horror-glow),
+        transparent
+      );
+    }
+
+    &::-moz-range-track {
+      height: 0.32rem;
+      background: var(--cypherv2-surface-raised);
+      border: 1px solid color-mix(in srgb, var(--cypherv2-border) 72%, transparent);
+      border-radius: 999px;
+    }
+
+    &::-moz-range-progress {
+      height: 0.32rem;
+      background: var(--cypherv2-horror-color);
+      border-radius: 999px;
+      box-shadow: 0 0 0.42rem color-mix(
+        in srgb,
+        var(--cypherv2-horror-color) var(--cypherv2-horror-glow),
+        transparent
+      );
+    }
+
+    &::-moz-range-thumb {
+      width: 0.72rem;
+      height: 0.72rem;
+      background: var(--cypherv2-surface-primary);
+      border: 2px solid var(--cypherv2-horror-color);
+      border-radius: 50%;
+      box-shadow: 0 0 0.38rem color-mix(
+        in srgb,
+        var(--cypherv2-horror-color) var(--cypherv2-horror-glow),
+        transparent
+      );
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--cypherv2-text-primary);
+      outline-offset: 3px;
+    }
+  }
+
+  .horror-range-value {
+    color: var(--cypherv2-horror-color);
+    font-size: 1rem;
+    font-weight: 850;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cypherv2.cypherv2-dialog.cypherv2-horror-dialog * {
+    transition: none;
+  }
+}

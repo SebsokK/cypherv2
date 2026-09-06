@@ -1,0 +1,12 @@
+<article class="cypherv2 cypherv2-chat-card intrusion-card player-intrusion-card has-exceptional-result"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header class="intrusion-card-heading">
+    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+    <h3>{{localize "CYPHERV2.Intrusion.Player.Title"}}</h3>
+  </header>
+  <div class="intrusion-card-identity">
+    {{#if actorImage}}<img class="intrusion-card-portrait" src="{{actorImage}}" alt="">{{/if}}
+    <p class="intrusion-card-message">{{localize "CYPHERV2.Intrusion.Player.Chat" character=actorName}}</p>
+  </div>
+  <strong class="intrusion-card-xp">{{localize "CYPHERV2.Intrusion.Player.Spent" xp=xpSpent}}</strong>
+</article>

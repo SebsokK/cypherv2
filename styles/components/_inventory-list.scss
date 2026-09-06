@@ -1,0 +1,827 @@
+.cypherv2 .inventory-section {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+
+  .inventory-group {
+    min-width: 0;
+  }
+
+  .inventory-group-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.4rem;
+    align-items: center;
+    min-height: 1.45rem;
+    margin-bottom: 0.12rem;
+    padding: 0 0.2rem;
+
+    h2 {
+      margin: 0;
+      color: var(--cypherv2-text-primary);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.055em;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+  }
+
+  .inventory-limit {
+    display: inline-flex;
+    gap: 0.22rem;
+    align-items: center;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    strong {
+      color: var(--cypherv2-text-primary);
+    }
+
+    input {
+      width: 2.25rem;
+      min-width: 2.25rem;
+      height: 1.25rem;
+      padding: 0 0.18rem;
+      color: var(--cypherv2-text-primary);
+      font-size: 0.67rem;
+      font-weight: 700;
+      text-align: center;
+    }
+  }
+
+  .inventory-add-action {
+    width: 1.35rem;
+    height: 1.35rem;
+    padding: 0;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.68rem;
+  }
+
+  .compact-inventory-list {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .compact-inventory-item {
+    min-width: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0.25rem;
+    transition: background 100ms ease, box-shadow 100ms ease;
+
+    &:hover,
+    &:focus-within,
+    &.is-expanded {
+      background: var(--cypherv2-surface-raised);
+      box-shadow: inset 2px 0 var(--cypherv2-accent);
+    }
+
+    &.is-expanded .inventory-details-toggle i {
+      transform: rotate(90deg);
+    }
+
+    &.is-depleted {
+      opacity: 0.55;
+
+      .inventory-item-name {
+        color: var(--cypherv2-text-muted);
+      }
+
+      .inventory-item-actions {
+        opacity: 0.9;
+      }
+    }
+
+    &:hover .inventory-item-actions,
+    &:focus-within .inventory-item-actions,
+    &.is-expanded .inventory-item-actions {
+      opacity: 1;
+    }
+  }
+
+  .compact-inventory-row {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    min-width: 0;
+    min-height: 1.65rem;
+    padding: 0.08rem 0.24rem 0.08rem 0.1rem;
+  }
+
+  .inventory-details-toggle {
+    flex: 0 0 auto;
+    width: 1.15rem;
+    height: 1.35rem;
+    padding: 0;
+    font-size: 0.55rem;
+
+    i {
+      transition: transform 100ms ease;
+    }
+  }
+
+  .inventory-item-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--cypherv2-text-primary);
+    font-size: 0.73rem;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: left;
+    justify-content: flex-start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .inventory-level,
+  .inventory-state,
+  .inventory-depletion,
+  .inventory-quantity {
+    flex: 0 0 auto;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.61rem;
+    line-height: 1.1;
+    white-space: nowrap;
+
+    strong {
+      color: var(--cypherv2-text-primary);
+    }
+  }
+
+  .inventory-power {
+    display: inline-flex;
+    gap: 0.28rem;
+    align-items: center;
+    flex: 0 0 auto;
+    font-size: 0.61rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    i {
+      width: 0.35rem;
+      height: 0.35rem;
+      background: currentcolor;
+      border-radius: 50%;
+    }
+
+    &.is-low { color: var(--cypherv2-cypher-power-low); }
+    &.is-medium { color: var(--cypherv2-cypher-power-medium); }
+    &.is-advanced { color: var(--cypherv2-cypher-power-advanced); }
+    &.is-high { color: var(--cypherv2-cypher-power-high); }
+    &.is-ultra { color: var(--cypherv2-cypher-power-ultra); }
+  }
+
+  .inventory-rollable {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    height: 1.3rem;
+    padding: 0 0.2rem;
+    color: var(--cypherv2-text-muted);
+    background: transparent;
+    border: 0;
+    font-size: 0.61rem;
+    line-height: 1.1;
+    white-space: nowrap;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-visible {
+      color: var(--cypherv2-accent-hover);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+    }
+  }
+
+  .inventory-depleted-label {
+    flex: 0 0 auto;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+
+    &.combat-depleted-state {
+      color: var(--cypherv2-danger);
+    }
+  }
+
+  .inventory-state {
+    color: var(--cypherv2-success);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .inventory-quantity {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+
+    input {
+      width: 2.5rem;
+      height: 1.25rem;
+      padding: 0 0.2rem;
+      font-size: 0.67rem;
+      text-align: center;
+    }
+  }
+
+  .inventory-item-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.04rem;
+    align-items: center;
+    opacity: 0.62;
+    transition: opacity 100ms ease;
+
+    .cypherv2-icon-action {
+      width: 1.25rem;
+      height: 1.25rem;
+      padding: 0;
+      font-size: 0.63rem;
+    }
+  }
+
+  .compact-inventory-details {
+    min-width: 0;
+    margin: 0 0.35rem 0.25rem 1.55rem;
+    padding: 0.35rem 0.45rem 0.4rem;
+    overflow-wrap: anywhere;
+    color: var(--cypherv2-text-primary);
+    font-size: 0.71rem;
+    line-height: 1.4;
+    border-top: 1px solid color-mix(in srgb, var(--cypherv2-border) 45%, transparent);
+
+    &[hidden] {
+      display: none;
+    }
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    img,
+    table {
+      max-width: 100%;
+    }
+  }
+
+  .compact-inventory-empty {
+    padding: 0.22rem 0.25rem;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.7rem;
+    font-style: italic;
+  }
+}
+
+// The Combat tab deliberately reuses Inventory primitives. Keep this visual
+// alignment pass scoped to the actual Character Inventory tab.
+.cypherv2 [data-tab="inventory"] .inventory-section {
+  .compact-inventory-list {
+    gap: 0;
+  }
+
+  .compact-inventory-item {
+    border-bottom: 1px solid color-mix(in srgb, var(--cypherv2-border) 42%, transparent);
+    border-radius: 0.2rem 0.2rem 0 0;
+
+    &:hover,
+    &:focus-within {
+      background: color-mix(in srgb, var(--cypherv2-surface-raised) 55%, transparent);
+      box-shadow: inset 2px 0 var(--cypherv2-accent);
+    }
+
+    &.is-expanded {
+      background: color-mix(in srgb, var(--cypherv2-surface-raised) 22%, transparent);
+      box-shadow: none;
+    }
+
+    &.is-depleted {
+      opacity: 1;
+    }
+  }
+
+  .compact-inventory-row {
+    gap: 0.1rem;
+  }
+
+  .inventory-item-name {
+    flex: 1 1 8rem;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .inventory-artifact-identity {
+    display: flex;
+    flex: 1 1 8rem;
+    flex-wrap: wrap;
+    gap: 0.05rem 0.34rem;
+    align-items: baseline;
+    min-width: 0;
+
+    .inventory-item-name {
+      flex: 0 1 auto;
+    }
+
+    .inventory-level {
+      margin-left: 0;
+      color: var(--cypherv2-text-muted);
+      font-size: 0.66rem;
+      font-weight: 500;
+
+      strong {
+        color: inherit;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .inventory-level,
+  .inventory-state,
+  .inventory-depletion,
+  .inventory-quantity {
+    margin-left: 0.18rem;
+  }
+
+  .compact-inventory-details {
+    margin: 0.05rem 0.3rem 0.38rem 1.45rem;
+    padding: 0.24rem 0.38rem 0.3rem 0.55rem;
+    color: color-mix(in srgb, var(--cypherv2-text-primary) 86%, var(--cypherv2-text-muted));
+    background: transparent;
+    border-top: 0;
+    border-left: 2px solid color-mix(in srgb, var(--cypherv2-accent) 62%, transparent);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+}
+
+.cypherv2 .combat-tab-section {
+  --combat-grid-columns: minmax(6.5rem, 1fr) 10.75rem 4.75rem 7.25rem 7.25rem 4.25rem;
+
+  .combat-weapon-row,
+  .combat-shield-row,
+  .combat-armor-row {
+    display: grid;
+    grid-template-areas: "identity secondary ammo depletion status actions";
+    grid-template-columns: var(--combat-grid-columns);
+    gap: 0.3rem;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--cypherv2-surface-raised);
+      box-shadow: inset 2px 0 0 var(--cypherv2-accent);
+      outline: 0;
+    }
+  }
+
+  .combat-row-left {
+    grid-area: identity;
+    display: flex;
+    gap: 0.12rem;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .combat-shield-row .combat-row-left,
+  .combat-armor-row .combat-row-left {
+    display: grid;
+    grid-template-columns: 1.25rem 1.25rem minmax(0, 1fr);
+  }
+
+  .combat-ammo-column,
+  .combat-secondary-column,
+  .combat-depletion-column,
+  .combat-damage-column,
+  .combat-familiarity-column,
+  .combat-status-column {
+    min-width: 0;
+    text-align: right;
+  }
+
+  .combat-ammo-column {
+    grid-area: ammo;
+    display: inline-flex;
+    gap: 0.2rem;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .combat-reload-action {
+    flex: 0 0 1rem;
+    width: 1rem;
+    min-width: 1rem;
+    height: 1rem;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.58rem;
+  }
+
+  .combat-item-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+    width: 4.25rem;
+  }
+
+  .combat-status-column {
+    grid-area: status;
+    display: inline-flex;
+    gap: 0.2rem;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 1rem;
+  }
+
+  .combat-status-separator {
+    color: var(--cypherv2-text-muted);
+  }
+
+  .combat-weapon-item.is-unusable .combat-attack-name {
+    color: var(--cypherv2-text-muted);
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .combat-attack-identity {
+    display: flex;
+    gap: 0.28rem;
+    align-items: baseline;
+    flex: 1 1 auto;
+    min-width: 0;
+
+    .inventory-item-name {
+      flex: 0 1 auto;
+    }
+  }
+
+  .combat-attack-category,
+  .combat-ammo {
+    flex: 0 0 auto;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.61rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .combat-attack-category {
+    font-style: italic;
+  }
+
+  .combat-ammo {
+    font-weight: 700;
+  }
+
+  .combat-depletion {
+    color: var(--cypherv2-text-muted);
+    font-weight: 700;
+    text-transform: none;
+  }
+
+  .combat-familiarity-warning {
+    color: var(--cypherv2-warning, #d6ad60);
+    font-size: 0.58rem;
+    font-weight: 750;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+  }
+
+  .combat-shield-identity {
+    display: grid;
+    gap: 0.12rem;
+    min-width: 0;
+  }
+
+  .combat-inline-shield-wounds,
+  .combat-inline-shield-track {
+    display: inline-flex;
+    gap: 0.14rem;
+    align-items: center;
+  }
+
+  .combat-inline-shield-wounds {
+    gap: 0.35rem;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.55rem;
+    white-space: nowrap;
+
+    abbr {
+      text-decoration: none;
+    }
+  }
+
+  .combat-shield-wounds-column {
+    grid-area: secondary;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .combat-secondary-column {
+    grid-area: secondary;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .combat-familiarity-column {
+    grid-area: secondary;
+  }
+
+  .combat-depletion-column {
+    grid-area: depletion;
+  }
+
+  .combat-damage-column {
+    grid-area: status;
+  }
+
+  .combat-inline-shield-pip {
+    width: 0.38rem;
+    height: 0.38rem;
+    border: 1px solid var(--cypherv2-wound-pip-shield);
+    border-radius: 50%;
+
+    &.is-filled {
+      background: var(--cypherv2-wound-pip-shield);
+    }
+  }
+
+  .combat-equipped-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.63rem;
+
+    &.is-equipped {
+      color: var(--cypherv2-success);
+    }
+  }
+
+  .combat-item-summary,
+  .combat-armor-total,
+  .combat-shield-wounds {
+    color: var(--cypherv2-text-muted);
+    font-size: 0.61rem;
+    line-height: 1.15;
+  }
+
+  .combat-item-summary {
+    flex: 0 0 auto;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-align: right;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    strong {
+      color: var(--cypherv2-text-primary);
+    }
+  }
+
+  .combat-item-summary.combat-equipped-state {
+    color: var(--cypherv2-success);
+  }
+
+  .combat-item-summary.combat-depleted-state {
+    color: var(--cypherv2-danger);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .combat-shield-state {
+    &.is-functional {
+      color: var(--cypherv2-success);
+    }
+
+    &.is-broken {
+      color: var(--cypherv2-danger);
+    }
+  }
+
+  .combat-armor-total {
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    strong {
+      color: var(--cypherv2-text-primary);
+    }
+  }
+
+  .combat-shield-wounds {
+    margin: 0.35rem 0 0;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+  }
+
+  .combat-warning {
+    margin: 0.1rem 0.25rem 0.2rem;
+    color: var(--cypherv2-danger);
+    font-size: 0.66rem;
+  }
+}
+
+.cypherv2 .quick-defense-section {
+  display: grid;
+  gap: 0.12rem;
+  margin-bottom: 0.55rem;
+  padding: 0 0.2rem;
+
+  > h2 {
+    margin: 0;
+    color: var(--cypherv2-text-primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.055em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .quick-defense-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+
+  .quick-defense-action {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 1.75rem;
+    padding: 0.18rem 0.42rem;
+    color: var(--cypherv2-text-primary);
+    text-align: center;
+    background: color-mix(in srgb, var(--cypherv2-surface-secondary) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--cypherv2-border) 65%, transparent);
+    border-radius: 0.25rem;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cypherv2-text-primary) 7%, transparent);
+    transition: background 100ms ease, border-color 100ms ease, box-shadow 100ms ease;
+
+    > i {
+      color: var(--cypherv2-text-muted);
+      font-size: 0.66rem;
+      transition: color 100ms ease;
+    }
+
+    strong {
+      color: var(--cypherv2-text-primary);
+      font-size: 0.69rem;
+      font-weight: 800;
+      letter-spacing: 0.045em;
+    }
+
+    small {
+      color: var(--cypherv2-text-muted);
+      font-size: 0.61rem;
+    }
+
+    &:hover {
+      border-color: var(--cypherv2-accent);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cypherv2-text-primary) 9%, transparent), 0 0 0.35rem color-mix(in srgb, var(--cypherv2-accent) 30%, transparent);
+
+      > i {
+        color: var(--cypherv2-accent-hover);
+      }
+    }
+
+    &:focus-visible {
+      border-color: var(--cypherv2-accent);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--cypherv2-text-primary) 9%, transparent), 0 0 0 2px color-mix(in srgb, var(--cypherv2-accent) 58%, transparent);
+      outline: 0;
+
+      > i {
+        color: var(--cypherv2-accent-hover);
+      }
+    }
+
+    &:active {
+      background: color-mix(in srgb, var(--cypherv2-surface-raised) 82%, transparent);
+    }
+  }
+}
+
+@container cypherv2-character-sheet (min-width: 541px) and (max-width: 700px) {
+  .cypherv2 .combat-tab-section {
+    --combat-grid-columns: minmax(4.5rem, 1fr) 8rem 3.75rem 6.25rem 5.75rem 4.25rem;
+
+    .combat-weapon-row,
+    .combat-shield-row,
+    .combat-armor-row {
+      gap: 0.2rem;
+    }
+
+    .combat-inline-shield-wounds {
+      gap: 0.16rem;
+    }
+
+    .combat-inline-shield-track {
+      gap: 0.08rem;
+    }
+
+    .combat-status-column {
+      gap: 0.1rem;
+    }
+  }
+}
+
+@container cypherv2-character-sheet (max-width: 540px) {
+  .cypherv2 .inventory-section {
+    .compact-inventory-row {
+      flex-wrap: wrap;
+    }
+
+    .inventory-item-name {
+      flex-basis: calc(100% - 5rem);
+      white-space: normal;
+    }
+
+    .inventory-level,
+    .inventory-power,
+    .inventory-state,
+    .inventory-depletion,
+    .inventory-quantity,
+    .combat-item-summary {
+      margin-left: 1.5rem;
+    }
+
+    .combat-item-summary {
+      text-align: left;
+    }
+
+    .combat-attack-identity {
+      flex-basis: calc(100% - 3rem);
+    }
+
+    .combat-ammo,
+    .combat-depletion {
+      margin-left: 0;
+    }
+
+    .inventory-item-actions {
+      margin-left: auto;
+    }
+
+    .combat-weapon-row {
+      grid-template-areas:
+        "left left actions"
+        "ammo depletion damage";
+      grid-template-columns: minmax(3.5rem, 0.7fr) minmax(6rem, 1fr) minmax(4.5rem, auto);
+
+      .combat-row-left { grid-area: left; }
+      .combat-secondary-column { display: none; }
+      .combat-ammo-column { grid-area: ammo; text-align: left; }
+      .combat-depletion-column { grid-area: depletion; text-align: center; }
+      .combat-damage-column { grid-area: damage; margin-left: 0; }
+      .combat-item-actions { grid-area: actions; }
+    }
+
+    .combat-shield-row {
+      grid-template-areas: "left actions" "wounds wounds" "depletion status";
+      grid-template-columns: minmax(0, 1fr) 4.25rem;
+
+      .combat-row-left { grid-area: left; }
+      .combat-shield-wounds-column { grid-area: wounds; }
+      > .combat-ammo-column { display: none; }
+      .combat-depletion-column { grid-area: depletion; text-align: left; }
+      .combat-status-column { grid-area: status; }
+      .combat-item-actions { grid-area: actions; }
+    }
+
+    .combat-armor-row {
+      grid-template-areas: "left actions" "familiarity status" "depletion depletion";
+      grid-template-columns: minmax(0, 1fr) 6.5rem;
+
+      .combat-row-left { grid-area: left; }
+      .combat-familiarity-column { grid-area: familiarity; text-align: left; }
+      > .combat-ammo-column { display: none; }
+      .combat-depletion-column { grid-area: depletion; text-align: left; }
+      .combat-status-column { grid-area: status; }
+      .combat-item-actions { grid-area: actions; }
+    }
+  }
+}

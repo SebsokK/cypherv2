@@ -1,0 +1,15 @@
+<article class="cypherv2 cypherv2-chat-card cypherv2-roll-card cypherv2-ability-payment-card"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header class="roll-card-identity"><h3>{{abilityName}}</h3><span class="roll-card-actor">{{actorName}}</span></header>
+  <p class="ability-payment-result">{{localize "CYPHERV2.Ability.Payment.PaidAmount" amount=costPaid pool=poolLabel}}</p>
+  <details class="roll-card-disclosure roll-card-details">
+    <summary>{{localize "CYPHERV2.Common.Details"}}</summary>
+    <div class="roll-card-detail-content"><dl class="roll-card-detail-list">
+      <dt>{{localize "CYPHERV2.Ability.Payment.BaseCost"}}</dt><dd>{{listedCost}}</dd>
+      <dt>{{localize "CYPHERV2.Pools.Edge"}}</dt><dd>{{#if ignoresEdge}}{{localize "CYPHERV2.Ability.Payment.Ignored"}}{{else}}{{edgeApplied}}{{/if}}</dd>
+      <dt>{{localize "CYPHERV2.Pools.Pool"}}</dt><dd>{{poolLabel}}</dd>
+      <dt>{{localize "CYPHERV2.Ability.Payment.PaidLabel"}}</dt><dd>{{costPaid}}</dd>
+      <dt>{{localize "CYPHERV2.Ability.Payment.Balance"}}</dt><dd>{{currentBefore}} → {{currentAfter}}</dd>
+    </dl></div>
+  </details>
+</article>

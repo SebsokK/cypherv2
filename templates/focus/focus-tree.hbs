@@ -1,0 +1,58 @@
+<section class="cypherv2-focus-tree-section" data-focus-uuid="{{focusUuid}}">
+  {{#if diagnostics.length}}
+    <ul class="focus-tree-diagnostics">
+      {{#each diagnostics as |diagnostic|}}<li class="{{diagnostic.severity}}">{{diagnostic.message}}</li>{{/each}}
+    </ul>
+  {{/if}}
+  {{#unless invalid}}
+    <div class="focus-tree-scroll">
+      <div class="focus-tree-canvas" style="min-width: {{width}}px; height: {{height}}px;">
+        {{#each tiers as |band|}}
+          <div class="focus-tier-band" style="top: {{band.top}}px;">
+            <strong>{{localize "CYPHERV2.Focus.Tier"}} {{band.tier}}</strong>
+            <div class="focus-tier-nodes">
+              {{#each band.nodes as |node|}}
+                <div class="focus-tree-node state-{{node.state}}{{#if node.advisoryUnavailable}} advisory-unavailable{{/if}}{{#if node.invalidProgression}} invalid-progression{{/if}}{{#if node.missingOwnedAbility}} missing-owned-ability{{/if}}{{#if node.selected}} editor-selected{{/if}}{{#if node.connectionSource}} connection-source{{/if}}" style="width: {{node.width}}px; height: {{node.height}}px;" data-node-id="{{node.id}}">
+                  <button type="button" class="focus-tree-node-inspect" data-action="{{node.primaryAction}}" data-focus-uuid="{{../../focusUuid}}" data-node-id="{{node.id}}" data-cypherv2-tooltip aria-describedby="cypherv2-tooltip-{{../../markerId}}-{{node.id}}">
+                    <strong>{{node.abilityName}}</strong>
+                    <span>{{localize "CYPHERV2.Focus.Tier"}} {{node.tier}}</span>
+                    {{#if node.isOwned}}<em>{{localize node.stateLabel}}</em>{{/if}}
+                    {{#if node.selected}}<i class="fa-solid fa-circle-check focus-tree-node-selected-indicator" aria-label="{{localize 'CYPHERV2.Focus.Editor.SelectedNode'}}"></i>{{/if}}
+                    {{#if node.missingAbility}}<i class="fa-solid fa-link-slash" aria-label="{{localize 'CYPHERV2.Focus.MissingAbility'}}"></i>{{/if}}
+                  </button>
+                  <template class="cypherv2-tooltip-template">
+                    <article class="cypherv2-focus-tooltip-content">
+                      <h3>{{node.abilityName}}</h3>
+                      <p class="cypherv2-tooltip-meta">{{localize "CYPHERV2.Focus.Tier"}} {{node.tier}} · {{localize node.stateLabel}}</p>
+                      {{#if node.tierLocked}}<p class="focus-tree-advisory-reason">{{localize "CYPHERV2.Focus.Advisory.RequiresTier"}} {{node.requiredTier}}</p>{{/if}}
+                      {{#if node.prerequisiteLocked}}<p class="focus-tree-advisory-reason">{{localize "CYPHERV2.Focus.Advisory.Prerequisite"}}</p>{{/if}}
+                      {{#if node.invalidProgression}}<p class="focus-tree-advisory-reason">{{localize "CYPHERV2.Focus.Advisory.InvalidProgression"}}</p>{{/if}}
+                      <div class="cypherv2-tooltip-description">{{{node.descriptionHtml}}}</div>
+                    </article>
+                  </template>
+                  <div class="focus-tree-node-actions">
+                    {{#if node.canGmMarkOwned}}
+                      <button type="button" class="focus-tree-context-action gm-override" data-action="gmMarkFocusOwned" data-focus-uuid="{{../../focusUuid}}" data-node-id="{{node.id}}">{{localize "CYPHERV2.Focus.ProgressionEdit.MarkOwned"}}</button>
+                    {{/if}}
+                    {{#if node.canGmRemoveOwned}}
+                      <button type="button" class="focus-tree-context-action undo" data-action="gmRemoveFocusOwned" data-focus-uuid="{{../../focusUuid}}" data-node-id="{{node.id}}">{{localize "CYPHERV2.Focus.ProgressionEdit.RemoveOwned"}}</button>
+                    {{/if}}
+                    {{#if node.canRestoreAbility}}
+                      <button type="button" class="focus-tree-context-action restore" data-action="restoreFocusAbility" data-focus-uuid="{{../../focusUuid}}" data-node-id="{{node.id}}">{{localize "CYPHERV2.Focus.RestoreAbility"}}</button>
+                    {{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        {{/each}}
+        <svg class="focus-tree-connections" aria-hidden="true">
+          <defs><marker id="{{markerId}}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z"></path></marker></defs>
+          {{#each connections as |connection|}}
+            <line data-from="{{connection.from}}" data-to="{{connection.to}}" marker-end="url(#{{../markerId}})"></line>
+          {{/each}}
+        </svg>
+      </div>
+    </div>
+  {{/unless}}
+</section>

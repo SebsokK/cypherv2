@@ -1,0 +1,594 @@
+<div class="cypherv2-sheet cypherv2-item{{#if isCompactRuleItem}} compact-rule-item{{/if}}{{#if usesCleanItemHeader}} clean-item-sheet{{/if}}">
+  {{#if usesCleanItemHeader}}
+    <header class="compact-item-header{{#if weaponDefaultPoolOptions.length}} weapon-item-header{{/if}}">
+      <img class="compact-item-portrait" src="{{item.img}}" alt="{{item.name}}" data-edit="img" {{#if editable}}data-action="editImage" role="button" tabindex="0" title="{{localize 'CYPHERV2.Common.EditImage'}}"{{/if}}>
+      <label class="compact-item-name">
+        <span>{{localize "CYPHERV2.Common.Name"}}</span>
+        <input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'CYPHERV2.Common.Name'}}">
+      </label>
+      {{#if weaponDefaultPoolOptions.length}}<label class="compact-mechanic-field weapon-default-pool" title="{{localize 'CYPHERV2.Combat.Weapon.DefaultPoolHint'}}"><span>{{localize "CYPHERV2.Pools.Pool"}}</span><select name="system.defaultPool">{{#each weaponDefaultPoolOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>{{/if}}
+    </header>
+  {{else}}
+    <header class="sheet-header">
+      <img class="portrait" src="{{item.img}}" alt="{{item.name}}" data-edit="img" {{#if editable}}data-action="editImage" role="button" tabindex="0" title="{{localize 'CYPHERV2.Common.EditImage'}}"{{/if}}>
+      <div class="identity">
+        <input class="document-name" name="name" type="text" value="{{item.name}}" placeholder="{{localize 'CYPHERV2.Common.Name'}}">
+        <p class="document-type">{{localize "CYPHERV2.Common.Type"}}: {{item.type}}</p>
+        <label>{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label>
+      </div>
+    </header>
+  {{/if}}
+
+  <section class="item-content" data-item-sheet-scroll>
+    {{#if isAbility}}
+      <section class="compact-rule-layout ability-rule-layout">
+        <div class="compact-mechanics-grid ability-core-mechanics">
+          <div class="compact-mechanic-field ability-cost-field">
+            <span>{{localize "CYPHERV2.Ability.Cost"}}</span>
+            <input name="system.cost.amount" type="number" min="0" step="1" value="{{system.cost.amount}}">
+          </div>
+          <fieldset class="compact-mechanic-field ability-pool-field">
+            <legend>{{localize "CYPHERV2.Ability.AllowedPools"}}</legend>
+            <div class="ability-pool-toggles">{{#each abilityAllowedPoolOptions as |option|}}<label class="ability-pool-toggle"><input type="checkbox" value="{{option.value}}" data-ability-allowed-pool {{checked option.selected}}> <span>{{option.label}}</span></label>{{/each}}{{#unless system.cost.allowedPools.length}}<small class="ability-no-pool">{{localize "CYPHERV2.Ability.NoPool"}}</small>{{/unless}}</div>
+          </fieldset>
+          <label class="compact-mechanic-field ability-edge-field"><span>{{localize "CYPHERV2.Ability.IgnoresEdge"}}</span><span class="ability-edge-control"><input name="system.cost.ignoresEdge" type="checkbox" {{checked system.cost.ignoresEdge}}></span></label>
+        </div>
+        <div class="stacked-field cypherv2-rich-description compact-rule-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <details class="compact-technical-area">
+          <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary>
+          <div class="compact-mechanics-grid ability-runtime-mechanics">
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Ability.Activation.Label"}}
+              <select name="system.activation">{{#each abilityActivationOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select>
+            </label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Ability.Roll.Label"}}
+              <select name="system.roll">{{#each abilityRollOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select>
+            </label>
+            {{#if abilityMechanics.showRollModifier}}<label class="compact-mechanic-field">{{abilityMechanics.rollModifierLabel}} <input name="system.rollModifier" type="number" min="-10" max="10" step="1" value="{{system.rollModifier}}"></label>{{/if}}
+            {{#if abilityMechanics.showAttackModifier}}<label class="compact-mechanic-field">{{localize "CYPHERV2.Ability.AttackModifier"}} <input name="system.attackModifier" type="number" min="-10" max="10" step="1" value="{{system.attackModifier}}"></label>{{/if}}
+            {{#if abilityMechanics.showDamage}}<label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Damage"}} <input name="system.damage" type="number" min="0" step="1" value="{{system.damage}}"></label>{{/if}}
+            {{#if abilityMechanics.showWoundSeverity}}<label class="compact-mechanic-field">{{localize "CYPHERV2.Npc.WoundSeverity"}}
+              <select name="system.woundSeverity">{{#each abilityWoundOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select>
+            </label>{{/if}}
+            {{#if abilityMechanics.showRange}}<label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Range.Label"}} <input name="system.range" type="text" value="{{system.range}}"></label>{{/if}}
+            {{#if abilityMechanics.showTargetMode}}<label class="compact-mechanic-field">{{localize "CYPHERV2.Ability.Targeting"}}
+              <select name="system.targetMode">{{#each abilityTargetOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select>
+            </label>{{/if}}
+          </div>
+          <div class="compact-technical-grid">
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Character.Tier"}} <input name="system.tier" type="number" min="0" step="1" value="{{system.tier}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.Category"}} <input name="system.category" type="text" value="{{system.category}}"></label>
+            <span>{{localize "CYPHERV2.Item.Automation"}}: {{system.automation.mode}}</span>
+            <span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span>
+          </div>
+          {{#if hasGrantProvenance}}<dl class="technical-provenance"><dt>{{localize "CYPHERV2.Item.Provenance"}}</dt><dd>{{system.grantedBy.kind}} · {{system.grantedBy.status}}</dd><dt>{{localize "CYPHERV2.Item.SourceUuid"}}</dt><dd>{{system.grantedBy.sourceUuid}}</dd><dt>{{localize "CYPHERV2.Item.InstanceId"}}</dt><dd>{{system.grantedBy.instanceId}}</dd><dt>{{localize "CYPHERV2.Item.GrantId"}}</dt><dd>{{system.grantedBy.grantId}}</dd></dl>{{/if}}
+          {{#if system.sourceFocusUuid}}<dl class="technical-provenance"><dt>{{localize "CYPHERV2.Item.FocusUuid"}}</dt><dd>{{system.sourceFocusUuid}}</dd><dt>{{localize "CYPHERV2.Item.FocusNodeId"}}</dt><dd>{{system.sourceNodeId}}</dd></dl>{{/if}}
+        </details>
+      </section>
+    {{/if}}
+    {{#if isSkill}}
+      <section class="compact-rule-layout skill-rule-layout">
+        <div class="compact-mechanics-grid skill-core-mechanics">
+        <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.Rank"}}
+          <select name="system.rank">
+            {{#each skillRankOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}
+          </select>
+        </label>
+        </div>
+        {{#if skillOptionalMechanics}}
+        <div class="compact-mechanics-grid skill-optional-mechanics">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.DefaultPool"}}
+          <select name="system.defaultPool">
+            {{#each skillPoolOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}
+          </select>
+          </label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.Category"}} <input name="system.category" type="text" value="{{system.category}}"></label>
+          <label class="compact-mechanic-field compact-context-field">{{localize "CYPHERV2.Combat.Modification.Contexts"}}
+          <select name="system.contexts" multiple size="3">
+            {{#each skillContextOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}
+          </select>
+          </label>
+          <label class="compact-mechanic-checkbox"><input name="system.initiative" type="checkbox" {{checked system.initiative}}> {{localize "CYPHERV2.Skill.Initiative"}}</label>
+        </div>
+        {{/if}}
+        <div class="stacked-field cypherv2-rich-description compact-rule-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <details class="compact-technical-area">
+          <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary>
+          {{#unless skillOptionalMechanics}}
+            <section class="technical-skill-options">
+              <h3>{{localize "CYPHERV2.Skill.OptionalMechanics"}}</h3>
+              <div class="compact-technical-grid">
+                <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.DefaultPool"}} <select name="system.defaultPool">{{#each skillPoolOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+                <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.Category"}} <input name="system.category" type="text" value="{{system.category}}"></label>
+                <label class="compact-mechanic-field compact-context-field">{{localize "CYPHERV2.Combat.Modification.Contexts"}} <select name="system.contexts" multiple size="3">{{#each skillContextOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+                <label class="compact-mechanic-checkbox"><input name="system.initiative" type="checkbox" {{checked system.initiative}}> {{localize "CYPHERV2.Skill.Initiative"}}</label>
+              </div>
+            </section>
+          {{/unless}}
+          <div class="compact-technical-grid">
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.MinimumTier"}} <input name="system.acquisition.minimumTier" type="number" min="1" value="{{system.acquisition.minimumTier}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.GrantedBy"}} <input name="system.acquisition.grantedByUuid" type="text" value="{{system.acquisition.grantedByUuid}}"></label>
+            <span>{{localize "CYPHERV2.Item.Automation"}}: {{system.automation.mode}}</span>
+            <span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span>
+          </div>
+          <label class="stacked-field technical-notes"><span>{{localize "CYPHERV2.Skill.AcquisitionNotes"}}</span><textarea name="system.acquisition.notes">{{system.acquisition.notes}}</textarea></label>
+          {{#if hasGrantProvenance}}<dl class="technical-provenance"><dt>{{localize "CYPHERV2.Item.Provenance"}}</dt><dd>{{system.grantedBy.kind}} · {{system.grantedBy.status}}</dd><dt>{{localize "CYPHERV2.Item.SourceUuid"}}</dt><dd>{{system.grantedBy.sourceUuid}}</dd><dt>{{localize "CYPHERV2.Item.InstanceId"}}</dt><dd>{{system.grantedBy.instanceId}}</dd><dt>{{localize "CYPHERV2.Item.GrantId"}}</dt><dd>{{system.grantedBy.grantId}}</dd></dl>{{/if}}
+        </details>
+      </section>
+    {{/if}}
+    {{#if isEquipment}}
+      <section class="compact-rule-layout inventory-item-sheet-layout">
+        <div class="compact-mechanics-grid inventory-item-core-mechanics">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Inventory.Quantity"}} <input name="system.quantity" type="number" min="0" step="1" value="{{system.quantity}}"></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Inventory.Level"}} <input name="system.level" type="number" min="0" step="1" value="{{system.level}}"></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Inventory.Price"}} <input name="system.price" type="text" value="{{system.price}}"></label>
+          <label class="compact-mechanic-checkbox inventory-item-toggle"><input name="system.equipped" type="checkbox" {{checked system.equipped}}> <span>{{localize "CYPHERV2.Combat.Equipped"}}</span></label>
+        </div>
+        <div class="stacked-field cypherv2-rich-description compact-rule-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <details class="compact-technical-area"><summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary><div class="compact-technical-grid"><label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label><span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span></div></details>
+      </section>
+    {{/if}}
+    {{#if isCypher}}
+      <section class="compact-rule-layout inventory-item-sheet-layout cypher-item-sheet-layout">
+        <div class="compact-mechanics-grid inventory-item-core-mechanics">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Cypher.Manifestation.Label"}} <select name="system.manifestation">{{#each cypherManifestationOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Cypher.Form"}} <input name="system.form" type="text" value="{{system.form}}"></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Cypher.Power.Label"}} <select name="system.power">{{#each cypherPowerOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Inventory.Level"}} <input type="number" value="{{cypherEffectiveLevel}}" disabled></label>
+        </div>
+        <div class="stacked-field cypherv2-rich-description compact-rule-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <details class="compact-technical-area">
+          <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary>
+          <div class="compact-technical-grid">
+            <label class="compact-mechanic-checkbox"><input name="system.levelOverride" type="checkbox" {{checked system.levelOverride}}> <span>{{localize "CYPHERV2.Cypher.LevelOverride"}}</span></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Cypher.OverrideLevel"}} <input name="system.level" type="number" min="1" step="1" value="{{system.level}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Skill.Category"}} <input name="system.category" type="text" value="{{system.category}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label>
+            <span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span>
+          </div>
+        </details>
+      </section>
+    {{/if}}
+    {{#if isArtifact}}
+      <section class="compact-rule-layout inventory-item-sheet-layout artifact-item-sheet-layout">
+        <div class="compact-mechanics-grid inventory-item-core-mechanics">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Artifact.LevelFormula"}} <input name="system.level" type="text" value="{{system.level}}"></label>
+          <div class="compact-depletion-controls artifact-depletion-controls">
+            <label class="compact-mechanic-checkbox"><input name="system.depletion.enabled" type="checkbox" {{checked system.depletion.enabled}}> <span>{{localize "CYPHERV2.Depletion.Enabled"}}</span></label>
+            <label class="compact-depletion-formula">{{localize "CYPHERV2.Depletion.Formula"}} <input name="system.depletion.formula" type="text" value="{{system.depletion.formula}}"></label>
+            <label class="compact-mechanic-checkbox compact-depleted-control {{#if system.depleted}}is-depleted{{/if}}"><input name="system.depleted" type="checkbox" {{checked system.depleted}}> <span>{{localize "CYPHERV2.Artifact.Depleted"}}</span></label>
+          </div>
+        </div>
+        {{#if system.depletion.enabled}}{{#unless system.depleted}}<button type="button" class="compact-inline-action" data-action="rollDepletion"><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "CYPHERV2.Depletion.Roll"}}</button>{{/unless}}{{/if}}
+        <div class="stacked-field cypherv2-rich-description compact-rule-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <details class="compact-technical-area">
+          <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary>
+          <div class="compact-technical-grid">
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Depletion.Threshold"}} <input name="system.depletion.threshold" type="number" min="1" step="1" value="{{system.depletion.threshold}}"></label>
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label>
+            <span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span>
+          </div>
+        </details>
+      </section>
+    {{/if}}
+    {{#if isWeapon}}
+      <section class="compact-rule-layout weapon-item-sheet-layout">
+        <div class="compact-mechanics-grid weapon-core-mechanics">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Category"}} <select name="system.category">{{#each weaponCategoryOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Weapon.BaseDamage"}} <input type="number" value="{{system.baseDamage}}" disabled></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Range.Label"}} <select name="system.rangeCategory">{{#each rangeOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Roll.SkillLevel"}} <select name="system.skillLevel">{{#each weaponSkillLevelOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+        </div>
+        <details class="compact-technical-area weapon-resource-options" data-persistent-disclosure="combat-resources" {{#if combatResourcesExpanded}}open{{/if}}>
+          <summary>{{localize "CYPHERV2.Combat.Weapon.Resources"}}</summary>
+          <div class="compact-technical-grid">
+            <div class="weapon-ammo-line"><label class="compact-mechanic-checkbox"><input name="system.ammo.enabled" type="checkbox" {{checked system.ammo.enabled}}> <span>{{localize "CYPHERV2.Combat.AmmoEnabled"}}</span></label>{{#if system.ammo.enabled}}<label class="compact-mechanic-field compact-ammo-field">{{localize "CYPHERV2.Combat.AmmoCurrent"}} <input name="system.ammo.value" type="number" min="0" value="{{system.ammo.value}}"></label><span class="ammo-separator">/</span><label class="compact-mechanic-field compact-ammo-field">{{localize "CYPHERV2.Combat.AmmoMaximum"}} <input name="system.ammo.max" type="number" min="0" value="{{system.ammo.max}}"></label><label class="compact-mechanic-field compact-ammo-field">{{localize "CYPHERV2.Combat.AmmoPerAttack"}} <input name="system.ammo.perAttack" type="number" min="1" value="{{system.ammo.perAttack}}"></label><button type="button" class="cypherv2-icon-action weapon-reload-action" data-action="reloadWeapon" title="{{localize 'CYPHERV2.Combat.Weapon.ReloadToMaximum'}}" aria-label="{{localize 'CYPHERV2.Combat.Weapon.ReloadToMaximum'}}"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i></button>{{/if}}</div>
+            <div class="compact-depletion-controls">
+              <label class="compact-mechanic-checkbox"><input name="system.depletion.enabled" type="checkbox" {{checked system.depletion.enabled}}> <span>{{localize "CYPHERV2.Depletion.Enabled"}}</span></label>
+              {{#if system.depletion.enabled}}
+                <div class="compact-depletion-rule"><span>{{localize "CYPHERV2.Depletion.DepletesOn"}}</span><input data-depletion-threshold type="text" value="{{combatDepletionThreshold}}" inputmode="numeric" aria-label="{{localize 'CYPHERV2.Depletion.Threshold'}}"><span>in 1d</span><input data-depletion-sides type="number" min="2" max="1000" step="1" value="{{combatDepletionSides}}" aria-label="{{localize 'CYPHERV2.Depletion.DieSides'}}"></div>
+                <label class="compact-mechanic-checkbox compact-depleted-control {{#if system.depleted}}is-depleted{{/if}}"><input name="system.depleted" type="checkbox" {{checked system.depleted}}> <span>{{localize "CYPHERV2.Depletion.Depleted"}}</span></label>
+              {{/if}}
+            </div>
+          </div>
+        </details>
+        {{#if isHeavyWeapon}}<p class="compact-rule-note">{{localize "CYPHERV2.Combat.Weapon.HeavyTwoHands"}}</p>{{/if}}
+        <div class="stacked-field cypherv2-rich-description compact-rule-description"><span>{{localize "CYPHERV2.Common.Description"}}</span>{{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+        <details class="compact-technical-area"><summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary><div class="compact-technical-grid"><label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Weapon.AttackType.Label"}} <select name="system.attackType">{{#each weaponAttackTypeOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label><label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Weapon.AttackModifier"}} <select name="system.attackModifier">{{#each weaponAttackModifierOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label><label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Weapon.BonusDamage"}} <input name="system.bonusDamage" type="number" min="0" step="1" value="{{system.bonusDamage}}"></label><label class="compact-mechanic-field compact-context-field">{{localize "CYPHERV2.Combat.Range.Notes"}} <input name="system.rangeNotes" type="text" value="{{system.rangeNotes}}"></label><label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label><span>{{localize "CYPHERV2.Item.Automation"}}: {{system.automation.mode}}</span><span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span></div></details>
+      </section>
+    {{/if}}
+    {{#if isArmor}}
+      <section class="compact-rule-layout armor-item-sheet-layout">
+        <div class="compact-mechanics-grid armor-core-mechanics">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Combat.Armor.Category.Label"}} <select name="system.category">{{#each armorCategoryOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+        </div>
+        <p class="compact-rule-note">{{localize "CYPHERV2.Combat.Armor.RuleSummary"}}</p>
+        <details class="compact-technical-area weapon-resource-options" data-persistent-disclosure="combat-resources" {{#if combatResourcesExpanded}}open{{/if}}><summary>{{localize "CYPHERV2.Depletion.Title"}}</summary><div class="compact-technical-grid"><div class="compact-depletion-controls"><label class="compact-mechanic-checkbox"><input name="system.depletion.enabled" type="checkbox" {{checked system.depletion.enabled}}> <span>{{localize "CYPHERV2.Depletion.Enabled"}}</span></label>{{#if system.depletion.enabled}}<div class="compact-depletion-rule"><span>{{localize "CYPHERV2.Depletion.DepletesOn"}}</span><input data-depletion-threshold type="text" value="{{combatDepletionThreshold}}" inputmode="numeric" aria-label="{{localize 'CYPHERV2.Depletion.Threshold'}}"><span>in 1d</span><input data-depletion-sides type="number" min="2" max="1000" step="1" value="{{combatDepletionSides}}" aria-label="{{localize 'CYPHERV2.Depletion.DieSides'}}"></div><label class="compact-mechanic-checkbox compact-depleted-control {{#if system.depleted}}is-depleted{{/if}}"><input name="system.depleted" type="checkbox" {{checked system.depleted}}> <span>{{localize "CYPHERV2.Depletion.Depleted"}}</span></label>{{/if}}</div></div></details>
+        <div class="stacked-field cypherv2-rich-description compact-rule-description"><span>{{localize "CYPHERV2.Common.Description"}}</span>{{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+        <details class="compact-technical-area"><summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary><div class="compact-technical-grid"><label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label><span>{{localize "CYPHERV2.Item.Automation"}}: {{system.automation.mode}}</span><span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span></div></details>
+      </section>
+    {{/if}}
+    {{#if isShield}}
+      <section class="compact-rule-layout shield-item-sheet-layout">
+        <div class="compact-mechanics-grid shield-core-mechanics">
+          <div class="compact-derived-status {{#if system.derived.broken}}is-broken{{else}}is-functional{{/if}}"><span>{{localize "CYPHERV2.Shield.Status"}}</span><strong>{{#if system.derived.broken}}{{localize "CYPHERV2.Shield.Broken"}}{{else}}{{localize "CYPHERV2.Shield.Functional"}}{{/if}}</strong></div>
+        </div>
+        <section class="compact-shield-wounds"><h3>{{localize "CYPHERV2.Shield.WoundTrack"}}</h3>{{#each shieldWoundTracks as |track|}}<div class="compact-shield-wound-row"><span>{{track.label}}</span><span class="compact-shield-pips">{{#each track.pips as |pip|}}{{#if @root.editable}}<button type="button" class="compact-shield-pip is-editable {{#if pip.filled}}is-filled{{/if}}" data-action="setShieldWoundCount" data-track="shield" data-shield-id="{{@root.item.id}}" data-severity="{{track.severity}}" data-count="{{pip.targetCount}}" title="{{pip.tooltip}}" aria-label="{{pip.tooltip}}" aria-pressed="{{pip.filled}}"></button>{{else}}<i class="compact-shield-pip {{#if pip.filled}}is-filled{{/if}}"></i>{{/if}}{{/each}}</span><small class="compact-shield-capacity"><span>{{track.count}}</span><span aria-hidden="true">/</span>{{#if @root.editable}}<input data-shield-capacity data-item-focus-key="system.woundCapacities.{{track.severity}}" data-severity="{{track.severity}}" type="number" min="0" step="1" value="{{track.capacity}}" aria-label="{{localize 'CYPHERV2.Shield.MaximumCapacity'}} {{track.label}}">{{else}}<span>{{track.capacity}}</span>{{/if}}</small></div>{{/each}}</section>
+        <details class="compact-technical-area weapon-resource-options" data-persistent-disclosure="combat-resources" {{#if combatResourcesExpanded}}open{{/if}}><summary>{{localize "CYPHERV2.Depletion.Title"}}</summary><div class="compact-technical-grid"><div class="compact-depletion-controls"><label class="compact-mechanic-checkbox"><input name="system.depletion.enabled" type="checkbox" {{checked system.depletion.enabled}}> <span>{{localize "CYPHERV2.Depletion.Enabled"}}</span></label>{{#if system.depletion.enabled}}<div class="compact-depletion-rule"><span>{{localize "CYPHERV2.Depletion.DepletesOn"}}</span><input data-depletion-threshold type="text" value="{{combatDepletionThreshold}}" inputmode="numeric" aria-label="{{localize 'CYPHERV2.Depletion.Threshold'}}"><span>in 1d</span><input data-depletion-sides type="number" min="2" max="1000" step="1" value="{{combatDepletionSides}}" aria-label="{{localize 'CYPHERV2.Depletion.DieSides'}}"></div><label class="compact-mechanic-checkbox compact-depleted-control {{#if system.depleted}}is-depleted{{/if}}"><input name="system.depleted" type="checkbox" {{checked system.depleted}}> <span>{{localize "CYPHERV2.Depletion.Depleted"}}</span></label>{{/if}}</div></div></details>
+        <div class="stacked-field cypherv2-rich-description compact-rule-description"><span>{{localize "CYPHERV2.Common.Description"}}</span>{{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+        <details class="compact-technical-area shield-wound-details"><summary>{{localize "CYPHERV2.Shield.WoundDetails"}}</summary><div class="shield-wound-details-content">
+          <section class="shield-wound-tier"><h3><span>{{localize "CYPHERV2.Wounds.Minor"}}</span><small>{{system.wounds.minor.length}} / {{system.derived.capacities.minor}}</small></h3><ul class="wound-list">{{#each system.wounds.minor as |wound|}}<li><div class="shield-wound-record"><strong>{{wound.label}}</strong>{{#if wound.description}}<p>{{wound.description}}</p>{{/if}}</div>{{#if @root.editable}}<span class="wound-actions"><button type="button" class="cypherv2-icon-action" data-action="editShieldWound" data-severity="minor" data-wound-id="{{wound.id}}" title="{{localize 'CYPHERV2.Actions.Edit'}}" aria-label="{{localize 'CYPHERV2.Actions.Edit'}} {{wound.label}}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action shield-wound-delete" data-action="deleteShieldWound" data-severity="minor" data-wound-id="{{wound.id}}" title="{{localize 'CYPHERV2.Actions.Delete'}}" aria-label="{{localize 'CYPHERV2.Actions.Delete'}} {{wound.label}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span>{{/if}}</li>{{/each}}</ul></section>
+          <section class="shield-wound-tier"><h3><span>{{localize "CYPHERV2.Wounds.Moderate"}}</span><small>{{system.wounds.moderate.length}} / {{system.derived.capacities.moderate}}</small></h3><ul class="wound-list">{{#each system.wounds.moderate as |wound|}}<li><div class="shield-wound-record"><strong>{{wound.label}}</strong>{{#if wound.description}}<p>{{wound.description}}</p>{{/if}}</div>{{#if @root.editable}}<span class="wound-actions"><button type="button" class="cypherv2-icon-action" data-action="editShieldWound" data-severity="moderate" data-wound-id="{{wound.id}}" title="{{localize 'CYPHERV2.Actions.Edit'}}" aria-label="{{localize 'CYPHERV2.Actions.Edit'}} {{wound.label}}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action shield-wound-delete" data-action="deleteShieldWound" data-severity="moderate" data-wound-id="{{wound.id}}" title="{{localize 'CYPHERV2.Actions.Delete'}}" aria-label="{{localize 'CYPHERV2.Actions.Delete'}} {{wound.label}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span>{{/if}}</li>{{/each}}</ul></section>
+          <section class="shield-wound-tier"><h3><span>{{localize "CYPHERV2.Wounds.Major"}}</span><small>{{system.wounds.major.length}} / {{system.derived.capacities.major}}</small></h3><ul class="wound-list">{{#each system.wounds.major as |wound|}}<li><div class="shield-wound-record"><strong>{{wound.label}}</strong>{{#if wound.description}}<p>{{wound.description}}</p>{{/if}}</div>{{#if @root.editable}}<span class="wound-actions"><button type="button" class="cypherv2-icon-action" data-action="editShieldWound" data-severity="major" data-wound-id="{{wound.id}}" title="{{localize 'CYPHERV2.Actions.Edit'}}" aria-label="{{localize 'CYPHERV2.Actions.Edit'}} {{wound.label}}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action shield-wound-delete" data-action="deleteShieldWound" data-severity="major" data-wound-id="{{wound.id}}" title="{{localize 'CYPHERV2.Actions.Delete'}}" aria-label="{{localize 'CYPHERV2.Actions.Delete'}} {{wound.label}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span>{{/if}}</li>{{/each}}</ul></section>
+        </div></details>
+        <details class="compact-technical-area"><summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary><div class="compact-technical-grid"><label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label><span>{{localize "CYPHERV2.Item.Automation"}}: {{system.automation.mode}}</span><span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span></div></details>
+      </section>
+    {{/if}}
+    {{#if isCharacterType}}
+      <section class="type-item-layout">
+        <div class="stacked-field cypherv2-rich-description type-description"><span>{{localize "CYPHERV2.Common.Description"}}</span>{{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+
+        <section class="package-editor type-benefits-panel">
+          <header class="compact-package-header type-benefits-header"><h3>{{localize "CYPHERV2.Packages.TypeBenefits"}}</h3></header>
+          <div class="status-grid package-bonus-grid type-bonus-grid">
+            <label>{{localize "CYPHERV2.Pools.Might"}} <input name="system.poolBonuses.might" type="number" min="0" value="{{system.poolBonuses.might}}"></label>
+            <label>{{localize "CYPHERV2.Pools.Speed"}} <input name="system.poolBonuses.speed" type="number" min="0" value="{{system.poolBonuses.speed}}"></label>
+            <label>{{localize "CYPHERV2.Pools.Intellect"}} <input name="system.poolBonuses.intellect" type="number" min="0" value="{{system.poolBonuses.intellect}}"></label>
+            <label>{{localize "CYPHERV2.Wounds.Minor"}} <input name="system.woundBonuses.minor" type="number" min="0" value="{{system.woundBonuses.minor}}"></label>
+            <label>{{localize "CYPHERV2.Wounds.Moderate"}} <input name="system.woundBonuses.moderate" type="number" min="0" value="{{system.woundBonuses.moderate}}"></label>
+            <label>{{localize "CYPHERV2.Wounds.Major"}} <input name="system.woundBonuses.major" type="number" min="0" value="{{system.woundBonuses.major}}"></label>
+          </div>
+          <fieldset class="type-edge-grant"><legend>{{localize "CYPHERV2.Packages.EdgeGrant"}}</legend>
+            <label>{{localize "CYPHERV2.Common.Mode"}} <select name="system.edgeGrant.mode">{{#each edgeModeOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+            <label>{{localize "CYPHERV2.Packages.Pool"}} <select name="system.edgeGrant.pool">{{#each packagePoolOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+            <label>{{localize "CYPHERV2.Packages.Amount"}} <input name="system.edgeGrant.amount" type="number" min="0" value="{{system.edgeGrant.amount}}"></label>
+          </fieldset>
+          <div class="package-familiarities type-familiarities"><fieldset><legend>{{localize "CYPHERV2.Packages.WeaponUse"}}</legend><label class="checkbox-field"><input name="system.weaponUse.light" type="checkbox" {{checked system.weaponUse.light}}> {{localize "CYPHERV2.Combat.Weapon.Category.light"}}</label><label class="checkbox-field"><input name="system.weaponUse.medium" type="checkbox" {{checked system.weaponUse.medium}}> {{localize "CYPHERV2.Combat.Weapon.Category.medium"}}</label><label class="checkbox-field"><input name="system.weaponUse.heavy" type="checkbox" {{checked system.weaponUse.heavy}}> {{localize "CYPHERV2.Combat.Weapon.Category.heavy"}}</label></fieldset><fieldset><legend>{{localize "CYPHERV2.Packages.ArmorUse"}}</legend><label class="checkbox-field"><input name="system.armorUse.light" type="checkbox" {{checked system.armorUse.light}}> {{localize "CYPHERV2.Combat.Armor.Category.light"}}</label><label class="checkbox-field"><input name="system.armorUse.medium" type="checkbox" {{checked system.armorUse.medium}}> {{localize "CYPHERV2.Combat.Armor.Category.medium"}}</label><label class="checkbox-field"><input name="system.armorUse.heavy" type="checkbox" {{checked system.armorUse.heavy}}> {{localize "CYPHERV2.Combat.Armor.Category.heavy"}}</label></fieldset></div>
+          <div class="type-genre-fields">
+            <label class="compact-mechanic-field">{{localize "CYPHERV2.Genre.SuggestedByType"}} <select name="system.genre" data-type-genre-select>{{#each packageGenreOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+            <label class="compact-mechanic-field type-custom-genre-field" data-type-custom-genre {{#unless typeCustomGenreSelected}}hidden{{/unless}}>{{localize "CYPHERV2.Packages.CustomGenre"}} <input name="system.customGenreId" type="text" value="{{system.customGenreId}}"></label>
+          </div>
+        </section>
+
+        <section class="package-grants compact-package-section type-grant-section">
+          <header class="compact-package-header"><h3>{{localize "CYPHERV2.Packages.AbilityGrants"}}</h3>{{#if editable}}<button type="button" class="compact-package-add-action cypherv2-icon-action" data-action="addPackageGrant" data-grant-target="ability" title="{{localize 'CYPHERV2.Packages.AddAbility'}}" aria-label="{{localize 'CYPHERV2.Packages.AddAbility'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}</header>
+          <ol class="compact-package-grant-list">{{#each system.abilityGrants as |grant|}}<li class="compact-package-grant-row"><span class="compact-package-grant-identity"><strong>{{grant.snapshot.name}}</strong></span><span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="inspectPackageGrant" data-grant-kind="ability" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{grant.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action" data-action="refreshPackageGrant" data-grant-kind="ability" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Packages.RefreshFromSource'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshFromSource'}} {{grant.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removePackageGrant" data-grant-kind="ability" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{grant.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span></li>{{else}}<li class="empty-list compact-package-empty">{{localize "CYPHERV2.Common.None"}}</li>{{/each}}</ol>
+        </section>
+
+        <section class="package-grants compact-package-section type-choice-section">
+          <header class="compact-package-header"><h3>{{localize "CYPHERV2.Species.AbilityChoices"}}</h3>{{#if editable}}<button type="button" class="compact-package-add-action cypherv2-icon-action" data-action="addChoiceGroup" data-choice-kind="ability" title="{{localize 'CYPHERV2.Packages.AddChoiceGroup'}}" aria-label="{{localize 'CYPHERV2.Packages.AddChoiceGroup'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}</header>
+          <div class="compact-package-choice-groups">{{#each typeAbilityChoiceGroups as |group|}}<article class="package-choice-group compact-package-choice-group"><header><span class="compact-package-choice-summary"><strong>{{localize "CYPHERV2.Packages.Choose"}} {{group.choose}}</strong></span><span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="addChoiceOption" data-choice-kind="ability" data-group-id="{{group.id}}" title="{{localize 'CYPHERV2.Species.AddAbilityOption'}}" aria-label="{{localize 'CYPHERV2.Species.AddAbilityOption'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removePackageGrant" data-grant-kind="abilityGroup" data-grant-id="{{group.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span></header><ol class="compact-package-grant-list compact-package-choice-list">{{#each group.options as |option|}}<li class="compact-package-grant-row"><span class="compact-package-grant-identity"><strong>{{option.snapshot.name}}</strong></span><span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="inspectPackageGrant" data-grant-kind="abilityOption" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{option.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action" data-action="refreshPackageGrant" data-grant-kind="abilityOption" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Packages.RefreshFromSource'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshFromSource'}} {{option.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removePackageGrant" data-grant-kind="abilityOption" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{option.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span></li>{{else}}<li class="empty-list compact-package-empty">{{localize "CYPHERV2.Packages.NoOptions"}}</li>{{/each}}</ol></article>{{else}}<p class="empty-list compact-package-empty">{{localize "CYPHERV2.Common.None"}}</p>{{/each}}</div>
+        </section>
+
+        <section class="package-grants compact-package-section type-grant-section">
+          <header class="compact-package-header"><h3>{{localize "CYPHERV2.Packages.FixedSkills"}}</h3>{{#if editable}}<button type="button" class="compact-package-add-action cypherv2-icon-action" data-action="addPackageGrant" data-grant-target="skill" title="{{localize 'CYPHERV2.Packages.AddFixedSkill'}}" aria-label="{{localize 'CYPHERV2.Packages.AddFixedSkill'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}</header>
+          <ol class="compact-package-grant-list">{{#each typeSkillGrants as |grant|}}<li class="compact-package-grant-row"><span class="compact-package-grant-identity"><strong>{{grant.snapshot.name}}</strong><small>{{grant.rankLabel}}</small></span><span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="inspectPackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{grant.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action" data-action="refreshPackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Packages.RefreshFromSource'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshFromSource'}} {{grant.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removePackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{grant.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span></li>{{else}}<li class="empty-list compact-package-empty">{{localize "CYPHERV2.Common.None"}}</li>{{/each}}</ol>
+        </section>
+
+        <section class="package-grants compact-package-section type-choice-section">
+          <header class="compact-package-header"><h3>{{localize "CYPHERV2.Packages.ChoiceGroups"}}</h3>{{#if editable}}<button type="button" class="compact-package-add-action cypherv2-icon-action" data-action="addChoiceGroup" data-choice-kind="skill" title="{{localize 'CYPHERV2.Packages.AddChoiceGroup'}}" aria-label="{{localize 'CYPHERV2.Packages.AddChoiceGroup'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}</header>
+          <div class="compact-package-choice-groups">{{#each typeSkillChoiceGroups as |group|}}<article class="package-choice-group compact-package-choice-group"><header><span class="compact-package-choice-summary"><strong>{{localize "CYPHERV2.Packages.Choose"}} {{group.choose}}</strong><small>{{group.rankLabel}}</small></span><span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="addChoiceOption" data-choice-kind="skill" data-group-id="{{group.id}}" title="{{localize 'CYPHERV2.Packages.AddSkillOption'}}" aria-label="{{localize 'CYPHERV2.Packages.AddSkillOption'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removePackageGrant" data-grant-kind="group" data-grant-id="{{group.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span></header><ol class="compact-package-grant-list compact-package-choice-list">{{#each group.options as |option|}}<li class="compact-package-grant-row"><span class="compact-package-grant-identity"><strong>{{option.snapshot.name}}</strong></span><span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="inspectPackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{option.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action" data-action="refreshPackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Packages.RefreshFromSource'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshFromSource'}} {{option.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removePackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{option.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span></li>{{else}}<li class="empty-list compact-package-empty">{{localize "CYPHERV2.Packages.NoOptions"}}</li>{{/each}}</ol></article>{{else}}<p class="empty-list compact-package-empty">{{localize "CYPHERV2.Common.None"}}</p>{{/each}}</div>
+        </section>
+
+        <div class="stacked-field cypherv2-rich-description type-rich-section"><span>{{localize "CYPHERV2.Packages.BackgroundOptions"}}</span>{{formInput systemFields.backgroundOptions name="system.backgroundOptions" value=source.system.backgroundOptions enriched=enriched.backgroundOptions elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+        <div class="stacked-field cypherv2-rich-description type-rich-section"><span>{{localize "CYPHERV2.Packages.EquipmentNotes"}}</span>{{formInput systemFields.equipmentNotes name="system.equipmentNotes" value=source.system.equipmentNotes enriched=enriched.equipmentNotes elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+
+        <details class="compact-technical-area type-technical-area" data-persistent-disclosure="type-technical">
+          <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary>
+          <div class="compact-technical-grid"><label class="compact-mechanic-field">{{localize "CYPHERV2.Packages.EquipmentBundle"}} <input name="system.equipmentBundleUuid" type="text" value="{{system.equipmentBundleUuid}}"></label></div>
+        </details>
+      </section>
+    {{/if}}
+    {{#if isDescriptor}}
+      <section class="descriptor-item-layout">
+        <div class="stacked-field cypherv2-rich-description descriptor-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <details class="descriptor-benefits" data-persistent-disclosure="descriptor-benefits" open>
+          <summary>{{localize "CYPHERV2.Packages.DescriptorBenefits"}}</summary>
+          <section class="package-editor">
+            <section class="package-grants descriptor-benefit-section descriptor-fixed-pool-section">
+              <header class="descriptor-benefit-header">
+                <h3>{{localize "CYPHERV2.Packages.FixedPoolGrants"}}</h3>
+              </header>
+              <div class="status-grid package-bonus-grid descriptor-pool-benefits">
+                <label>{{localize "CYPHERV2.Pools.Might"}} <input name="system.poolBonuses.might" type="number" min="0" value="{{system.poolBonuses.might}}"></label>
+                <label>{{localize "CYPHERV2.Pools.Speed"}} <input name="system.poolBonuses.speed" type="number" min="0" value="{{system.poolBonuses.speed}}"></label>
+                <label>{{localize "CYPHERV2.Pools.Intellect"}} <input name="system.poolBonuses.intellect" type="number" min="0" value="{{system.poolBonuses.intellect}}"></label>
+              </div>
+            </section>
+
+            <section class="package-grants descriptor-benefit-section descriptor-pool-choice-section">
+              <header class="descriptor-benefit-header">
+                <h3>{{localize "CYPHERV2.Packages.PoolBonusChoiceGroups"}}</h3>
+                {{#if editable}}
+                  <button type="button" class="descriptor-add-action cypherv2-icon-action" data-action="addPoolBonusChoiceGroup" title="{{localize 'CYPHERV2.Packages.AddPoolBonusChoiceGroup'}}" aria-label="{{localize 'CYPHERV2.Packages.AddPoolBonusChoiceGroup'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                {{/if}}
+              </header>
+              <div class="descriptor-choice-groups">
+                {{#each descriptorPoolBonusChoiceGroups as |group|}}
+                  <article class="package-choice-group descriptor-choice-group descriptor-pool-choice-group">
+                    <header>
+                      <span class="descriptor-choice-summary"><strong>+{{group.amount}} · {{localize "CYPHERV2.Packages.Choose"}} {{group.choose}}</strong><small>{{group.poolsLabel}}</small></span>
+                      {{#if ../editable}}
+                        <span class="descriptor-row-actions">
+                          <button type="button" class="cypherv2-icon-action" data-action="editPoolBonusChoiceGroup" data-group-id="{{group.id}}" title="{{localize 'CYPHERV2.Packages.EditPoolBonusChoiceGroup'}}" aria-label="{{localize 'CYPHERV2.Packages.EditPoolBonusChoiceGroup'}}"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
+                          <button type="button" class="cypherv2-icon-action descriptor-remove-action" data-action="removePoolBonusChoiceGroup" data-group-id="{{group.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                        </span>
+                      {{/if}}
+                    </header>
+                  </article>
+                {{else}}
+                  <p class="empty-list descriptor-empty-groups">{{localize "CYPHERV2.Common.None"}}</p>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="package-grants descriptor-benefit-section">
+              <header class="descriptor-benefit-header">
+                <h3>{{localize "CYPHERV2.Packages.FixedSkills"}}</h3>
+                {{#if editable}}
+                  <button type="button" class="descriptor-add-action cypherv2-icon-action" data-action="addPackageGrant" title="{{localize 'CYPHERV2.Packages.AddFixedSkill'}}" aria-label="{{localize 'CYPHERV2.Packages.AddFixedSkill'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                {{/if}}
+              </header>
+              <ol class="descriptor-grant-list">
+                {{#each descriptorSkillGrants as |grant|}}
+                  <li class="descriptor-grant-row">
+                    <span class="descriptor-grant-identity"><strong>{{grant.snapshot.name}}</strong><small>{{grant.rankLabel}}</small></span>
+                    <span class="descriptor-row-actions">
+                      <button type="button" class="cypherv2-icon-action" data-action="inspectPackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{grant.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+                      <button type="button" class="cypherv2-icon-action" data-action="refreshPackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Packages.RefreshFromSource'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshFromSource'}} {{grant.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button>
+                      <button type="button" class="cypherv2-icon-action descriptor-remove-action" data-action="removePackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{grant.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                    </span>
+                  </li>
+                {{else}}
+                  <li class="empty-list">{{localize "CYPHERV2.Common.None"}}</li>
+                {{/each}}
+              </ol>
+            </section>
+
+            <section class="package-grants descriptor-benefit-section">
+              <header class="descriptor-benefit-header">
+                <h3>{{localize "CYPHERV2.Packages.ChoiceGroups"}}</h3>
+                {{#if editable}}
+                  <button type="button" class="descriptor-add-action cypherv2-icon-action" data-action="addChoiceGroup" title="{{localize 'CYPHERV2.Packages.AddChoiceGroup'}}" aria-label="{{localize 'CYPHERV2.Packages.AddChoiceGroup'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                {{/if}}
+              </header>
+              <div class="descriptor-choice-groups">
+                {{#each descriptorChoiceGroups as |group|}}
+                  <article class="package-choice-group descriptor-choice-group">
+                    <header>
+                      <span class="descriptor-choice-summary"><strong>{{localize "CYPHERV2.Packages.Choose"}} {{group.choose}}</strong><small>{{group.rankLabel}}</small></span>
+                      <span class="descriptor-row-actions">
+                        <button type="button" class="cypherv2-icon-action" data-action="addChoiceOption" data-group-id="{{group.id}}" title="{{localize 'CYPHERV2.Packages.AddSkillOption'}}" aria-label="{{localize 'CYPHERV2.Packages.AddSkillOption'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" class="cypherv2-icon-action descriptor-remove-action" data-action="removePackageGrant" data-grant-kind="group" data-grant-id="{{group.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                      </span>
+                    </header>
+                    <ol class="descriptor-grant-list descriptor-choice-list">
+                      {{#each group.options as |option|}}
+                        <li class="descriptor-grant-row">
+                          <span class="descriptor-grant-identity"><strong>{{option.snapshot.name}}</strong></span>
+                          <span class="descriptor-row-actions">
+                            <button type="button" class="cypherv2-icon-action" data-action="inspectPackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{option.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+                            <button type="button" class="cypherv2-icon-action" data-action="refreshPackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Packages.RefreshFromSource'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshFromSource'}} {{option.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button>
+                            <button type="button" class="cypherv2-icon-action descriptor-remove-action" data-action="removePackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{option.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                          </span>
+                        </li>
+                      {{else}}
+                        <li class="empty-list">{{localize "CYPHERV2.Packages.NoOptions"}}</li>
+                      {{/each}}
+                    </ol>
+                  </article>
+                {{else}}
+                  <p class="empty-list descriptor-empty-groups">{{localize "CYPHERV2.Common.None"}}</p>
+                {{/each}}
+              </div>
+            </section>
+          </section>
+        </details>
+      </section>
+    {{/if}}
+    {{#if isSpecies}}
+      <section class="package-editor species-editor">
+        <div class="stacked-field cypherv2-rich-description compact-rule-description"><span>{{localize "CYPHERV2.Common.Description"}}</span>{{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}</div>
+        <h2>{{localize "CYPHERV2.Species.Benefits"}}</h2>
+        <div class="status-grid package-bonus-grid">
+          <label>{{localize "CYPHERV2.Pools.Might"}} <input name="system.poolBonuses.might" type="number" min="0" value="{{system.poolBonuses.might}}"></label>
+          <label>{{localize "CYPHERV2.Pools.Speed"}} <input name="system.poolBonuses.speed" type="number" min="0" value="{{system.poolBonuses.speed}}"></label>
+          <label>{{localize "CYPHERV2.Pools.Intellect"}} <input name="system.poolBonuses.intellect" type="number" min="0" value="{{system.poolBonuses.intellect}}"></label>
+          <label>{{localize "CYPHERV2.Wounds.Minor"}} <input name="system.woundBonuses.minor" type="number" min="0" value="{{system.woundBonuses.minor}}"></label>
+          <label>{{localize "CYPHERV2.Wounds.Moderate"}} <input name="system.woundBonuses.moderate" type="number" min="0" value="{{system.woundBonuses.moderate}}"></label>
+          <label>{{localize "CYPHERV2.Wounds.Major"}} <input name="system.woundBonuses.major" type="number" min="0" value="{{system.woundBonuses.major}}"></label>
+          <label>{{localize "CYPHERV2.Species.CypherLimitBonus"}} <input name="system.cypherLimitBonus" type="number" min="0" value="{{system.cypherLimitBonus}}"></label>
+        </div>
+        <fieldset><legend>{{localize "CYPHERV2.Packages.EdgeGrant"}}</legend><label>{{localize "CYPHERV2.Common.Mode"}} <select name="system.edgeGrant.mode">{{#each edgeModeOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label><label>{{localize "CYPHERV2.Packages.Pool"}} <select name="system.edgeGrant.pool">{{#each packagePoolOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label><label>{{localize "CYPHERV2.Packages.Amount"}} <input name="system.edgeGrant.amount" type="number" min="0" value="{{system.edgeGrant.amount}}"></label></fieldset>
+        <div class="package-familiarities"><fieldset><legend>{{localize "CYPHERV2.Packages.WeaponUse"}}</legend><label class="checkbox-field"><input name="system.weaponUse.light" type="checkbox" {{checked system.weaponUse.light}}> {{localize "CYPHERV2.Combat.Weapon.Category.light"}}</label><label class="checkbox-field"><input name="system.weaponUse.medium" type="checkbox" {{checked system.weaponUse.medium}}> {{localize "CYPHERV2.Combat.Weapon.Category.medium"}}</label><label class="checkbox-field"><input name="system.weaponUse.heavy" type="checkbox" {{checked system.weaponUse.heavy}}> {{localize "CYPHERV2.Combat.Weapon.Category.heavy"}}</label></fieldset><fieldset><legend>{{localize "CYPHERV2.Packages.ArmorUse"}}</legend><label class="checkbox-field"><input name="system.armorUse.light" type="checkbox" {{checked system.armorUse.light}}> {{localize "CYPHERV2.Combat.Armor.Category.light"}}</label><label class="checkbox-field"><input name="system.armorUse.medium" type="checkbox" {{checked system.armorUse.medium}}> {{localize "CYPHERV2.Combat.Armor.Category.medium"}}</label><label class="checkbox-field"><input name="system.armorUse.heavy" type="checkbox" {{checked system.armorUse.heavy}}> {{localize "CYPHERV2.Combat.Armor.Category.heavy"}}</label></fieldset></div>
+        <section class="package-grants"><header class="section-header"><h3>{{localize "CYPHERV2.Packages.AbilityGrants"}}</h3><button type="button" data-action="addPackageGrant" data-grant-target="ability">{{localize "CYPHERV2.Packages.AddAbility"}}</button></header><ol>{{#each system.abilityGrants as |grant|}}<li><strong>{{grant.snapshot.name}}</strong><span class="skill-actions"><button type="button" data-action="inspectPackageGrant" data-grant-kind="ability" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Actions.Inspect"}}</button><button type="button" data-action="refreshPackageGrant" data-grant-kind="ability" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Packages.RefreshSnapshot"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="ability" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></li>{{else}}<li class="empty-list">{{localize "CYPHERV2.Common.None"}}</li>{{/each}}</ol></section>
+        <section class="package-grants"><header class="section-header"><h3>{{localize "CYPHERV2.Species.AbilityChoices"}}</h3><button type="button" data-action="addChoiceGroup" data-choice-kind="ability">{{localize "CYPHERV2.Packages.AddChoiceGroup"}}</button></header>{{#each speciesAbilityChoiceGroups as |group|}}<article class="package-choice-group"><header><strong>{{localize "CYPHERV2.Packages.Choose"}} {{group.choose}}</strong><span><button type="button" data-action="addChoiceOption" data-choice-kind="ability" data-group-id="{{group.id}}">{{localize "CYPHERV2.Species.AddAbilityOption"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="abilityGroup" data-grant-id="{{group.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></header><ol>{{#each group.options as |option|}}<li>{{option.snapshot.name}}<span class="skill-actions"><button type="button" data-action="inspectPackageGrant" data-grant-kind="abilityOption" data-group-id="{{../id}}" data-grant-id="{{option.id}}">{{localize "CYPHERV2.Actions.Inspect"}}</button><button type="button" data-action="refreshPackageGrant" data-grant-kind="abilityOption" data-group-id="{{../id}}" data-grant-id="{{option.id}}">{{localize "CYPHERV2.Packages.RefreshSnapshot"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="abilityOption" data-group-id="{{../id}}" data-grant-id="{{option.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></li>{{/each}}</ol></article>{{/each}}</section>
+        <section class="package-grants"><header class="section-header"><h3>{{localize "CYPHERV2.Packages.FixedSkills"}}</h3><button type="button" data-action="addPackageGrant" data-grant-target="skill">{{localize "CYPHERV2.Packages.AddFixedSkill"}}</button></header><ol>{{#each speciesSkillGrants as |grant|}}<li><strong>{{grant.snapshot.name}}</strong> — {{grant.rankLabel}}<span class="skill-actions"><button type="button" data-action="inspectPackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Actions.Inspect"}}</button><button type="button" data-action="refreshPackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Packages.RefreshSnapshot"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="skill" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></li>{{else}}<li class="empty-list">{{localize "CYPHERV2.Common.None"}}</li>{{/each}}</ol></section>
+        <section class="package-grants"><header class="section-header"><h3>{{localize "CYPHERV2.Packages.ChoiceGroups"}}</h3><button type="button" data-action="addChoiceGroup" data-choice-kind="skill">{{localize "CYPHERV2.Packages.AddChoiceGroup"}}</button></header>{{#each speciesSkillChoiceGroups as |group|}}<article class="package-choice-group"><header><strong>{{localize "CYPHERV2.Packages.Choose"}} {{group.choose}} — {{group.rankLabel}}</strong><span><button type="button" data-action="addChoiceOption" data-choice-kind="skill" data-group-id="{{group.id}}">{{localize "CYPHERV2.Packages.AddSkillOption"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="group" data-grant-id="{{group.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></header><ol>{{#each group.options as |option|}}<li>{{option.snapshot.name}}<span class="skill-actions"><button type="button" data-action="inspectPackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}">{{localize "CYPHERV2.Actions.Inspect"}}</button><button type="button" data-action="refreshPackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}">{{localize "CYPHERV2.Packages.RefreshSnapshot"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="option" data-group-id="{{../id}}" data-grant-id="{{option.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></li>{{/each}}</ol></article>{{/each}}</section>
+        <section class="package-grants"><header class="section-header"><h3>{{localize "CYPHERV2.Species.DescriptorGrants"}}</h3><button type="button" data-action="addPackageGrant" data-grant-target="descriptor">{{localize "CYPHERV2.Species.AddDescriptorGrant"}}</button></header><ol>{{#each system.descriptorGrants as |grant|}}<li><strong>{{grant.snapshot.name}}</strong><span class="skill-actions"><button type="button" data-action="inspectPackageGrant" data-grant-kind="descriptor" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Actions.Inspect"}}</button><button type="button" data-action="refreshPackageGrant" data-grant-kind="descriptor" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Packages.RefreshSnapshot"}}</button><button type="button" data-action="removePackageGrant" data-grant-kind="descriptor" data-grant-id="{{grant.id}}">{{localize "CYPHERV2.Actions.Remove"}}</button></span></li>{{else}}<li class="empty-list">{{localize "CYPHERV2.Common.None"}}</li>{{/each}}</ol></section>
+      </section>
+    {{/if}}
+    {{#if isFocus}}
+      <section class="focus-item-information">
+        <div class="stacked-field cypherv2-rich-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+      </section>
+      <section class="focus-item-tree{{#if focusTreeEditing}} editing{{/if}}">
+        <header class="focus-tree-editor-header">
+          <div>
+            <h2>{{localize "CYPHERV2.Focus.Tree"}}</h2>
+            <small>{{#if focusTreeEditing}}{{localize "CYPHERV2.Focus.Editor.WorkingCopy"}}{{else}}{{localize "CYPHERV2.Focus.Editor.ReadOnly"}}{{/if}}</small>
+          </div>
+          <div class="focus-tree-editor-actions">
+            {{#if canEditFocusTree}}
+              <button type="button" data-action="editFocusTree"><i class="fa-solid fa-diagram-project"></i> {{localize "CYPHERV2.Focus.Editor.EditTree"}}</button>
+            {{/if}}
+            {{#if focusTreeEditing}}
+              <button type="button" data-action="saveFocusTree"><i class="fa-solid fa-floppy-disk"></i> {{localize "CYPHERV2.Focus.Editor.SaveTree"}}</button>
+              <button type="button" class="danger" data-action="clearFocusConnections" {{#unless focusEditor.connections.length}}disabled{{/unless}}><i class="fa-solid fa-eraser"></i> {{localize "CYPHERV2.Focus.Editor.ClearConnections"}}</button>
+              <button type="button" data-action="cancelFocusTree"><i class="fa-solid fa-xmark"></i> {{localize "CYPHERV2.Focus.Editor.CancelEditing"}}</button>
+            {{/if}}
+          </div>
+        </header>
+        {{#if focusTreeEditing}}
+          <div class="focus-tree-editor-toolbar">
+            <button type="button" data-action="addFocusAbility"><i class="fa-solid fa-plus"></i> {{localize "CYPHERV2.Focus.Editor.AddAbility"}}</button>
+            <span class="focus-tree-editor-dropzone"><i class="fa-solid fa-arrow-down"></i> {{localize "CYPHERV2.Focus.Editor.DropAbility"}}</span>
+            {{#if focusEditor.dirty}}<strong>{{localize "CYPHERV2.Focus.Editor.Unsaved"}}</strong>{{/if}}
+          </div>
+          {{#if focusEditor.selectedNode}}
+            <section class="focus-tree-node-editor" tabindex="-1">
+              <header>
+                <div>
+                  <strong class="focus-tree-selected-label">{{localize "CYPHERV2.Focus.Editor.SelectedNode"}}</strong>
+                  <h3>{{focusEditor.selectedNode.abilitySnapshot.name}}</h3>
+                  <small>{{localize "CYPHERV2.Focus.Tier"}} {{focusEditor.selectedNode.tier}} · {{focusEditor.selectedNode.id}}</small>
+                </div>
+                <button type="button" data-action="openFocusNode" data-node-id="{{focusEditor.selectedNode.id}}">{{localize "CYPHERV2.Focus.Editor.InspectAbility"}}</button>
+              </header>
+              <div class="focus-node-editor-row">
+                <strong>{{localize "CYPHERV2.Focus.Editor.Move"}}</strong>
+                <button type="button" data-action="moveFocusNode" data-node-id="{{focusEditor.selectedNode.id}}" data-direction="left" aria-label="{{localize 'CYPHERV2.Focus.Editor.MoveLeft'}}"><i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" data-action="moveFocusNode" data-node-id="{{focusEditor.selectedNode.id}}" data-direction="right" aria-label="{{localize 'CYPHERV2.Focus.Editor.MoveRight'}}"><i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+              <div class="focus-node-editor-row">
+                <strong>{{localize "CYPHERV2.Focus.Tier"}}</strong>
+                {{#each focusEditor.tierOptions as |tier|}}
+                  <button type="button" data-action="setFocusNodeTier" data-node-id="{{../focusEditor.selectedNode.id}}" data-tier="{{tier}}">{{tier}}</button>
+                {{/each}}
+              </div>
+              <div class="focus-node-editor-row focus-node-editor-commands">
+                <button type="button" data-action="startFocusConnection" data-node-id="{{focusEditor.selectedNode.id}}"><i class="fa-solid fa-arrow-right-long"></i> {{localize "CYPHERV2.Focus.Editor.Connect"}}</button>
+                <button type="button" data-action="refreshFocusSnapshot" data-node-id="{{focusEditor.selectedNode.id}}"><i class="fa-solid fa-arrows-rotate"></i> {{localize "CYPHERV2.Focus.Editor.RefreshSnapshot"}}</button>
+                <button type="button" class="danger" data-action="deleteFocusNode" data-node-id="{{focusEditor.selectedNode.id}}"><i class="fa-solid fa-trash"></i> {{localize "CYPHERV2.Focus.Editor.DeleteNode"}}</button>
+              </div>
+              {{#if focusEditor.connecting}}
+                <div class="focus-tree-connection-prompt">
+                  <span>{{localize "CYPHERV2.Focus.Editor.ConnectFrom"}} <strong>{{focusEditor.connectionSourceName}}</strong> — {{localize "CYPHERV2.Focus.Editor.ChooseDestination"}}</span>
+                  <button type="button" data-action="cancelFocusConnection">{{localize "CYPHERV2.Actions.Cancel"}}</button>
+                </div>
+              {{/if}}
+            </section>
+          {{else}}
+            <section class="focus-tree-node-editor empty">
+              <p class="focus-tree-editor-hint">{{localize "CYPHERV2.Focus.Editor.SelectNode"}}</p>
+            </section>
+          {{/if}}
+        {{/if}}
+        {{#each focusTrees as |tree|}}
+          {{> "systems/cypherv2/templates/focus/focus-tree.hbs" tree}}
+        {{/each}}
+        {{#if focusTreeEditing}}
+          <section class="focus-tree-connection-list">
+            <h3>{{localize "CYPHERV2.Focus.Editor.Connections"}}</h3>
+            {{#if focusEditor.connections.length}}
+              <ul>
+                {{#each focusEditor.connections as |connection|}}
+                  <li>
+                    <span><strong>{{connection.fromName}}</strong> → <strong>{{connection.toName}}</strong></span>
+                    <button type="button" data-action="deleteFocusConnection" data-connection-id="{{connection.id}}">{{localize "CYPHERV2.Actions.Delete"}}</button>
+                  </li>
+                {{/each}}
+              </ul>
+            {{else}}
+              <p>{{localize "CYPHERV2.Focus.Editor.NoConnections"}}</p>
+            {{/if}}
+          </section>
+        {{/if}}
+      </section>
+      <details class="compact-technical-area focus-technical-area">
+        <summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary>
+        <div class="compact-technical-grid">
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label>
+          <span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span>
+        </div>
+      </details>
+    {{/if}}
+    {{#if isGenre}}
+      <section class="compact-rule-layout genre-item-sheet-layout">
+        <div class="stacked-field cypherv2-rich-description compact-rule-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+        <section class="genre-ability-catalog compact-package-section">
+          <header class="compact-package-header">
+            <h3>{{localize "CYPHERV2.Genre.AbilityCatalog"}}</h3>
+            {{#if editable}}<button type="button" class="compact-package-add-action cypherv2-icon-action" data-action="addGenreAbility" title="{{localize 'CYPHERV2.Genre.AddAbility'}}" aria-label="{{localize 'CYPHERV2.Genre.AddAbility'}}"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>{{/if}}
+          </header>
+          <small class="genre-catalog-help">{{localize "CYPHERV2.Genre.DropAbilityHint"}}</small>
+          <ol class="genre-ability-list compact-package-grant-list">
+            {{#each system.abilityCatalog as |entry|}}
+              <li class="genre-ability-row compact-package-grant-row">
+                <span class="compact-package-grant-identity"><strong>{{entry.snapshot.name}}</strong></span>
+                <span class="genre-ability-controls">
+                  {{#if ../editable}}<label class="genre-entry-tier">{{localize "CYPHERV2.Genre.MinimumTier"}} <input data-genre-minimum-tier data-entry-id="{{entry.id}}" type="number" min="{{../genreMinimumTierMin}}" max="{{../genreMinimumTierMax}}" step="1" value="{{entry.minimumTier}}"></label>{{else}}<small class="genre-entry-tier genre-entry-tier-readonly">{{localize "CYPHERV2.Genre.MinimumTier"}} {{entry.minimumTier}}</small>{{/if}}
+                  <span class="compact-package-row-actions"><button type="button" class="cypherv2-icon-action" data-action="inspectGenreAbility" data-entry-id="{{entry.id}}" title="{{localize 'CYPHERV2.Actions.Inspect'}}" aria-label="{{localize 'CYPHERV2.Actions.Inspect'}} {{entry.snapshot.name}}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>{{#if ../editable}}<button type="button" class="cypherv2-icon-action" data-action="refreshGenreAbility" data-entry-id="{{entry.id}}" title="{{localize 'CYPHERV2.Packages.RefreshSnapshot'}}" aria-label="{{localize 'CYPHERV2.Packages.RefreshSnapshot'}} {{entry.snapshot.name}}"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action compact-package-remove-action" data-action="removeGenreAbility" data-entry-id="{{entry.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{entry.snapshot.name}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>{{/if}}</span>
+                </span>
+              </li>
+            {{else}}<li class="empty-list compact-package-empty">{{localize "CYPHERV2.Genre.NoAbilities"}}</li>{{/each}}
+          </ol>
+        </section>
+        <section class="genre-options compact-package-section">
+          <header class="compact-package-header"><h3>{{localize "CYPHERV2.Genre.Options"}}</h3></header>
+          <label class="compact-mechanic-field">{{localize "CYPHERV2.Genre.TotalEffortCap"}} <select name="system.options.totalEffortCapMode">{{#each genreEffortCapOptions as |option|}}<option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>{{/each}}</select></label>
+        </section>
+        <details class="compact-technical-area" data-persistent-disclosure="genre-technical"><summary><i class="fa-solid fa-gear" aria-hidden="true"></i> {{localize "CYPHERV2.Item.AdvancedTechnical"}}</summary><div class="compact-technical-grid"><label class="compact-mechanic-field">{{localize "CYPHERV2.Genre.LegacyKey"}} <input name="system.legacyKey" type="text" value="{{system.legacyKey}}"></label><label class="compact-mechanic-field">{{localize "CYPHERV2.Item.Slug"}} <input name="system.slug" type="text" value="{{system.slug}}"></label><span>{{localize "CYPHERV2.Item.RuleElements"}}: {{system.ruleElements.length}}</span></div></details>
+      </section>
+    {{/if}}
+    {{#unless isFocus}}
+      {{#unless hideNormalItemFooter}}
+      {{#if usesRichDescription}}
+        <div class="stacked-field cypherv2-rich-description">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          {{formInput systemFields.description name="system.description" value=source.system.description enriched=enriched.description elementType="prose-mirror" toggled=true disabled=(not editable) documentUUID=item.uuid}}
+        </div>
+      {{else}}
+        <label class="stacked-field">
+          <span>{{localize "CYPHERV2.Common.Description"}}</span>
+          <textarea name="system.description">{{system.description}}</textarea>
+        </label>
+      {{/if}}
+      {{/unless}}
+    {{/unless}}
+    {{#unless hideNormalItemFooter}}
+    <div class="status-grid">
+      <article class="status-card">
+        <h2>{{localize "CYPHERV2.Item.Automation"}}</h2>
+        <p>{{system.automation.mode}}</p>
+      </article>
+      <article class="status-card">
+        <h2>{{localize "CYPHERV2.Item.RuleElements"}}</h2>
+        <p>{{system.ruleElements.length}}</p>
+      </article>
+    </div>
+    {{/unless}}
+  </section>
+
+  {{#unless hideNormalItemFooter}}
+  <section class="phase-notice">
+    <strong>{{localize "CYPHERV2.Phase1.Title"}}</strong>
+    <span>{{localize "CYPHERV2.Phase1.ItemMessage"}}</span>
+  </section>
+  {{/unless}}
+</div>

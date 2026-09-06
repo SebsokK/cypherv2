@@ -1,0 +1,8 @@
+<article class="cypherv2 cypherv2-chat-card cypherv2-roll-card cypherv2-item-card {{#if depleted}}is-depleted{{/if}}"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header><h3>{{itemName}}</h3><span>{{itemType}}</span></header>
+  {{#if properties.length}}<dl class="item-card-properties">{{#each properties as |property|}}<dt>{{property.label}}</dt><dd>{{property.value}}</dd>{{/each}}</dl>{{/if}}
+  {{#if hasDescription}}<section class="item-card-description">{{{enrichedDescription}}}</section>{{/if}}
+  {{#if depleted}}<p class="item-card-depleted">{{localize "CYPHERV2.Artifact.Depleted"}}</p>{{/if}}
+  {{#if canRollDepletion}}<button type="button" class="cypherv2-item-chat-action" data-action="rollItemCardDepletion" data-item-uuid="{{itemUuid}}"><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "CYPHERV2.Depletion.Roll"}}</button>{{/if}}
+</article>

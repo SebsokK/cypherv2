@@ -1,0 +1,10 @@
+<article class="cypherv2 cypherv2-chat-card cypherv2-roll-card cypherv2-ability-card"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header><h3>{{abilityName}}</h3><span>{{actorName}} · {{activation}}</span></header>
+  {{#if targetName}}<p>{{localize "CYPHERV2.Combat.Target"}}: {{targetName}}</p>{{/if}}
+  <p class="roll-outcome success">{{localize "CYPHERV2.Ability.Used"}}</p>
+  {{#if damage}}<p class="combat-result"><strong>{{localize "CYPHERV2.Combat.Damage"}}: {{damage}}</strong></p>{{/if}}
+  {{#if woundSeverity}}<p class="combat-result"><strong>{{localize "CYPHERV2.Npc.WoundSeverity"}}: {{woundSeverity}}</strong></p>{{/if}}
+  {{#if combatAction}}<button type="button" class="cypherv2-combat-action" data-action="applyCombatOutcome">{{combatActionLabel}}</button>{{/if}}
+  <details class="roll-card-disclosure roll-card-details"><summary>{{localize "CYPHERV2.Common.Details"}}</summary><div class="roll-card-detail-content"><dl class="roll-card-detail-list">{{#if poolLabel}}<dt>{{localize "CYPHERV2.Pools.Pool"}}</dt><dd>{{poolLabel}}</dd>{{/if}}<dt>{{localize "CYPHERV2.Roll.CostPaid"}}</dt><dd>{{costPaid}}</dd></dl></div></details>
+</article>

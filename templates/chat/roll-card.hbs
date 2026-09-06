@@ -1,0 +1,51 @@
+<article class="cypherv2 cypherv2-chat-card cypherv2-roll-card {{#if hasExceptionalResult}}has-exceptional-result{{/if}}" data-cypherv2-entrance{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header class="roll-card-identity">
+    <h3>{{rollLabel}}</h3>
+    <span class="roll-card-actor">{{actorName}}{{#if poolLabel}} · {{poolLabel}}{{/if}}</span>
+  </header>
+  {{#if skillName}}<p class="roll-card-context roll-skill"><strong>{{skillName}}</strong> · <span class="skill-rank rank-{{skillRankClass}}">{{skillRank}}</span></p>{{/if}}
+  {{#if weaponName}}<p class="roll-card-context"><strong>{{weaponName}}</strong> · {{weaponCategory}}</p>{{/if}}
+  {{#if defenseType}}<p class="roll-card-context"><strong>{{defenseType}}</strong></p>{{/if}}
+  {{#if abilityName}}<p class="roll-card-context roll-ability"><strong>{{abilityName}}</strong> · {{abilityActivation}}</p>{{/if}}
+  {{#if targetName}}<p class="roll-card-target">{{localize "CYPHERV2.Combat.Target"}}: {{targetName}}</p>{{/if}}
+
+  <section class="roll-card-result">
+    {{#if showBeatsDifficulty}}<p class="roll-card-beats">{{localize "CYPHERV2.Roll.BeatsDifficulty"}} <strong>{{beatsDifficulty}}</strong></p>{{/if}}
+    {{#if outcome}}<p class="roll-outcome {{outcomeClass}}"><span aria-hidden="true">{{outcomeIcon}}</span> {{outcome}}</p>{{/if}}
+    {{#if showNaturalRoll}}<p class="roll-card-raw">{{localize "CYPHERV2.Roll.Roll"}} {{naturalRoll}}{{#if showNaturalDifficulty}} <span>({{naturalDifficulty}})</span>{{/if}}</p>{{/if}}
+    {{#if showFinalDamage}}<p class="roll-card-final-damage">{{localize "CYPHERV2.Combat.Damage"}} <strong>{{finalDamage}}</strong></p>{{/if}}
+  </section>
+
+  {{#if hasExceptionalResult}}
+    <section class="roll-card-exceptional">
+      {{#if gmIntrusion}}<p class="roll-card-intrusion"><span aria-hidden="true">⚠</span> {{localize "CYPHERV2.Roll.NaturalEffects.GMIntrusion"}}</p>{{/if}}
+      {{#unless gmIntrusion}}{{#if specialRoll}}<p class="roll-card-natural-effect"><span aria-hidden="true">✦</span> {{specialRoll.label}}{{#if specialRoll.damage}} · {{specialRoll.damage}}{{/if}}</p>{{/if}}{{/unless}}
+      {{#if hasNaturalEffectDisclosure}}
+        <details class="roll-card-disclosure natural-effect-details">
+          <summary>{{localize "CYPHERV2.Roll.NaturalEffects.Title"}}</summary>
+          <ul>
+            {{#each naturalEffects as |effect|}}{{#unless effect.isIntrusion}}<li><span>{{effect.label}}</span><small>{{effect.status}}</small></li>{{/unless}}{{/each}}
+          </ul>
+        </details>
+      {{/if}}
+    </section>
+  {{/if}}
+
+  {{#if combatWoundSeverity}}<p class="combat-result"><strong>{{localize "CYPHERV2.Npc.WoundSeverity"}}: {{combatWoundSeverity}}</strong></p>{{/if}}
+  {{#if shieldTransfer}}<p class="combat-result shield-transfer"><strong>{{shieldName}} {{localize "CYPHERV2.Shield.WillTakeWound"}} {{shieldSeverity}}</strong><br><span>{{localize "CYPHERV2.Shield.CharacterTakesNoWound"}}</span></p>{{/if}}
+  {{#if combatAction}}<button type="button" class="cypherv2-combat-action" data-action="applyCombatOutcome">{{combatActionLabel}}</button>{{/if}}
+
+  {{#if hasDetails}}
+    <details class="roll-card-disclosure roll-card-details">
+      <summary>{{localize "CYPHERV2.Common.Details"}}</summary>
+      <div class="roll-card-detail-content">
+        {{#if resolutionDetails.length}}<section class="roll-card-detail-group roll-card-resolution-details"><h4>{{localize "CYPHERV2.Roll.Details.Resolution"}}</h4><dl class="roll-card-detail-list">{{#each resolutionDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl></section>{{/if}}
+        {{#if modifierTotalDetails.length}}<section class="roll-card-detail-group roll-card-modifier-details"><h4>{{localize "CYPHERV2.Roll.Details.Modifiers"}}</h4>{{#if modifierDetails.length}}<dl class="roll-card-detail-list roll-card-modifier-sources">{{#each modifierDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl>{{/if}}<dl class="roll-card-detail-list roll-card-detail-totals">{{#each modifierTotalDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl></section>{{/if}}
+        {{#if effortDetails.length}}<section class="roll-card-detail-group roll-card-effort-details"><h4>{{localize "CYPHERV2.Roll.Details.Effort"}}</h4><dl class="roll-card-detail-list">{{#each effortDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl></section>{{/if}}
+        {{#if costDetails.length}}<section class="roll-card-detail-group roll-card-cost-details"><h4>{{localize "CYPHERV2.Roll.Details.Cost"}}</h4><dl class="roll-card-detail-list">{{#each costDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl></section>{{/if}}
+        {{#if damageTotalDetails.length}}<section class="roll-card-detail-group roll-card-damage-details"><h4>{{localize "CYPHERV2.Roll.Details.Damage"}}</h4>{{#if damageDetails.length}}<dl class="roll-card-detail-list roll-card-damage-sources">{{#each damageDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl>{{/if}}<dl class="roll-card-detail-list roll-card-detail-totals roll-card-damage-total">{{#each damageTotalDetails as |entry|}}<dt>{{entry.label}}</dt><dd>{{entry.value}}</dd>{{/each}}</dl></section>{{/if}}
+      </div>
+    </details>
+  {{/if}}
+</article>

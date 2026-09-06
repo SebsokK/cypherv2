@@ -1,0 +1,71 @@
+{
+  "id": "cypherv2",
+  "title": "Cypher V2",
+  "description": "A modern, extensible implementation of Cypher V2 for Foundry Virtual Tabletop.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.360"
+  },
+  "authors": [
+    {
+      "name": "Cypher V2 Contributors"
+    }
+  ],
+  "esmodules": ["dist/cypherv2.mjs"],
+  "styles": ["dist/cypherv2.css"],
+  "media": [
+    {
+      "type": "setup",
+      "url": "systems/cypherv2/assets/cypher2meta.jpg",
+      "thumbnail": "systems/cypherv2/assets/cypher2meta.jpg"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": [
+          "description",
+          "notes",
+          "gmNotes",
+          "advancement.notes",
+          "wounds.minor.*.description",
+          "wounds.moderate.*.description",
+          "wounds.major.*.description"
+        ]
+      },
+      "npc": {
+        "htmlFields": ["description", "notes", "gmNotes", "gmIntrusion"]
+      }
+    },
+    "Item": {
+      "ability": {"htmlFields": ["description"]},
+      "skill": {"htmlFields": ["acquisition.notes"]},
+      "weapon": {"htmlFields": ["description"]},
+      "armor": {"htmlFields": ["description"]},
+      "shield": {"htmlFields": ["description", "wounds.minor.*.description", "wounds.moderate.*.description", "wounds.major.*.description"]},
+      "equipment": {"htmlFields": ["description"]},
+      "cypher": {"htmlFields": ["description"]},
+      "artifact": {"htmlFields": ["description"]},
+      "descriptor": {"htmlFields": ["description"]},
+      "characterType": {"htmlFields": ["description", "backgroundOptions", "equipmentNotes"]},
+      "focus": {"htmlFields": ["description"]},
+      "genre": {"htmlFields": ["description"]},
+      "species": {"htmlFields": ["description"]}
+    }
+  },
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true,
+  "grid": {
+    "distance": 1.5,
+    "units": "m"
+  },
+  "license": "LICENSE.md",
+  "readme": "README.md"
+}

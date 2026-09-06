@@ -1,0 +1,65 @@
+<article class="cypherv2 cypherv2-chat-card intrusion-card gm-intrusion-card has-exceptional-result"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header class="intrusion-card-heading">
+    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+    <h3>{{#if isFree}}{{localize "CYPHERV2.Intrusion.Chat.Free"}}{{else}}{{localize "CYPHERV2.Intrusion.Chat.Title"}}{{/if}}</h3>
+  </header>
+  {{#if isTargeted}}
+    <div class="intrusion-card-identity">
+      {{#if actorImage}}<img class="intrusion-card-portrait" src="{{actorImage}}" alt="">{{/if}}
+      <div><p class="intrusion-card-character">{{sourceActorName}}</p><p class="intrusion-card-message">{{localize "CYPHERV2.Intrusion.Chat.TargetedV2"}}</p></div>
+    </div>
+    <strong class="intrusion-card-xp">{{localize "CYPHERV2.Intrusion.Chat.XPReceived" xp=targetXp}}</strong>
+    {{#if resolvedRecipient}}
+      <section class="intrusion-shared-xp is-resolved">
+        <small>{{localize "CYPHERV2.Intrusion.Chat.SharedXP"}}</small>
+        <span class="intrusion-recipient is-resolved">
+          {{#if resolvedRecipient.actorImage}}<img src="{{resolvedRecipient.actorImage}}" alt="">{{/if}}
+          <strong>{{resolvedRecipient.actorName}}</strong>
+          <span>{{localize "CYPHERV2.Intrusion.Chat.XPReceived" xp=sharedXp}}</span>
+        </span>
+      </section>
+    {{else}}
+      <section class="intrusion-shared-xp" data-intrusion-choice>
+        <strong>{{localize "CYPHERV2.Intrusion.Chat.ChooseAnother"}}</strong>
+        <small>{{localize "CYPHERV2.Intrusion.Chat.ChooseHint"}}</small>
+        {{#if hasRecipients}}
+          <div class="intrusion-recipient-list">
+            {{#each recipients as |recipient|}}
+              <button type="button" class="intrusion-recipient" data-action="assignSharedIntrusionXp" data-recipient-actor-id="{{recipient.actorId}}">
+                {{#if recipient.actorImage}}<img src="{{recipient.actorImage}}" alt="">{{/if}}
+                <span>{{recipient.actorName}}</span>
+              </button>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="intrusion-no-recipient">{{localize "CYPHERV2.Intrusion.Chat.NoEligible"}}</p>
+        {{/if}}
+        {{#if resolving}}<p class="intrusion-resolving">{{localize "CYPHERV2.Intrusion.Chat.Resolving"}}</p>{{/if}}
+      </section>
+    {{/if}}
+  {{else if isGroup}}
+    <strong class="intrusion-group-title">{{localize "CYPHERV2.Intrusion.Chat.GroupTitle"}}</strong>
+    {{#if hasAffectedCharacters}}
+      <div class="intrusion-group-list">
+        {{#each affectedCharacters as |character|}}
+          <div class="intrusion-group-character">
+            {{#if character.actorImage}}<img src="{{character.actorImage}}" alt="">{{/if}}
+            <strong>{{character.actorName}}</strong>
+            <span>{{localize "CYPHERV2.Intrusion.Chat.XPAmount" xp=../targetXp}}</span>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="intrusion-card-message">{{localize "CYPHERV2.Intrusion.Chat.Group"}}</p>
+    {{/if}}
+  {{else}}
+    {{#if sourceCharacter}}
+      <div class="intrusion-card-identity intrusion-free-identity">
+        {{#if sourceCharacter.actorImage}}<img class="intrusion-card-portrait" src="{{sourceCharacter.actorImage}}" alt="">{{/if}}
+        <p class="intrusion-card-character">{{sourceCharacter.actorName}}</p>
+      </div>
+    {{/if}}
+    <p class="intrusion-card-message">{{localize "CYPHERV2.Intrusion.Chat.FreeHint"}}</p>
+  {{/if}}
+</article>

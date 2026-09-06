@@ -1,0 +1,11 @@
+<article class="cypherv2 cypherv2-chat-card cypherv2-defense-request-card"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header><h3>{{localize "CYPHERV2.Combat.NpcAttack"}}</h3></header>
+  <p>{{sourceName}} → {{targetName}}</p>
+  <p>{{localize "CYPHERV2.Npc.WoundSeverity"}}: {{woundSeverity}}</p>
+  <div class="defense-request-actions">
+    {{#if allowDodge}}<button type="button" data-action="rollRequestedDefense" data-defense="dodge">{{localize "CYPHERV2.Combat.Defense.dodge"}}</button>{{/if}}
+    {{#if allowBlock}}<button type="button" data-action="rollRequestedDefense" data-defense="block">{{localize "CYPHERV2.Combat.Defense.block"}}</button>{{/if}}
+    {{#if allowBlockWithShield}}<button type="button" data-action="rollRequestedDefense" data-defense="blockWithShield">{{localize "CYPHERV2.Combat.Defense.blockWithShield"}}</button>{{/if}}
+  </div>
+</article>

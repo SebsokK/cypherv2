@@ -1,0 +1,95 @@
+// Shared checkbox presentation for Cypher V2 document sheets and DialogV2
+// content. Native input semantics, labels, change events, and serialization are
+// intentionally left untouched.
+$checkbox-size: 0.875rem;
+$checkmark-mask: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2012%209%27%3E%3Cpath%20d=%27M4.5%209%200%204.5l1.7-1.7%202.8%202.8L10.3%200%2012%201.7z%27/%3E%3C/svg%3E");
+
+%cypherv2-checkbox {
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 $checkbox-size;
+  appearance: none;
+  inline-size: $checkbox-size;
+  block-size: $checkbox-size;
+  min-inline-size: $checkbox-size;
+  min-block-size: $checkbox-size;
+  max-inline-size: $checkbox-size;
+  max-block-size: $checkbox-size;
+  margin: 0;
+  padding: 0;
+  color: var(--cypherv2-text-primary);
+  vertical-align: middle;
+  background: var(--cypherv2-surface-primary);
+  border: 1px solid var(--cypherv2-border);
+  border-radius: 0.16rem;
+  cursor: pointer;
+  transition: border-color 100ms ease, background-color 100ms ease, box-shadow 100ms ease;
+
+  &::before {
+    content: "";
+    position: static;
+    place-self: center;
+    inline-size: 0.625rem;
+    block-size: 0.5rem;
+    margin: 0;
+    background-color: var(--cypherv2-text-primary);
+    opacity: 0;
+    -webkit-mask-image: $checkmark-mask;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-image: $checkmark-mask;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  // Foundry draws its native checked glyph through ::after. Cypher owns the
+  // visual checkmark above, so suppress only that presentation layer while
+  // preserving the real checkbox and all of its native form behavior.
+  &::after {
+    content: none;
+    display: none;
+  }
+
+  &:checked {
+    background: var(--cypherv2-danger);
+    border-color: var(--cypherv2-danger);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:not(:disabled):hover {
+    border-color: var(--cypherv2-danger);
+    box-shadow: 0 0 0.28rem color-mix(in srgb, var(--cypherv2-danger) 38%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--cypherv2-text-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+  }
+}
+
+.cypherv2-sheet input[type="checkbox"],
+.cypherv2-dialog input[type="checkbox"],
+.application.dialog:has(.cypherv2-dialog-fields) .cypherv2-dialog-fields input[type="checkbox"] {
+  @extend %cypherv2-checkbox;
+}
+
+// Normalize the label row without changing its native input association.
+.cypherv2-sheet label:has(> input[type="checkbox"]),
+.cypherv2-dialog label:has(> input[type="checkbox"]),
+.application.dialog:has(.cypherv2-dialog-fields)
+  .cypherv2-dialog-fields label:has(> input[type="checkbox"]) {
+  display: inline-flex;
+  gap: var(--cypherv2-space-compact);
+  align-items: center;
+}

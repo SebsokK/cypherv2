@@ -1,0 +1,32 @@
+<article class="cypherv2 cypherv2-chat-card cypherv2-roll-card roll-audit-card"{{#if chatCardStyle}} style="{{chatCardStyle}}"{{/if}}>
+  {{#if actorImage}}<img class="cypherv2-chat-watermark" src="{{actorImage}}" alt="" aria-hidden="true">{{/if}}
+  <header>
+    <h3>{{localize "CYPHERV2.Roll.GmAudit"}} — {{rollLabel}}</h3>
+    <span>{{actorName}}{{#if poolLabel}} · {{poolLabel}}{{/if}}</span>
+  </header>
+  {{#if skillName}}<p class="roll-skill"><strong>{{skillName}}</strong> · {{skillRank}}</p>{{/if}}
+  {{#if weaponName}}<p><strong>{{weaponName}}</strong> · {{weaponCategory}}</p>{{/if}}
+  {{#if defenseType}}<p><strong>{{defenseType}}</strong></p>{{/if}}
+  {{#if targetName}}<p>{{localize "CYPHERV2.Combat.Target"}}: {{targetName}}</p>{{/if}}
+  <p class="roll-outcome {{outcomeClass}}">{{outcome}}</p>
+  <dl>
+    {{#if showNaturalRoll}}<dt>{{localize "CYPHERV2.Roll.Roll"}}</dt><dd>{{naturalRoll}}</dd>{{/if}}
+    <dt>{{localize "CYPHERV2.Roll.OriginalDifficulty"}}</dt><dd>{{originalDifficulty}}</dd>
+    <dt>{{localize "CYPHERV2.Roll.FinalDifficulty"}}</dt><dd>{{finalDifficulty}}</dd>
+    <dt>{{localize "CYPHERV2.Roll.TargetNumber"}}</dt><dd>{{targetNumber}}</dd>
+    <dt>{{localize "CYPHERV2.Roll.CostPaid"}}</dt><dd>{{poolCost}}</dd>
+  </dl>
+  {{#if naturalEffects.length}}
+    <ul class="natural-effects">
+      {{#each naturalEffects as |effect|}}<li>{{effect.label}} · {{effect.status}}</li>{{/each}}
+    </ul>
+  {{/if}}
+  {{#if showFinalDamage}}<p class="combat-result"><strong>{{localize "CYPHERV2.Combat.Damage"}}: {{finalDamage}}</strong></p>{{/if}}
+  {{#if combatWoundSeverity}}<p class="combat-result"><strong>{{localize "CYPHERV2.Npc.WoundSeverity"}}: {{combatWoundSeverity}}</strong></p>{{/if}}
+  {{#if combatAction}}<button type="button" class="cypherv2-combat-action" data-action="applyCombatOutcome">{{combatActionLabel}}</button>{{/if}}
+  <ul class="roll-breakdown">
+    {{#each breakdown as |entry|}}
+      <li><span>{{entry.label}}</span><strong>{{entry.modifier}}</strong></li>
+    {{/each}}
+  </ul>
+</article>

@@ -1,0 +1,41 @@
+.cypherv2-system-tooltip {
+  position: fixed;
+  z-index: 10000;
+  width: min(22rem, calc(100vw - 1rem));
+  max-height: min(24rem, calc(100vh - 1rem));
+  padding: 0.65rem;
+  overflow: auto;
+  pointer-events: none;
+  color: var(--cypherv2-color-text);
+  background: var(--cypherv2-color-surface-raised);
+  border: 1px solid var(--cypherv2-color-border);
+  border-radius: var(--cypherv2-radius);
+  box-shadow: var(--cypherv2-shadow);
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  .cypherv2-focus-tooltip-content {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .cypherv2-tooltip-meta {
+    color: var(--cypherv2-color-muted);
+    font-size: 0.72rem;
+  }
+
+  .cypherv2-tooltip-description {
+    overflow-wrap: anywhere;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+}

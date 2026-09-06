@@ -1,0 +1,165 @@
+.cypherv2 .cypherv2-rich-description {
+  .editor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 7rem;
+    overflow: visible;
+    color: var(--cypherv2-color-text);
+    background: color-mix(in srgb, var(--cypherv2-color-bg) 80%, transparent);
+    border: 1px solid var(--cypherv2-color-border);
+    border-radius: var(--cypherv2-radius);
+
+    &:hover button.toggle:enabled,
+    &:focus-within button.toggle:enabled {
+      opacity: 1;
+    }
+
+    // Reset generic Foundry/system button presentation before styling only
+    // the controls which belong to this editor.
+    button,
+    button:hover {
+      width: unset;
+      min-width: unset;
+      min-height: unset;
+      margin: unset;
+      padding: unset;
+      color: unset;
+      background: unset;
+      border: unset;
+      border-radius: unset;
+      box-shadow: unset;
+      font-size: unset;
+    }
+
+    .menu-container {
+      position: relative;
+      z-index: 4;
+      flex: 0 0 auto;
+      overflow: visible;
+
+      menu.editor-menu {
+        position: relative;
+        inset: auto;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.15rem;
+        margin: 0;
+        padding: 0.3rem;
+        overflow: visible;
+        list-style: none !important;
+        background: var(--cypherv2-color-surface);
+        border-bottom: 1px solid var(--cypherv2-color-border);
+
+        > li {
+          position: relative;
+          display: inline-flex !important;
+          align-items: center;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+
+        > li:has(> button[data-action="save"]) {
+          order: 100;
+          flex: 0 0 auto;
+          margin-left: auto;
+          padding-left: 0.3rem;
+          border-left: 1px solid var(--cypherv2-color-border);
+        }
+
+        // These editors are deliberately non-collaborative. Foundry still
+        // renders the native status slot, so suppress only that visual item.
+        > li.concurrent-users {
+          display: none;
+        }
+
+        button {
+          display: inline-flex;
+          gap: 0.2rem;
+          align-items: center;
+          justify-content: center;
+          width: auto;
+          min-width: 1.65rem;
+          min-height: 1.65rem;
+          padding: 0.2rem 0.35rem;
+          color: var(--cypherv2-color-text);
+          background: transparent;
+          border-radius: calc(var(--cypherv2-radius) / 2);
+          cursor: pointer;
+
+          &:hover,
+          &.active {
+            color: var(--cypherv2-color-text);
+            background: color-mix(in srgb, var(--cypherv2-color-accent) 20%, transparent);
+          }
+        }
+
+        button[data-action="save"] {
+          color: var(--cypherv2-color-text);
+          font-weight: 700;
+          background: var(--cypherv2-color-accent);
+          border: 1px solid var(--cypherv2-color-accent);
+
+          &:hover,
+          &:focus-visible {
+            color: var(--cypherv2-color-text);
+            background: color-mix(in srgb, var(--cypherv2-color-accent) 82%, var(--cypherv2-color-text));
+            outline: 1px solid var(--cypherv2-color-text);
+            outline-offset: 1px;
+          }
+        }
+
+        // Foundry v14 keeps every dropdown list inside its toolbar button.
+        // Opening one clones that list into body > #prosemirror-dropdown, so
+        // hiding the inactive originals here does not hide the opened menu.
+        .pm-dropdown > ul,
+        ul {
+          position: absolute !important;
+          z-index: 300 !important;
+          top: 100% !important;
+          display: none !important;
+        }
+      }
+
+    }
+  }
+
+  .editor-content {
+    min-height: 7rem;
+    padding: 0.5rem;
+  }
+
+  button.toggle {
+    position: absolute;
+    z-index: 3;
+    top: 0.25rem;
+    right: var(--cypherv2-space);
+    color: var(--cypherv2-color-accent);
+    opacity: 0.55;
+  }
+
+  prose-mirror.editor[disabled] button.toggle {
+    display: none;
+  }
+
+  .editor.inactive .editor-content {
+    user-select: text;
+  }
+
+  .editor.active {
+    min-height: 15rem;
+  }
+
+  &.character-notes-editor {
+    min-height: 12rem;
+
+    .editor,
+    .editor-content {
+      min-height: 12rem;
+    }
+  }
+
+}
