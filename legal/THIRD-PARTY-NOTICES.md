@@ -2,9 +2,11 @@
 
 ## Cypher
 
-Cypher is a trademark of Monte Cook Games, LLC. This project is an independent production and is not affiliated with or endorsed by Monte Cook Games, LLC.
+This product is an independent production and is not affiliated with Monte Cook Games, LLC. It is published under the Cypher Open License, found at https://col.montecookgames.com.
 
-No Cypher Reference Document content is included in the Phase 0/1 scaffold. Before adding or publishing CRD-derived content, contributors must review and comply with the current Cypher Open License at <https://col.montecookgames.com/>.
+Cypher is a trademark of Monte Cook Games, LLC. This project is not affiliated with or endorsed by Monte Cook Games, LLC.
+
+This release includes rules content reviewed against the 2026 *Cypher Reference Document* and redistributed under the applicable 2026 Cypher Open License. Content provenance and the affected system Compendiums are recorded in `CONTENT-SOURCES.md`. The Cypher Open License project site is <https://col.montecookgames.com/>.
 
 ## Legacy technical reference
 
@@ -15,4 +17,3 @@ The legacy project stated that images in its `icons/` directory were CC BY 3.0. 
 ## Foundry Virtual Tabletop
 
 Foundry Virtual Tabletop is software owned by Foundry Gaming LLC. This game system uses Foundry's public package and client APIs and does not redistribute Foundry software.
-

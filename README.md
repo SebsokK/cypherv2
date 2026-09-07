@@ -9,10 +9,10 @@
 > If you do not want to use software made with AI assistance, **do not use this system.**
 
 > [!WARNING]
-> ## BETA — NO COMPENDIUMS YET
+> ## PUBLIC BETA
 > **Cypher V2 is currently a BETA release.** Expect bugs, rough edges and changes while it is tested by real groups.
 >
-> **No ready-to-use Compendiums are bundled yet.** They are currently being written and will be added progressively.
+> This beta includes reviewed system Compendiums, but it does not yet represent every Cypher rule or content category.
 
 > [!NOTE]
 > ## FORK & THANKS
@@ -50,11 +50,25 @@
 - Custom Cypher default Actor/Item artwork, pause screen, turn marker and no-Scene lobby artwork.
 - English interface and localization catalogue.
 
+## Included compendiums
+
+The beta currently distributes seven system Compendiums:
+
+- **Descriptors** (`descriptors`)
+- **Skills** (`skills`)
+- **Weapons & Armors** (`weapons-and-armors`)
+- **Foci** (`foci`)
+- **Focus Abilities** (`focus-abilities`)
+- **Cyphers** (`cyphers`)
+- **Cypher Tables** (`cypher-tables`)
+
+These packs contain reviewed beta content. They are not a claim that every Cypher rule, option, or content category is complete.
+
 ## Beta status
 
 This repository is being opened publicly so other GMs can test the system in real games and find the things its author and automated test suite did not.
 
-The current priority is **stability, feedback and Compendium authoring**, not adding large new feature sets. Existing data structures and UI may still evolve during the beta.
+The current priority is **stability, feedback and continued content review**, not adding large new feature sets. Existing data structures and UI may still evolve during the beta.
 
 Bug reports and useful feedback are welcome through GitHub Issues. You can also find **SokK** on the **Cypher Unlimited Discord**.
 
@@ -77,7 +91,7 @@ Some important principles:
 Requirements:
 
 - Node.js 22.13 or later.
-- pnpm 9 or later.
+- pnpm 11.19.0 (the version pinned by the repository).
 - Foundry VTT 14.360 for runtime testing.
 
 Install and verify:
@@ -115,13 +129,19 @@ Data/systems/cypherv2
 
 Then run the build if required and restart Foundry. The repository already tracks the generated `dist` bundle used by the system.
 
-A normal beta installation/update manifest will be provided through GitHub releases as the release packaging is finalized.
+For normal installation and updates, use the public manifest:
+
+```text
+https://raw.githubusercontent.com/SebsokK/cypherv2/main/system.json
+```
 
 ## Content and licensing
 
 This is an **unofficial fan-made system** and is not an official Monte Cook Games or Foundry Virtual Tabletop product.
 
-The software is MIT licensed. Open game content and other third-party material must follow the provenance and licensing requirements documented in the repository.
+This product is an independent production and is not affiliated with Monte Cook Games, LLC. It is published under the Cypher Open License, found at https://col.montecookgames.com.
+
+The project code is MIT licensed. Monte Cook Games rules content is separately identified in the legal documentation and redistributed on the stated 2026 Cypher Reference Document / Cypher Open License basis. Third-party and project-specific assets are documented separately where provenance information is available.
 
 See:
 

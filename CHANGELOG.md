@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.1.0-beta.2 - 2026-09-07
+
+### Added
+
+- Seven distributable system Compendiums: 33 Descriptors, 58 Skills, the reviewed Weapons & Armors pack, 42 Foci, 529 Focus Abilities, 201 Cyphers, and 12 Cypher Tables.
+- Reviewed Focus Trees and connections backed by reproducible canonical source data and validated system UUIDs.
+
+### Changed
+
+- Added configurable Recovery tracks, including duplicate Recovery slot types and a Recovery roll modifier.
+- Added manual Wound-capacity modifiers and the option to hide Focus from the Character Sentence.
+- Improved compact rich-text heading presentation and themed native RollTable results in Chat.
+- Polished Character Settings and related configuration presentation for the beta workflow.
+
 ## 0.1.0 - 2026-08-24
 
 ### Added
