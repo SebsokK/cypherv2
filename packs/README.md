@@ -1,5 +1,13 @@
 # Compendium packs
 
+`descriptors/`, `skills/`, and `weapons-and-armors/` are generated Foundry v14 LevelDB packs. Their canonical source is the lossless reviewed snapshot in `content/core-items/reviewed-packs.json`, promoted from the authoritative `cypher-v2-test` World packs. Rebuild all three atomically with:
+
+```bash
+pnpm import:core-packs
+```
+
+The import validates document and LevelDB-key uniqueness, pack-specific Item types, folder references, non-blank slug uniqueness, and all promoted system UUIDs before replacing any destination. The combined equipment pack intentionally preserves the reviewed `Weapons` and `Armors & Shields` folders. The one-time maintenance command `pnpm promote:core-packs -- ...` accepts unpacked review exports; it must never target a live World LevelDB directory.
+
 `focus-abilities/` and `foci/` are generated Foundry v14 LevelDB packs. They are compiled from the canonical lossless reviewed snapshot in `content/foci/reviewed-pack.json` by:
 
 ```bash

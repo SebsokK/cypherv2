@@ -6,12 +6,14 @@
   "packageManager": "pnpm@11.19.0",
   "description": "A modern Foundry VTT v14 system for Cypher V2.",
   "scripts": {
-    "build": "vite build && pnpm import:foci && pnpm import:cyphers",
+    "build": "vite build && pnpm import:core-packs && pnpm import:foci && pnpm import:cyphers",
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm typecheck && pnpm test && pnpm build",
+    "import:core-packs": "node scripts/import-core-packs.mjs",
+    "promote:core-packs": "node scripts/promote-reviewed-core-packs.mjs",
     "import:foci": "node scripts/import-foci.mjs",
     "promote:foci": "node scripts/promote-reviewed-foci.mjs",
     "import:cyphers": "node scripts/import-cyphers.mjs"

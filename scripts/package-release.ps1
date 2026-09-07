@@ -61,6 +61,9 @@ foreach ($relativePath in $requiredRuntimePaths) {
 }
 
 $requiredGeneratedPacks = @(
+  "packs/descriptors",
+  "packs/skills",
+  "packs/weapons-and-armors",
   "packs/focus-abilities",
   "packs/foci",
   "packs/cyphers",

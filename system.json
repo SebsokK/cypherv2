@@ -25,6 +25,27 @@
   ],
   "packs": [
     {
+      "name": "descriptors",
+      "label": "Descriptors",
+      "path": "packs/descriptors",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "skills",
+      "label": "Skills",
+      "path": "packs/skills",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "weapons-and-armors",
+      "label": "Weapons & Armors",
+      "path": "packs/weapons-and-armors",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
       "name": "focus-abilities",
       "label": "Focus Abilities",
       "path": "packs/focus-abilities",
