@@ -73,6 +73,16 @@ describe("V1 presentation polish", () => {
     expect(chatStyles).toContain("var(--cypherv2-accent)");
   });
 
+  it("skins Foundry's native RollTable result structure with semantic Cypher tokens", () => {
+    expect(chatStyles).toContain(".chat-message:has(.table-draw)");
+    expect(chatStyles).toContain("ul.table-results");
+    expect(chatStyles).toContain("> a.content-link");
+    expect(chatStyles).toContain("var(--cypherv2-surface-primary)");
+    expect(chatStyles).toContain("var(--cypherv2-text-primary)");
+    expect(chatStyles).toContain("var(--cypherv2-text-muted)");
+    expect(chatStyles).toContain("var(--cypherv2-border)");
+  });
+
   it("declares the Foundry v14 setup media asset", () => {
     expect(manifest.media).toContainEqual({
       type: "setup",

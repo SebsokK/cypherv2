@@ -4,19 +4,26 @@ import {
   RECOVERY_USAGE_KEYS,
   availableRecoveryTypes,
   assertLiving,
-  createRecoveryUsage,
   defaultIdFactory,
   type CharacterDocumentLike,
   type IdFactory,
   type PoolKey,
   type RecoveryHistoryEntry,
+  type RecoverySlotData,
   type RecoveryUsage
 } from "../rules/core/core-types";
 import {effectiveTier} from "../rules/core/character-overrides";
+import {
+  availableRecoverySlots,
+  defaultRecoverySlots,
+  recoveryUsageFromSlots,
+  useRecoverySlot
+} from "../rules/core/recovery-track";
 
 export type RecoveryAllocation = Record<PoolKey, number>;
 
 export interface RecoveryRollResult {
+  slotId: string;
   type: RecoveryType;
   dieResult: number;
   tier: number;
@@ -33,6 +40,7 @@ export interface RecoveryApplicationResult {
   values: RecoveryAllocation;
   unspent: number;
   used: RecoveryUsage;
+  slots: RecoverySlotData[];
   historyEntry: RecoveryHistoryEntry;
 }
 
@@ -70,13 +78,14 @@ export class RecoveryService {
     tier: number,
     dieResult: number,
     lastAction = false,
-    recoveryBonus = 0
+    recoveryBonus = 0,
+    slotId = ""
   ): RecoveryRollResult {
     integerInRange(dieResult, 1, 6, "Recovery die");
     integerInRange(tier, 1, Number.MAX_SAFE_INTEGER, "Tier");
-    integerInRange(recoveryBonus, 0, Number.MAX_SAFE_INTEGER, "Recovery bonus");
+    integerInRange(recoveryBonus, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, "Recovery bonus");
     const bonus = recoveryBonus + (type === "one-action" && lastAction ? 2 : 0);
-    return {type, dieResult, tier, bonus, total: dieResult + tier + bonus, lastAction};
+    return {slotId, type, dieResult, tier, bonus, total: Math.max(0, dieResult + tier + bonus), lastAction};
   }
 
   availableTypes(usage: RecoveryUsage): RecoveryType[] {
@@ -87,9 +96,27 @@ export class RecoveryService {
     return !usage[RECOVERY_USAGE_KEYS[type]];
   }
 
-  async roll(actor: CharacterDocumentLike, type: RecoveryType, lastAction = false): Promise<RecoveryRollResult> {
+  slots(actor: CharacterDocumentLike): RecoverySlotData[] {
+    return actor.system.recovery.slots?.length
+      ? actor.system.recovery.slots.map((slot) => ({...slot}))
+      : defaultRecoverySlots(actor.system.recovery.used);
+  }
+
+  availableSlots(actor: CharacterDocumentLike): RecoverySlotData[] {
+    return availableRecoverySlots(this.slots(actor));
+  }
+
+  async roll(
+    actor: CharacterDocumentLike,
+    type: RecoveryType,
+    lastAction = false,
+    requestedSlotId?: string
+  ): Promise<RecoveryRollResult> {
     assertLiving(actor);
-    if (!this.isAvailable(actor.system.recovery.used, type)) {
+    const slot = this.availableSlots(actor).find((entry) => (
+      entry.type === type && (!requestedSlotId || entry.id === requestedSlotId)
+    ));
+    if (!slot) {
       throw new Error(`The '${type}' Core Recovery has already been used today.`);
     }
     return this.calculateRoll(
@@ -97,7 +124,8 @@ export class RecoveryService {
       effectiveTier(actor.system),
       await this.#rollD6(),
       lastAction,
-      actor.system.derived.recovery.bonus
+      actor.system.derived.recovery.bonus,
+      slot.id
     );
   }
 
@@ -105,7 +133,7 @@ export class RecoveryService {
     actor: CharacterDocumentLike,
     roll: RecoveryRollResult,
     requested: RecoveryAllocation
-  ): Omit<RecoveryApplicationResult, "kind" | "used" | "historyEntry"> {
+  ): Omit<RecoveryApplicationResult, "kind" | "used" | "slots" | "historyEntry"> {
     const requestedTotal = POOL_KEYS.reduce((sum, pool) => {
       return sum + integerInRange(requested[pool], 0, Number.MAX_SAFE_INTEGER, `${pool} allocation`);
     }, 0);
@@ -139,15 +167,14 @@ export class RecoveryService {
     requested: RecoveryAllocation
   ): RecoveryApplicationResult {
     assertLiving(actor);
-    if (!this.isAvailable(actor.system.recovery.used, roll.type)) {
-      throw new Error(`The '${roll.type}' Core Recovery has already been used today.`);
-    }
+    const slots = this.slots(actor);
+    const slotId = roll.slotId || availableRecoverySlots(slots).find((slot) => slot.type === roll.type)?.id || "";
+    const updatedSlots = useRecoverySlot(slots, slotId, roll.type);
     const distribution = this.distribute(actor, roll, requested);
-    const used = roll.type === "10-hours"
-      ? createRecoveryUsage(false)
-      : {...actor.system.recovery.used, [RECOVERY_USAGE_KEYS[roll.type]]: true};
+    const used = recoveryUsageFromSlots(updatedSlots);
     const historyEntry: RecoveryHistoryEntry = {
       id: this.#idFactory(),
+      slotId,
       kind: "normal",
       type: roll.type,
       rolled: true,
@@ -160,20 +187,24 @@ export class RecoveryService {
       intellect: distribution.restored.intellect,
       timestamp: this.#now()
     };
-    return {...distribution, kind: "normal", used, historyEntry};
+    return {...distribution, kind: "normal", used, slots: updatedSlots, historyEntry};
   }
 
-  prepareNonRest(actor: CharacterDocumentLike, type: RecoveryType): RecoveryApplicationResult {
+  prepareNonRest(actor: CharacterDocumentLike, type: RecoveryType, requestedSlotId?: string): RecoveryApplicationResult {
     assertLiving(actor);
-    if (!this.isAvailable(actor.system.recovery.used, type)) {
+    const slots = this.slots(actor);
+    const slot = availableRecoverySlots(slots).find((entry) => (
+      entry.type === type && (!requestedSlotId || entry.id === requestedSlotId)
+    ));
+    if (!slot) {
       throw new Error(`The '${type}' Core Recovery has already been used today.`);
     }
-    const used = type === "10-hours"
-      ? createRecoveryUsage(false)
-      : {...actor.system.recovery.used, [RECOVERY_USAGE_KEYS[type]]: true};
+    const updatedSlots = useRecoverySlot(slots, slot.id, type);
+    const used = recoveryUsageFromSlots(updatedSlots);
     const zero = {might: 0, speed: 0, intellect: 0};
     const historyEntry: RecoveryHistoryEntry = {
       id: this.#idFactory(),
+      slotId: slot.id,
       kind: "nonRest",
       type,
       rolled: false,
@@ -196,6 +227,7 @@ export class RecoveryService {
       },
       unspent: 0,
       used,
+      slots: updatedSlots,
       historyEntry
     };
   }

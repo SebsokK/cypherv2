@@ -4,6 +4,7 @@ import type {
   CharacterOverrides,
   CharacterPools,
   RecoveryUsage,
+  RecoverySlotData,
   RecoveryHistoryEntry,
   RestHistoryEntry,
   WoundCollection
@@ -36,6 +37,7 @@ import {
   CHARACTER_HEADER_BACKGROUND_MODES,
   type CharacterAppearanceData
 } from "../../themes/character-appearance";
+import {defaultRecoverySlots} from "../../rules/core/recovery-track";
 
 function advancementPurchaseField(): unknown {
   return new fields.SchemaField({
@@ -95,6 +97,7 @@ function focusAcquisitionRecordField(): unknown {
 function recoveryHistoryField(): unknown {
   return new fields.SchemaField({
     id: new fields.StringField({required: true, nullable: false, blank: false}),
+    slotId: new fields.StringField({required: true, nullable: false, blank: true, initial: ""}),
     kind: new fields.StringField({
       required: true,
       nullable: false,
@@ -111,6 +114,14 @@ function recoveryHistoryField(): unknown {
     speed: integerField(),
     intellect: integerField(),
     timestamp: integerField()
+  });
+}
+
+function recoverySlotField(): unknown {
+  return new fields.SchemaField({
+    id: new fields.StringField({required: true, nullable: false, blank: false}),
+    type: new fields.StringField({required: true, nullable: false, choices: [...RECOVERY_TYPES]}),
+    used: new fields.BooleanField({required: true, nullable: false, initial: false})
   });
 }
 
@@ -142,11 +153,19 @@ export class CharacterDataModel extends ActorDataModelBase {
   declare cypherLimitBase: number;
   declare stats: CharacterPools & {effortBase: number};
   declare wounds: WoundCollection;
-  declare recovery: {bonus: number; used: RecoveryUsage; history: RecoveryHistoryEntry[]};
+  declare recovery: {
+    bonus: number;
+    used: RecoveryUsage;
+    slots: RecoverySlotData[];
+    customized: boolean;
+    rollModifier: number;
+    history: RecoveryHistoryEntry[];
+  };
   declare rest: {lastType: string; history: RestHistoryEntry[]};
   declare focusProgress: FocusProgress[];
   declare genre: GenreAssociationData;
   declare appearance: CharacterAppearanceData;
+  declare presentation: {hideFocusInSentence: boolean};
   declare advancement: CharacterAdvancementData;
   declare derived: CharacterDerivedData;
 
@@ -170,6 +189,11 @@ export class CharacterDataModel extends ActorDataModelBase {
             max: new fields.NumberField({required: true, nullable: true, integer: true, min: 1, initial: null}),
             edge: new fields.NumberField({required: true, nullable: true, integer: true, min: -20, initial: null})
           })
+        }),
+        wounds: new fields.SchemaField({
+          minor: integerField(0, -20),
+          moderate: integerField(0, -20),
+          major: integerField(0, -20)
         })
       }),
       xp: integerField(),
@@ -188,6 +212,13 @@ export class CharacterDataModel extends ActorDataModelBase {
           oneHour: new fields.BooleanField({required: true, nullable: false, initial: false}),
           tenHours: new fields.BooleanField({required: true, nullable: false, initial: false})
         }),
+        slots: new fields.ArrayField(recoverySlotField(), {
+          required: true,
+          nullable: false,
+          initial: defaultRecoverySlots()
+        }),
+        customized: new fields.BooleanField({required: true, nullable: false, initial: false}),
+        rollModifier: integerField(0, -20),
         history: new fields.ArrayField(recoveryHistoryField(), {
           required: true,
           nullable: false,
@@ -269,6 +300,9 @@ export class CharacterDataModel extends ActorDataModelBase {
           validate: (value: string) => value === "" || /^#(?:[\da-f]{3}|[\da-f]{6})$/i.test(value)
         })
       }),
+      presentation: new fields.SchemaField({
+        hideFocusInSentence: new fields.BooleanField({required: true, nullable: false, initial: false})
+      }),
       advancement: new fields.SchemaField({
         cycle: integerField(1, 1),
         purchases: new fields.ArrayField(advancementPurchaseField(), {
@@ -326,10 +360,15 @@ export class CharacterDataModel extends ActorDataModelBase {
             contributions: contributionArrayField()
           }),
           wounds: new fields.SchemaField({
+            calculatedCapacities: new fields.SchemaField({
+              minor: integerField(3, 1),
+              moderate: integerField(3, 1),
+              major: integerField(3, 1)
+            }),
             capacities: new fields.SchemaField({
-              minor: integerField(3),
-              moderate: integerField(3),
-              major: integerField(3)
+              minor: integerField(3, 1),
+              moderate: integerField(3, 1),
+              major: integerField(3, 1)
             }),
             capacityContributions: new fields.SchemaField({
               minor: contributionArrayField(),
@@ -342,6 +381,9 @@ export class CharacterDataModel extends ActorDataModelBase {
           }),
           recovery: new fields.SchemaField({
             formula: new fields.StringField({required: true, nullable: false, initial: "1d6 + Tier"}),
+            calculatedFormula: new fields.StringField({required: true, nullable: false, initial: "1d6 + Tier"}),
+            calculatedBonus: integerField(0, -20),
+            manualModifier: integerField(0, -20),
             bonus: integerField(),
             bonusContributions: contributionArrayField(),
             availableTypes: new fields.ArrayField(
@@ -449,7 +491,9 @@ export class CharacterDataModel extends ActorDataModelBase {
       },
       this.cypherLimitBase,
       this.tier,
-      this.overrides
+      this.overrides,
+      this.recovery.rollModifier,
+      this.recovery.slots
     );
 
     Object.assign(this.derived.tier, derived.tier);
@@ -457,6 +501,7 @@ export class CharacterDataModel extends ActorDataModelBase {
     Object.assign(this.derived.pools.speed, derived.pools.speed);
     Object.assign(this.derived.pools.intellect, derived.pools.intellect);
     Object.assign(this.derived.effort, derived.effort);
+    Object.assign(this.derived.wounds.calculatedCapacities, derived.wounds.calculatedCapacities);
     Object.assign(this.derived.wounds.capacities, derived.wounds.capacities);
     Object.assign(this.derived.wounds.capacityContributions, derived.wounds.capacityContributions);
     this.derived.wounds.hindrance = derived.wounds.hindrance;

@@ -3,10 +3,12 @@ packages:
 
 allowBuilds:
   '@parcel/watcher': true
+  classic-level: true
   esbuild: true
 
 onlyBuiltDependencies:
   - "@parcel/watcher"
+  - "classic-level"
   - "esbuild"
 
 confirmModulesPurge: false

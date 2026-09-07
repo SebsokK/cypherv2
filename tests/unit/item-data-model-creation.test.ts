@@ -579,6 +579,56 @@ describe("Item DataModel creation defaults", () => {
     ]);
   });
 
+  it("accepts generated Focus and Ability documents through the current Item DataModels", async () => {
+    // @ts-expect-error Developer-only JavaScript module has no runtime-facing TypeScript declaration.
+    const {generateFocusImport} = await import("../../scripts/focus-importer.mjs");
+    const generated = generateFocusImport({
+      schemaVersion: 1,
+      source: {id: "data-model-test", title: "DataModel Test", version: "1", license: "test-only"},
+      abilities: [{
+        id: "model-ability",
+        name: "Model Ability",
+        tier: 2,
+        fullRulesDescription: "<p>Model-safe rules.</p>",
+        sourcePage: "1",
+        actionClassification: "action",
+        cost: {kind: "fixed", amount: 2, allowedPools: ["might", "intellect"], ignoresEdge: false},
+        repeatability: {canTakeMultipleTimes: false, maximumSelections: null},
+        prerequisiteAbilityId: null,
+        laterTierChanges: [],
+        automation: {activation: "action", roll: "attack", attackModifier: 1, damage: 4, range: "long", targetMode: "single"},
+        reviewStatus: "verified",
+        reviewNote: "",
+        reviewIssues: []
+      }],
+      foci: [{
+        id: "model-focus",
+        name: "Model Focus",
+        description: "<p>Model-safe Focus.</p>",
+        sourcePage: "2",
+        genreThemes: [],
+        gmIntrusionSuggestions: [],
+        additionalEquipment: "",
+        associatedAbilities: ["model-ability"],
+        graph: {
+          nodes: [{id: "model-node", abilityId: "model-ability", tier: 2, order: 0, reviewStatus: "verified", reviewNote: ""}],
+          edges: []
+        },
+        reviewStatus: "verified",
+        reviewNote: "",
+        reviewIssues: []
+      }]
+    });
+    const {AbilityDataModel} = await import("../../src/data/items/ability");
+    const {FocusDataModel} = await import("../../src/data/items/focus");
+    const abilitySource = generated.abilityDocuments[0].system as Record<string, unknown>;
+    const focusSource = generated.focusDocuments[0].system as Record<string, unknown>;
+    const importedAbility = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)(abilitySource);
+    const importedFocus = new (FocusDataModel as unknown as new (source: Record<string, unknown>) => any)(focusSource);
+    expect(importedAbility).toMatchObject({tier: 2, cost: {amount: 2, allowedPools: ["might", "intellect"]}, roll: "attack"});
+    expect(importedFocus.graph.nodes[0]).toMatchObject({id: "model-node", tier: 2});
+  });
+
   it("creates a fresh uninitialized Core Character with the V2 source defaults", async () => {
     const {CharacterDataModel} = await import("../../src/data/actors/character");
     const character = new (CharacterDataModel as unknown as new () => {
@@ -589,6 +639,9 @@ describe("Item DataModel creation defaults", () => {
       genre: {sourceUuid: string; instanceId: string; provenance: string; attachedAt: number};
       advancement: {guidanceCompletedTiers: number[]};
       creation: {coreInitialized: boolean; mode: string};
+      recovery: {slots: Array<{id: string; type: string; used: boolean}>; customized: boolean; rollModifier: number};
+      presentation: {hideFocusInSentence: boolean};
+      overrides: {wounds: Record<string, number>};
       derived: {wounds: {capacities: Record<string, number>}};
     })();
     expect(character.tier).toBe(1);
@@ -603,6 +656,15 @@ describe("Item DataModel creation defaults", () => {
     expect(character.genre).toEqual({sourceUuid: "", instanceId: "", provenance: "manual", attachedAt: 0});
     expect(character.advancement.guidanceCompletedTiers).toEqual([]);
     expect(character.creation).toMatchObject({coreInitialized: false, mode: "uninitialized"});
+    expect(character.recovery).toMatchObject({customized: false, rollModifier: 0});
+    expect(character.recovery.slots.map(({id, type}) => ({id, type}))).toEqual([
+      {id: "core-recovery-action", type: "one-action"},
+      {id: "core-recovery-ten-minutes", type: "10-minutes"},
+      {id: "core-recovery-one-hour", type: "1-hour"},
+      {id: "core-recovery-ten-hours", type: "10-hours"}
+    ]);
+    expect(character.presentation.hideFocusInSentence).toBe(false);
+    expect(character.overrides.wounds).toEqual({minor: 0, moderate: 0, major: 0});
     expect(character.derived.wounds.capacities).toEqual({minor: 3, moderate: 3, major: 3});
   });
 

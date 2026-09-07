@@ -23,6 +23,36 @@
       "thumbnail": "systems/cypherv2/assets/cypher2meta.jpg"
     }
   ],
+  "packs": [
+    {
+      "name": "focus-abilities",
+      "label": "Focus Abilities",
+      "path": "packs/focus-abilities",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "foci",
+      "label": "Foci",
+      "path": "packs/foci",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "cyphers",
+      "label": "Cyphers",
+      "path": "packs/cyphers",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "cypher-tables",
+      "label": "Cypher Tables",
+      "path": "packs/cypher-tables",
+      "type": "RollTable",
+      "system": "cypherv2"
+    }
+  ],
   "documentTypes": {
     "Actor": {
       "character": {

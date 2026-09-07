@@ -1,3 +1,6 @@
+import {createRecoveryUsage, type RecoveryUsage} from "../../rules/core/core-types";
+import {normalizeRecoverySlots, recoveryUsageFromSlots} from "../../rules/core/recovery-track";
+
 export interface CharacterMigrationOptions {
   readonly partial?: boolean;
 }
@@ -28,6 +31,18 @@ function normalizeOverrides(overrides: Record<string, unknown>, partial = false)
       if (!partial || hasOwn(stats, key)) normalizedStats[key] = pool(key);
     }
     normalized.stats = normalizedStats;
+  }
+  if (!partial || hasOwn(overrides, "wounds")) {
+    const wounds = overrides.wounds && typeof overrides.wounds === "object"
+      ? overrides.wounds as Record<string, unknown>
+      : {};
+    const normalizedWounds: Record<string, number> = {};
+    for (const severity of ["minor", "moderate", "major"]) {
+      if (!partial || hasOwn(wounds, severity)) {
+        normalizedWounds[severity] = Number.isInteger(wounds[severity]) ? Number(wounds[severity]) : 0;
+      }
+    }
+    normalized.wounds = normalizedWounds;
   }
   return normalized;
 }
@@ -176,11 +191,42 @@ export function migrateCharacterSystemData(
   if (source.advancement && typeof source.advancement === "object") {
     source.advancement = normalizeAdvancement(source.advancement as Record<string, unknown>, partial);
   }
-  if (source.recovery && typeof source.recovery === "object") {
-    const recovery = source.recovery as Record<string, unknown>;
-    source.recovery = partial && !hasOwn(recovery, "bonus")
-      ? {...recovery}
-      : {...recovery, bonus: Number.isInteger(recovery.bonus) ? recovery.bonus : 0};
+  if (!partial || (source.recovery && typeof source.recovery === "object")) {
+    const recovery = source.recovery && typeof source.recovery === "object"
+      ? source.recovery as Record<string, unknown>
+      : {};
+    const legacy = recovery.used && typeof recovery.used === "object"
+      ? {...createRecoveryUsage(false), ...recovery.used as Partial<RecoveryUsage>}
+      : createRecoveryUsage(false);
+    const normalized = {...recovery};
+    if (!partial || hasOwn(recovery, "bonus")) normalized.bonus = Number.isInteger(recovery.bonus) ? recovery.bonus : 0;
+    if (!partial || hasOwn(recovery, "slots")) {
+      normalized.slots = normalizeRecoverySlots(recovery.slots, legacy);
+      normalized.used = recoveryUsageFromSlots(normalized.slots as ReturnType<typeof normalizeRecoverySlots>);
+    }
+    if (!partial || hasOwn(recovery, "customized")) normalized.customized = recovery.customized === true;
+    if (!partial || hasOwn(recovery, "rollModifier")) {
+      normalized.rollModifier = Number.isInteger(recovery.rollModifier) ? Number(recovery.rollModifier) : 0;
+    }
+    if (!partial || hasOwn(recovery, "history")) {
+      normalized.history = Array.isArray(recovery.history)
+        ? recovery.history.map((raw) => raw && typeof raw === "object"
+          ? {slotId: "", ...raw as Record<string, unknown>}
+          : raw)
+        : [];
+    }
+    source.recovery = normalized;
+  }
+  if (!partial) {
+    const presentation = source.presentation && typeof source.presentation === "object"
+      ? source.presentation as Record<string, unknown>
+      : {};
+    source.presentation = {hideFocusInSentence: presentation.hideFocusInSentence === true};
+  } else if (source.presentation && typeof source.presentation === "object") {
+    const presentation = source.presentation as Record<string, unknown>;
+    if (hasOwn(presentation, "hideFocusInSentence")) {
+      source.presentation = {hideFocusInSentence: presentation.hideFocusInSentence === true};
+    }
   }
   if (source.creation && typeof source.creation === "object") {
     source.creation = normalizeCreation(source.creation as Record<string, unknown>, partial);

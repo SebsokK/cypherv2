@@ -3,5 +3,11 @@ node_modules/
 .vite/
 coverage/
 .release/
+.generated/
+.reports/
 *.log
-_reference/*.zip
+_reference/
+packs/focus-abilities/
+packs/foci/
+packs/cyphers/
+packs/cypher-tables/

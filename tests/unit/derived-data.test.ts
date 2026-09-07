@@ -67,6 +67,17 @@ describe("Core Character derived data", () => {
     expect(derived.wounds.capacityContributions.major[0]?.sourceId).toBe("cypherv2.core");
   });
 
+  it("applies independent manual Wound capacity modifiers after calculated contributions", () => {
+    const derived = deriveCharacterData(
+      pools(), wounds(), createRecoveryUsage(), {}, [], undefined, 0, undefined, 2, 1,
+      {tier: null, effort: null, stats: {
+        might: {max: null, edge: null}, speed: {max: null, edge: null}, intellect: {max: null, edge: null}
+      }, wounds: {minor: 1, moderate: 0, major: -1}}
+    );
+    expect(derived.wounds.calculatedCapacities).toEqual({minor: 3, moderate: 3, major: 3});
+    expect(derived.wounds.capacities).toEqual({minor: 4, moderate: 3, major: 2});
+  });
+
   it("adds one hindrance when Moderate Wounds are full", () => {
     expect(deriveCharacterData(pools(), wounds({moderate: 2}), createRecoveryUsage()).wounds.hindrance).toBe(0);
     expect(deriveCharacterData(pools(), wounds({moderate: 3}), createRecoveryUsage()).wounds.hindrance).toBe(1);
@@ -115,5 +126,16 @@ describe("Core Character derived data", () => {
       sourceId: "system.recovery.bonus",
       value: 4
     });
+  });
+
+  it("adds a signed manual Recovery modifier without changing the calculated formula", () => {
+    const plus = deriveCharacterData(
+      pools(), wounds(), createRecoveryUsage(), {}, [], undefined, 0, undefined, 2, 1, undefined, 1
+    );
+    const minus = deriveCharacterData(
+      pools(), wounds(), createRecoveryUsage(), {}, [], undefined, 0, undefined, 2, 1, undefined, -1
+    );
+    expect(plus.recovery).toMatchObject({calculatedFormula: "1d6 + Tier", formula: "1d6 + Tier + 1", bonus: 1});
+    expect(minus.recovery).toMatchObject({calculatedFormula: "1d6 + Tier", formula: "1d6 + Tier - 1", bonus: -1});
   });
 });

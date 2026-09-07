@@ -71,9 +71,10 @@ export class RecoveryWorkflowService {
   async rollNormal(
     actor: CharacterDocumentLike,
     type: RecoveryType,
-    lastAction = false
+    lastAction = false,
+    slotId?: string
   ): Promise<RecoveryRollResult> {
-    return this.#recovery.roll(actor, type, lastAction);
+    return this.#recovery.roll(actor, type, lastAction, slotId);
   }
 
   async completeNormal(
@@ -110,6 +111,7 @@ export class RecoveryWorkflowService {
       update["system.rest.history"] = [...actor.system.rest.history, rest.historyEntry];
     }
     update["system.recovery.used"] = recovery.used;
+    update["system.recovery.slots"] = recovery.slots;
     update["system.recovery.history"] = [...actor.system.recovery.history, recovery.historyEntry];
     await actor.update(update);
     await this.#hooks.processDurations(context);
@@ -120,10 +122,11 @@ export class RecoveryWorkflowService {
 
   async completeNonRest(
     actor: CharacterDocumentLike,
-    type: RecoveryType
+    type: RecoveryType,
+    slotId?: string
   ): Promise<RecoveryWorkflowResult> {
     assertLiving(actor);
-    const recovery = this.#recovery.prepareNonRest(actor, type);
+    const recovery = this.#recovery.prepareNonRest(actor, type, slotId);
     const context: RecoveryWorkflowResult = {
       kind: "nonRest",
       type,
@@ -135,6 +138,7 @@ export class RecoveryWorkflowService {
     await this.#hooks.beforeComplete(context);
     await actor.update({
       "system.recovery.used": recovery.used,
+      "system.recovery.slots": recovery.slots,
       "system.recovery.history": [...actor.system.recovery.history, recovery.historyEntry]
     });
     await this.#hooks.processDurations(context);

@@ -607,7 +607,7 @@
 
   .character-hud-recovery-buttons {
     display: grid;
-    grid-template-columns: repeat(4, minmax(2rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr));
     gap: 0.18rem;
 
     button {
@@ -633,6 +633,13 @@
         cursor: not-allowed;
       }
     }
+  }
+
+  .character-hud-over-capacity {
+    align-self: center;
+    color: var(--cypherv2-danger);
+    font-size: 0.58rem;
+    font-weight: 800;
   }
 
   .character-hud-currency {
@@ -775,6 +782,41 @@
   flex: 0 0 auto;
   gap: 0.15rem;
   align-items: center;
+}
+
+.character-source-subsection {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--cypherv2-border);
+
+  > h3 {
+    margin: 0;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+.character-focus-sentence-setting {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  width: fit-content;
+  margin: 0 0 0.35rem;
+  color: var(--cypherv2-text-primary);
+  font-size: 0.68rem;
+
+  input { margin: 0; }
+}
+
+.character-compound-override-row {
+  > span:not(.character-settings-row-actions) {
+    font-size: 0.66rem;
+  }
 }
 
 .character-familiarity-settings {

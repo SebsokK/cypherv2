@@ -10,7 +10,6 @@ import {
 } from "../../constants/system";
 import {
   POOL_KEYS,
-  createRecoveryUsage,
   type CharacterDocumentLike,
   type PoolKey
 } from "../../rules/core/core-types";
@@ -23,6 +22,12 @@ import {
   promptRally,
   promptRecovery
 } from "../dialogs/character-core-dialogs";
+import {
+  promptRecoveryOverride,
+  promptWoundCapacityOverride,
+  resetRecoveryOverride,
+  resetWoundCapacityOverride
+} from "../dialogs/character-override-dialogs";
 import {
   CHARACTER_OVERRIDE_KEYS,
   characterOverrideView,
@@ -128,6 +133,7 @@ import type {GenreCharacterLike} from "../../services/genre-service";
 import type {GenreDocumentLike} from "../../genre/genre-types";
 import {playerIntrusionController} from "../../intrusions/player-intrusion-controller";
 import type {PlayerIntrusionCharacterLike} from "../../services/player-intrusion-service";
+import {recoveryUsageFromSlots} from "../../rules/core/recovery-track";
 
 const SKILL_QUICK_ROLL_PULSE_CLASS = "is-quick-roll-pulse";
 
@@ -161,6 +167,10 @@ function itemId(target: HTMLElement): string {
 
 function abilityPoolLabel(pool: PoolKey): string {
   return game.i18n.localize(`CYPHERV2.Pools.${pool[0]!.toUpperCase()}${pool.slice(1)}`);
+}
+
+function signedInteger(value: number): string {
+  return value > 0 ? `+${value}` : String(value);
 }
 
 function focusActionData(target: HTMLElement): {focusUuid: string; nodeId: string} {
@@ -199,6 +209,8 @@ const CHARACTER_MUTATING_ACTIONS = new Set([
   "applyWound", "setCharacterWoundCount", "setShieldWoundCount", "toggleFamiliarity",
   "editWound", "deleteWound", "poolDamage", "recovery", "recoveryType", "resetRecoveries", "rally",
   "editCharacterOverride", "clearCharacterOverride", "rollPool",
+  "editWoundCapacityOverride", "resetWoundCapacityOverride",
+  "editRecoveryOverride", "resetRecoveryOverride",
   "createSkill", "rollSkill", "configureSkillRoll", "deleteSkill", "resetHeaderAppearance",
   "createWeapon", "createArmor", "createShield", "attackWeapon", "rollCombatDepletion", "reloadWeapon",
   "toggleShieldEquipped", "toggleArmorEquipped", "deleteCombatItem", "block", "dodge",
@@ -243,6 +255,10 @@ export class CharacterSheet extends ActorSheetV2 {
       rally: CharacterSheet.#onRally,
       editCharacterOverride: CharacterSheet.#onEditCharacterOverride,
       clearCharacterOverride: CharacterSheet.#onClearCharacterOverride,
+      editWoundCapacityOverride: CharacterSheet.#onEditWoundCapacityOverride,
+      resetWoundCapacityOverride: CharacterSheet.#onResetWoundCapacityOverride,
+      editRecoveryOverride: CharacterSheet.#onEditRecoveryOverride,
+      resetRecoveryOverride: CharacterSheet.#onResetRecoveryOverride,
       rollPool: CharacterSheet.#onRollPool,
       inspectHeaderFocus: CharacterSheet.#onInspectHeaderFocus,
       createSkill: CharacterSheet.#onCreateSkill,
@@ -795,8 +811,9 @@ export class CharacterSheet extends ActorSheetV2 {
     target: HTMLElement
   ): Promise<void> {
     const type = target.dataset.recoveryType as RecoveryType | undefined;
+    const slotId = target.dataset.recoverySlotId;
     if (!type || !RECOVERY_TYPES.includes(type)) return;
-    await promptRecovery(this.actor as unknown as CharacterDocumentLike, type);
+    await promptRecovery(this.actor as unknown as CharacterDocumentLike, type, slotId);
   }
 
   static async #onResetRecoveries(this: CharacterSheet): Promise<void> {
@@ -808,7 +825,12 @@ export class CharacterSheet extends ActorSheetV2 {
       no: {label: game.i18n.localize("CYPHERV2.Actions.Cancel")}
     });
     if (!confirmed) return;
-    await this.actor.update({"system.recovery.used": createRecoveryUsage(false)});
+    const slots = (this.actor.system as unknown as CharacterDocumentLike["system"]).recovery.slots
+      .map((slot) => ({...slot, used: false}));
+    await this.actor.update({
+      "system.recovery.slots": slots,
+      "system.recovery.used": recoveryUsageFromSlots(slots)
+    });
     ui.notifications.info(game.i18n.localize("CYPHERV2.Hud.RecoveriesReset"));
   }
 
@@ -867,6 +889,30 @@ export class CharacterSheet extends ActorSheetV2 {
       key
     );
     await this.actor.update({[view.path]: null});
+  }
+
+  static async #onEditWoundCapacityOverride(this: CharacterSheet, event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    await promptWoundCapacityOverride(this.actor as unknown as CharacterDocumentLike);
+  }
+
+  static async #onResetWoundCapacityOverride(this: CharacterSheet, event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    await resetWoundCapacityOverride(this.actor as unknown as CharacterDocumentLike);
+  }
+
+  static async #onEditRecoveryOverride(this: CharacterSheet, event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    await promptRecoveryOverride(this.actor as unknown as CharacterDocumentLike);
+  }
+
+  static async #onResetRecoveryOverride(this: CharacterSheet, event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    await resetRecoveryOverride(this.actor as unknown as CharacterDocumentLike);
   }
 
   static async #onRollPool(
@@ -1698,7 +1744,8 @@ export class CharacterSheet extends ActorSheetV2 {
       descriptors: descriptorItems,
       ...(speciesItems[0] ? {species: {id: speciesItems[0].id, name: speciesItems[0].name}} : {}),
       ...(typeItems[0] ? {type: {id: typeItems[0].id, name: typeItems[0].name}} : {}),
-      ...(primaryFocus ? {focus: {uuid: primaryFocus.uuid, name: primaryFocus.name}} : {})
+      ...(primaryFocus ? {focus: {uuid: primaryFocus.uuid, name: primaryFocus.name}} : {}),
+      hideFocus: coreSystem.presentation.hideFocusInSentence
     });
     const identity = {
       ...identitySource,
@@ -1809,7 +1856,7 @@ export class CharacterSheet extends ActorSheetV2 {
         hindranceModifier: formatStepModifier("hinder", coreSystem.derived.wounds.hindrance),
         dead: coreSystem.derived.wounds.dead
       },
-      recoveries: headerRecoveries(coreSystem.recovery.used).map((recovery) => ({
+      recoveries: headerRecoveries(coreSystem.recovery.slots).map((recovery) => ({
         ...recovery,
         label: game.i18n.localize(`CYPHERV2.Recovery.${recovery.type}`)
       })),
@@ -1881,6 +1928,26 @@ export class CharacterSheet extends ActorSheetV2 {
       const view = characterOverrideView(coreSystem, key);
       return {...view, label: game.i18n.localize(overrideLabelKeys[key]), hasOverride: view.override !== null};
     });
+    const woundModifiers = coreSystem.overrides.wounds ?? {minor: 0, moderate: 0, major: 0};
+    const woundOverride = {
+      hasOverride: Object.values(woundModifiers).some((value) => value !== 0),
+      calculated: coreSystem.derived.wounds.calculatedCapacities,
+      modifiers: woundModifiers,
+      modifierLabels: {
+        minor: signedInteger(woundModifiers.minor),
+        moderate: signedInteger(woundModifiers.moderate),
+        major: signedInteger(woundModifiers.major)
+      },
+      effective: coreSystem.derived.wounds.capacities
+    };
+    const recoveryOverride = {
+      hasOverride: coreSystem.recovery.customized || coreSystem.recovery.rollModifier !== 0,
+      calculatedSlots: 4,
+      calculatedFormula: coreSystem.derived.recovery.calculatedFormula,
+      effectiveSlots: coreSystem.recovery.slots.length,
+      effectiveFormula: coreSystem.derived.recovery.formula,
+      modifier: coreSystem.recovery.rollModifier
+    };
     const guidanceParts = [game.i18n.localize(guidance.focusAbilityCount === 2
       ? "CYPHERV2.Advancement.Guidance.TwoFocusAbilities"
       : "CYPHERV2.Advancement.Guidance.FocusAbility")];
@@ -1905,6 +1972,8 @@ export class CharacterSheet extends ActorSheetV2 {
       enriched: {notes: enrichedNotes},
       familiarities,
       characterOverrides,
+      woundOverride,
+      recoveryOverride,
       genre,
       woundHindranceModifier: formatStepModifier("hinder", coreSystem.derived.wounds.hindrance),
       header,

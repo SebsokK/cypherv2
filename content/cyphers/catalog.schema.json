@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/content/cyphers/catalog.schema.json",
+  "title": "Cypher V2 canonical Cypher and RollTable catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "source", "reviewIssues", "cyphers", "tables"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schemaVersion": {"const": 1},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "version", "license", "pages"],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "title": {"$ref": "#/$defs/nonBlankString"},
+        "version": {"$ref": "#/$defs/nonBlankString"},
+        "license": {"$ref": "#/$defs/nonBlankString"},
+        "pages": {"$ref": "#/$defs/nonBlankString"}
+      }
+    },
+    "reviewIssues": {"type": "array", "items": {"$ref": "#/$defs/reviewIssue"}},
+    "cyphers": {"type": "array", "items": {"$ref": "#/$defs/cypher"}},
+    "tables": {"type": "array", "items": {"$ref": "#/$defs/table"}}
+  },
+  "$defs": {
+    "nonBlankString": {"type": "string", "minLength": 1},
+    "stableId": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "reviewStatus": {"enum": ["verified", "manual-review", "ambiguous"]},
+    "reviewIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issueType", "reviewStatus", "note"],
+      "properties": {
+        "issueType": {"$ref": "#/$defs/stableId"},
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "note": {"$ref": "#/$defs/nonBlankString"}
+      }
+    },
+    "cypher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "name", "category", "manifestation", "power", "level", "levelOverride", "form",
+        "description", "sourcePage", "sourceOrder", "nonstandard", "reviewStatus", "reviewNote"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "name": {"$ref": "#/$defs/nonBlankString"},
+        "category": {"enum": ["standard", "manifest", "power-boost"]},
+        "manifestation": {"enum": ["subtle", "manifest"]},
+        "power": {"oneOf": [{"type": "null"}, {"enum": ["low", "medium", "advanced", "high", "ultra"]}]},
+        "level": {"oneOf": [{"type": "null"}, {"type": "integer", "minimum": 1}]},
+        "levelOverride": {"type": "boolean"},
+        "form": {"type": "string"},
+        "description": {"$ref": "#/$defs/nonBlankString"},
+        "sourcePage": {"$ref": "#/$defs/nonBlankString"},
+        "sourceOrder": {"type": "integer", "minimum": 1},
+        "nonstandard": {"type": "boolean"},
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "reviewNote": {"type": "string"}
+      }
+    },
+    "range": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "integer", "minimum": 1, "maximum": 100},
+        {"type": "integer", "minimum": 1, "maximum": 100}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "tableResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["range", "text", "cypherId", "tableId"],
+      "properties": {
+        "range": {"$ref": "#/$defs/range"},
+        "text": {"type": ["string", "null"]},
+        "cypherId": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/stableId"}]},
+        "tableId": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/stableId"}]}
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "sourcePage", "formula", "results"],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "name": {"$ref": "#/$defs/nonBlankString"},
+        "sourcePage": {"$ref": "#/$defs/nonBlankString"},
+        "formula": {"const": "1d100"},
+        "results": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/tableResult"}}
+      }
+    }
+  }
+}

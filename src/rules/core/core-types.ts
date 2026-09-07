@@ -25,6 +25,12 @@ export const RECOVERY_USAGE_KEYS = {
 export type RecoveryUsageKey = (typeof RECOVERY_USAGE_KEYS)[RecoveryType];
 export type RecoveryUsage = Record<RecoveryUsageKey, boolean>;
 
+export interface RecoverySlotData {
+  id: string;
+  type: RecoveryType;
+  used: boolean;
+}
+
 export function createRecoveryUsage(used = false): RecoveryUsage {
   return {oneAction: used, tenMinutes: used, oneHour: used, tenHours: used};
 }
@@ -54,6 +60,7 @@ export interface CharacterOverrides {
   tier: number | null;
   effort: number | null;
   stats: Record<PoolKey, CharacterNumericOverride>;
+  wounds?: WoundCapacities;
 }
 
 export interface WoundRecordData {
@@ -98,6 +105,7 @@ export interface CharacterDerivedData {
     contributions: DerivedContribution[];
   };
   wounds: {
+    calculatedCapacities: WoundCapacities;
     capacities: WoundCapacities;
     capacityContributions: Record<WoundSeverity, DerivedContribution[]>;
     hindrance: number;
@@ -106,6 +114,9 @@ export interface CharacterDerivedData {
   };
   recovery: {
     formula: string;
+    calculatedFormula: string;
+    calculatedBonus: number;
+    manualModifier: number;
     bonus: number;
     bonusContributions: DerivedContribution[];
     availableTypes: RecoveryType[];
@@ -142,6 +153,7 @@ export interface CharacterDerivedData {
 
 export interface RecoveryHistoryEntry {
   id: string;
+  slotId: string;
   kind: RecoveryKind;
   type: RecoveryType;
   rolled: boolean;
@@ -190,7 +202,13 @@ export interface CharacterCoreSystemData {
   recovery: {
     bonus: number;
     used: RecoveryUsage;
+    slots: RecoverySlotData[];
+    customized: boolean;
+    rollModifier: number;
     history: RecoveryHistoryEntry[];
+  };
+  presentation: {
+    hideFocusInSentence: boolean;
   };
   rest: {
     lastType: string;

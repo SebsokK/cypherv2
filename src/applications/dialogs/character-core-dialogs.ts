@@ -1,5 +1,6 @@
 import {WOUND_SEVERITIES, type RecoveryKind, type RecoveryType, type WoundSeverity} from "../../constants/system";
 import type {CharacterDocumentLike, PoolKey} from "../../rules/core/core-types";
+import {availableRecoverySlots, defaultRecoverySlots} from "../../rules/core/recovery-track";
 import {
   characterOverrideView,
   type CharacterOverrideKey
@@ -201,26 +202,31 @@ export async function promptPoolDamage(actor: CharacterDocumentLike): Promise<vo
 
 export async function promptRecovery(
   actor: CharacterDocumentLike,
-  selectedType?: RecoveryType
+  selectedType?: RecoveryType,
+  selectedSlotId?: string
 ): Promise<void> {
-  const availableTypes = actor.system.derived.recovery.availableTypes;
-  if (availableTypes.length === 0) {
+  const slots = actor.system.recovery.slots?.length
+    ? actor.system.recovery.slots
+    : defaultRecoverySlots(actor.system.recovery.used);
+  const availableSlots = availableRecoverySlots(slots);
+  if (availableSlots.length === 0) {
     ui.notifications.warn(game.i18n.localize("CYPHERV2.Recovery.NoneAvailable"));
     return;
   }
-  if (selectedType && !availableTypes.includes(selectedType)) {
+  if (selectedSlotId && !availableSlots.some((slot) => slot.id === selectedSlotId && slot.type === selectedType)) {
     ui.notifications.warn(game.i18n.localize("CYPHERV2.Recovery.AlreadyUsed"));
     return;
   }
   let type = selectedType;
-  if (!type) {
+  let slotId = selectedSlotId;
+  if (!type || !slotId) {
     const selection = await foundry.applications.api.DialogV2.input({
       window: {title: game.i18n.localize("CYPHERV2.Recovery.Choose")},
       content: `<div class="cypherv2 cypherv2-dialog cypherv2-recovery-dialog">
         <section class="cypherv2-dialog-section">
           <span class="cypherv2-dialog-section-heading">${game.i18n.localize("CYPHERV2.Recovery.Available")}</span>
           <label class="cypherv2-dialog-field">${game.i18n.localize("CYPHERV2.Recovery.Choose")}
-            <select name="type">${availableTypes.map((entry) => `<option value="${entry}">${game.i18n.localize(`CYPHERV2.Recovery.${entry}`)}</option>`).join("")}</select>
+            <select name="slotId">${availableSlots.map((entry) => `<option value="${entry.id}">${game.i18n.localize(`CYPHERV2.Recovery.${entry.type}`)}</option>`).join("")}</select>
           </label>
         </section>
       </div>`,
@@ -228,8 +234,9 @@ export async function promptRecovery(
       ok: {label: game.i18n.localize("CYPHERV2.Actions.Next")}
     }) as DialogData | null;
     if (!selection) return;
-    type = stringValue(selection, "type") as RecoveryType;
-    if (!availableTypes.includes(type)) {
+    slotId = stringValue(selection, "slotId");
+    type = availableSlots.find((slot) => slot.id === slotId)?.type;
+    if (!type || !slotId) {
       ui.notifications.warn(game.i18n.localize("CYPHERV2.Recovery.AlreadyUsed"));
       return;
     }
@@ -260,14 +267,15 @@ export async function promptRecovery(
   try {
     const resolution = resolveRecoveryDialogMode(type, stringValue(setup, "mode") as RecoveryDialogMode);
     if (resolution.kind === "nonRest") {
-      await game.cypherv2.services.recovery.completeNonRest(actor, type);
+      await game.cypherv2.services.recovery.completeNonRest(actor, type, slotId);
       ui.notifications.info(game.i18n.localize("CYPHERV2.Recovery.NonRestCompleted"));
       return;
     }
     const roll = await game.cypherv2.services.recovery.rollNormal(
       actor,
       type,
-      resolution.lastAction
+      resolution.lastAction,
+      slotId
     );
     const restControls = type === "1-hour"
       ? `<label>${game.i18n.localize("CYPHERV2.Rest.OneHourChoice")}

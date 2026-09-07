@@ -68,6 +68,20 @@ describe("RecoveryService", () => {
     await expect(service.roll(actor, "one-action")).resolves.toMatchObject({type: "one-action"});
   });
 
+  it("uses the selected stable slot when duplicate Recovery types exist", async () => {
+    const actor = character();
+    actor.system.recovery.slots = [
+      {id: "action-a", type: "one-action", used: false},
+      {id: "action-b", type: "one-action", used: false},
+      {id: "hour", type: "1-hour", used: false}
+    ];
+    const roll = await service.roll(actor, "one-action", false, "action-b");
+    const result = service.prepareNormal(actor, roll, {might: 0, speed: 0, intellect: 0});
+    expect(result.slots.find((slot) => slot.id === "action-a")?.used).toBe(false);
+    expect(result.slots.find((slot) => slot.id === "action-b")?.used).toBe(true);
+    expect(result.historyEntry.slotId).toBe("action-b");
+  });
+
   it("distributes the result freely across all three Pools", () => {
     const actor = character({poolValues: {might: 3, speed: 4, intellect: 5}});
     const roll = service.calculateRoll("one-action", 1, 6);

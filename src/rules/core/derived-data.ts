@@ -13,9 +13,11 @@ import {
   type DerivedContribution,
   type PoolKey,
   type RecoveryUsage,
+  type RecoverySlotData,
   type WoundCollection
 } from "./core-types";
 import {emptyCharacterOverrides, resolveNumericOverride} from "./character-overrides";
+import {availableRecoverySlots} from "./recovery-track";
 
 export interface CharacterDerivedExtensions {
   poolMax?: Partial<Record<PoolKey, readonly DerivedContribution[]>>;
@@ -78,7 +80,9 @@ export function deriveCharacterData(
   },
   cypherLimitBase = 2,
   tier = 1,
-  overrides: CharacterOverrides = emptyCharacterOverrides()
+  overrides: CharacterOverrides = emptyCharacterOverrides(),
+  recoveryRollModifier = 0,
+  recoverySlots: readonly RecoverySlotData[] = []
 ): CharacterDerivedData {
   const pools = {} as CharacterDerivedData["pools"];
 
@@ -143,6 +147,7 @@ export function deriveCharacterData(
   ];
 
   const capacityContributions = {} as CharacterDerivedData["wounds"]["capacityContributions"];
+  const calculatedCapacities = {} as CharacterDerivedData["wounds"]["calculatedCapacities"];
   const capacities = {} as CharacterDerivedData["wounds"]["capacities"];
   for (const severity of WOUND_SEVERITIES) {
     const contributions = [
@@ -155,8 +160,17 @@ export function deriveCharacterData(
       ),
       ...(extensions.woundCapacity?.[severity] ?? [])
     ];
-    capacityContributions[severity] = contributions;
-    capacities[severity] = Math.max(0, total(contributions));
+    const calculated = Math.max(1, total(contributions));
+    const modifier = overrides.wounds?.[severity] ?? 0;
+    calculatedCapacities[severity] = calculated;
+    capacityContributions[severity] = modifier === 0 ? contributions : [...contributions, contribution(
+      `wound.${severity}.capacity.manual`,
+      `system.overrides.wounds.${severity}`,
+      "base",
+      `Manual ${severity} Wound capacity modifier`,
+      modifier
+    )];
+    capacities[severity] = Math.max(1, calculated + modifier);
   }
 
   const hindranceContributions: DerivedContribution[] = [];
@@ -227,6 +241,7 @@ export function deriveCharacterData(
       contributions: effortContributions
     },
     wounds: {
+      calculatedCapacities,
       capacities,
       capacityContributions,
       hindrance: total(hindranceContributions),
@@ -234,12 +249,15 @@ export function deriveCharacterData(
       dead: wounds.major.length >= capacities.major
     },
     recovery: {
-      formula: derivedRecoveryBonus === 0
-        ? "1d6 + Tier"
-        : `1d6 + Tier + ${derivedRecoveryBonus}`,
-      bonus: derivedRecoveryBonus,
+      formula: recoveryFormula(derivedRecoveryBonus + recoveryRollModifier),
+      calculatedFormula: recoveryFormula(derivedRecoveryBonus),
+      calculatedBonus: derivedRecoveryBonus,
+      manualModifier: recoveryRollModifier,
+      bonus: derivedRecoveryBonus + recoveryRollModifier,
       bonusContributions: recoveryBonusContributions,
-      availableTypes: availableRecoveryTypes(recoveryUsage)
+      availableTypes: recoverySlots.length > 0
+        ? [...new Set(availableRecoverySlots(recoverySlots).map((slot) => slot.type))]
+        : availableRecoveryTypes(recoveryUsage)
     },
     cypherLimit: {max: Math.max(0, total(cypherLimitContributions)), contributions: cypherLimitContributions},
     combat: {
@@ -257,4 +275,9 @@ export function deriveCharacterData(
     },
     packages: packagePresentation
   };
+}
+
+function recoveryFormula(bonus: number): string {
+  if (bonus === 0) return "1d6 + Tier";
+  return `1d6 + Tier ${bonus > 0 ? "+" : "-"} ${Math.abs(bonus)}`;
 }

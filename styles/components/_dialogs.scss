@@ -428,3 +428,40 @@
     min-width: 6rem;
   }
 }
+.cypherv2-recovery-override-dialog {
+  .recovery-override-slots {
+    display: grid;
+    gap: var(--cypherv2-space-tight);
+  }
+
+  .recovery-override-slot {
+    display: grid;
+    grid-template-columns: 1rem minmax(8rem, 1fr) auto auto;
+    gap: var(--cypherv2-space-tight);
+    align-items: center;
+    padding: var(--cypherv2-space-tight);
+    color: var(--cypherv2-text-primary);
+    background: var(--cypherv2-surface-primary);
+    border: 1px solid var(--cypherv2-border);
+    border-radius: calc(var(--cypherv2-radius) / 2);
+
+    > i,
+    .recovery-slot-state {
+      color: var(--cypherv2-text-muted);
+    }
+
+    .recovery-slot-state {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+  }
+
+  .recovery-slot-add {
+    margin-top: var(--cypherv2-space-compact);
+  }
+}
+
+.cypherv2-wound-override-dialog .cypherv2-dialog-field small {
+  color: var(--cypherv2-text-muted);
+  font-size: 0.65rem;
+}

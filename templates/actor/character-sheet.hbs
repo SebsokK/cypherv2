@@ -38,11 +38,13 @@
             {{else}}
               <button type="button" class="character-hud-identity-slot cypherv2-primary-action" data-action="inspectPackage" data-item-id="{{header.identity.type.id}}">{{header.identity.type.displayName}}</button>
             {{/if}}
-            <span>{{localize "CYPHERV2.Hud.Who"}}</span>
-            {{#if header.identity.focus.missing}}
-              <span class="character-hud-identity-slot is-missing" data-hud-drop="focus" title="{{localize 'CYPHERV2.Hud.DropFocus'}}">{{header.identity.focus.displayName}}</span>
-            {{else}}
-              <button type="button" class="character-hud-identity-slot cypherv2-primary-action" data-action="inspectHeaderFocus" data-focus-uuid="{{header.identity.focus.uuid}}">{{header.identity.focus.displayName}}</button>
+            {{#if header.identity.showFocus}}
+              <span>{{localize "CYPHERV2.Hud.Who"}}</span>
+              {{#if header.identity.focus.missing}}
+                <span class="character-hud-identity-slot is-missing" data-hud-drop="focus" title="{{localize 'CYPHERV2.Hud.DropFocus'}}">{{header.identity.focus.displayName}}</span>
+              {{else}}
+                <button type="button" class="character-hud-identity-slot cypherv2-primary-action" data-action="inspectHeaderFocus" data-focus-uuid="{{header.identity.focus.uuid}}">{{header.identity.focus.displayName}}</button>
+              {{/if}}
             {{/if}}
           </p>
         </div>
@@ -84,7 +86,7 @@
         {{#each header.wounds.rows as |row|}}
           <div class="character-hud-wound-row {{#if ../header.shield}}has-shield{{/if}}">
             <small>{{row.character.shortLabel}}</small>
-            <span class="character-hud-pips" aria-label="{{row.character.tooltip}}">{{#each row.character.pips as |pip|}}{{#if @root.editable}}<button type="button" class="character-hud-pip is-character is-editable {{#if pip.filled}}is-filled{{/if}}" data-action="setCharacterWoundCount" data-track="character" data-severity="{{row.character.severity}}" data-count="{{pip.targetCount}}" title="{{pip.tooltip}}" aria-label="{{pip.tooltip}}" aria-pressed="{{pip.filled}}"></button>{{else}}<i class="character-hud-pip is-character {{#if pip.filled}}is-filled{{/if}}"></i>{{/if}}{{/each}}</span>
+            <span class="character-hud-pips" aria-label="{{row.character.tooltip}}">{{#each row.character.pips as |pip|}}{{#if @root.editable}}<button type="button" class="character-hud-pip is-character is-editable {{#if pip.filled}}is-filled{{/if}}" data-action="setCharacterWoundCount" data-track="character" data-severity="{{row.character.severity}}" data-count="{{pip.targetCount}}" title="{{pip.tooltip}}" aria-label="{{pip.tooltip}}" aria-pressed="{{pip.filled}}"></button>{{else}}<i class="character-hud-pip is-character {{#if pip.filled}}is-filled{{/if}}"></i>{{/if}}{{/each}}{{#if row.character.overCapacity}}<small class="character-hud-over-capacity">+{{row.character.overCapacity}}</small>{{/if}}</span>
             {{#if row.shield}}<span class="character-hud-pips" aria-label="{{row.shield.tooltip}}">{{#each row.shield.pips as |pip|}}{{#if @root.editable}}<button type="button" class="character-hud-pip is-shield is-editable {{#if pip.filled}}is-filled{{/if}}" data-action="setShieldWoundCount" data-track="shield" data-shield-id="{{row.shield.itemId}}" data-severity="{{row.shield.severity}}" data-count="{{pip.targetCount}}" title="{{pip.tooltip}}" aria-label="{{pip.tooltip}}" aria-pressed="{{pip.filled}}"></button>{{else}}<i class="character-hud-pip is-shield {{#if pip.filled}}is-filled{{/if}}"></i>{{/if}}{{/each}}</span>{{/if}}
           </div>
         {{/each}}
@@ -101,7 +103,7 @@
           {{#if header.canResetRecoveries}}<button type="button" class="cypherv2-icon-action" data-action="resetRecoveries" title="{{localize 'CYPHERV2.Hud.ResetRecoveries'}}" aria-label="{{localize 'CYPHERV2.Hud.ResetRecoveries'}}"><i class="fa-solid fa-rotate-right"></i></button>{{/if}}
         </div>
         <div class="character-hud-recovery-buttons">
-          {{#each header.recoveries as |recovery|}}<button type="button" data-action="recoveryType" data-recovery-type="{{recovery.type}}" title="{{recovery.label}}" {{#if recovery.used}}disabled aria-disabled="true"{{/if}}>{{localize recovery.shortLabel}}</button>{{/each}}
+          {{#each header.recoveries as |recovery|}}<button type="button" data-action="recoveryType" data-recovery-slot-id="{{recovery.id}}" data-recovery-type="{{recovery.type}}" title="{{recovery.label}}" {{#if recovery.used}}disabled aria-disabled="true"{{/if}}>{{localize recovery.shortLabel}}</button>{{/each}}
         </div>
       </article>
 
@@ -128,25 +130,28 @@
         <div class="character-familiarity-family"><h3>{{localize "CYPHERV2.Combat.Armors"}}</h3><div class="character-familiarity-buttons">{{#each familiarities.armor as |entry|}}<button type="button" class="character-familiarity-toggle {{#if entry.effective}}is-effective{{/if}} {{#if entry.manual}}is-manual{{/if}} {{#if entry.packageGranted}}is-package-granted{{/if}}" data-action="toggleFamiliarity" data-family="armor" data-category="{{entry.category}}" aria-pressed="{{entry.manual}}" title="{{entry.sourceHint}}" {{#unless entry.canToggle}}disabled aria-disabled="true"{{/unless}}><span>{{entry.label}}</span>{{#if entry.effective}}<i class="fa-solid fa-check" aria-hidden="true"></i>{{/if}}</button>{{/each}}</div></div>
       </section>
 
-      <section class="character-settings-section character-genre-settings" data-hud-drop="genre">
-        <header class="character-settings-section-header"><h2>{{localize "CYPHERV2.Genre.Label"}}</h2></header>
-        {{#if genre.attached}}
-          <div class="character-genre-row">
-            <i class="fa-solid fa-masks-theater" aria-hidden="true"></i>
-            <button type="button" class="link-button" data-action="inspectGenre" {{#unless genre.available}}disabled{{/unless}}>{{genre.name}}</button>
-            <small>{{#if genre.available}}{{localize "CYPHERV2.Genre.EffortCap.Label"}}: {{genre.totalEffortCapLabel}}{{else}}{{localize "CYPHERV2.Genre.SourceUnavailable"}}{{/if}}</small>
-            {{#if editable}}<span class="character-settings-row-actions"><button type="button" class="cypherv2-icon-action" data-action="addGenre" title="{{localize 'CYPHERV2.Packages.Replace'}}" aria-label="{{localize 'CYPHERV2.Packages.Replace'}} {{genre.name}}"><i class="fa-solid fa-pen"></i></button><button type="button" class="cypherv2-icon-action" data-action="removeGenre" title="{{localize 'CYPHERV2.Genre.Remove'}}" aria-label="{{localize 'CYPHERV2.Genre.Remove'}} {{genre.name}}"><i class="fa-solid fa-xmark"></i></button></span>{{/if}}
-          </div>
-        {{else}}
-          <div class="character-genre-empty"><span class="character-genre-dropzone"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i> {{localize "CYPHERV2.Genre.DropHere"}}</span>{{#if editable}}<button type="button" class="compact-inline-action" data-action="addGenre"><i class="fa-solid fa-plus"></i> {{localize "CYPHERV2.Genre.Add"}}</button>{{/if}}</div>
-        {{/if}}
-      </section>
-
       <section class="character-settings-section character-packages">
         <header class="character-settings-section-header">
           <h2>{{localize "CYPHERV2.Settings.Character.Sources"}}</h2>
           {{#if advancement.guidance.completed}}{{#if editable}}<button type="button" class="compact-inline-action" data-action="resetProgressionGuidance">{{localize "CYPHERV2.Advancement.Guidance.Reset"}}</button>{{/if}}{{/if}}
         </header>
+        <div class="character-source-subsection character-genre-settings" data-hud-drop="genre">
+          <h3>{{localize "CYPHERV2.Genre.Label"}}</h3>
+          {{#if genre.attached}}
+            <div class="character-genre-row">
+              <i class="fa-solid fa-masks-theater" aria-hidden="true"></i>
+              <button type="button" class="link-button" data-action="inspectGenre" {{#unless genre.available}}disabled{{/unless}}>{{genre.name}}</button>
+              <small>{{#if genre.available}}{{localize "CYPHERV2.Genre.EffortCap.Label"}}: {{genre.totalEffortCapLabel}}{{else}}{{localize "CYPHERV2.Genre.SourceUnavailable"}}{{/if}}</small>
+              {{#if editable}}<span class="character-settings-row-actions"><button type="button" class="cypherv2-icon-action" data-action="addGenre" title="{{localize 'CYPHERV2.Packages.Replace'}}" aria-label="{{localize 'CYPHERV2.Packages.Replace'}} {{genre.name}}"><i class="fa-solid fa-pen"></i></button><button type="button" class="cypherv2-icon-action" data-action="removeGenre" title="{{localize 'CYPHERV2.Genre.Remove'}}" aria-label="{{localize 'CYPHERV2.Genre.Remove'}} {{genre.name}}"><i class="fa-solid fa-xmark"></i></button></span>{{/if}}
+            </div>
+          {{else}}
+            <div class="character-genre-empty"><span class="character-genre-dropzone"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i> {{localize "CYPHERV2.Genre.DropHere"}}</span>{{#if editable}}<button type="button" class="compact-inline-action" data-action="addGenre"><i class="fa-solid fa-plus"></i> {{localize "CYPHERV2.Genre.Add"}}</button>{{/if}}</div>
+          {{/if}}
+        </div>
+        <label class="character-focus-sentence-setting">
+          <input type="checkbox" name="system.presentation.hideFocusInSentence" {{checked system.presentation.hideFocusInSentence}} {{#unless editable}}disabled{{/unless}}>
+          <span>{{localize "CYPHERV2.Settings.Character.HideFocusInSentence"}}</span>
+        </label>
         <div class="character-source-list">
           <div class="character-source-row"><strong>{{localize "CYPHERV2.Packages.Types"}}</strong><div class="character-source-values">{{#each typeItems as |package|}}<span class="character-source-item"><button type="button" class="link-button" data-action="inspectPackage" data-item-id="{{package.id}}">{{package.name}}</button>{{#if ../editable}}<button type="button" class="cypherv2-icon-action" data-action="removePackage" data-item-id="{{package.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{package.name}}"><i class="fa-solid fa-xmark"></i></button>{{/if}}</span>{{else}}<span class="empty-list">{{localize "CYPHERV2.Common.None"}}</span>{{/each}}</div>{{#if editable}}<button type="button" class="compact-inline-action character-source-add" data-action="addType"><i class="fa-solid fa-plus"></i> {{localize "CYPHERV2.Actions.Add"}}</button>{{/if}}</div>
           <div class="character-source-row"><strong>{{localize "CYPHERV2.Packages.PrimaryDescriptor"}}</strong><div class="character-source-values">{{#each primaryDescriptorItems as |package|}}<span class="character-source-item"><button type="button" class="link-button" data-action="inspectPackage" data-item-id="{{package.id}}">{{package.name}}</button>{{#if ../editable}}<button type="button" class="cypherv2-icon-action" data-action="removePackage" data-item-id="{{package.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{package.name}}"><i class="fa-solid fa-xmark"></i></button>{{/if}}</span>{{else}}<span class="empty-list">{{localize "CYPHERV2.Common.None"}}</span>{{/each}}</div>{{#if editable}}<button type="button" class="compact-inline-action character-source-add" data-action="addDescriptor"><i class="fa-solid fa-plus"></i> {{localize "CYPHERV2.Actions.Add"}}</button>{{/if}}</div>
@@ -181,12 +186,26 @@
               {{#if ../editable}}<span class="character-settings-row-actions"><button type="button" class="cypherv2-icon-action" data-action="editCharacterOverride" data-override-key="{{entry.key}}" title="{{localize 'CYPHERV2.Actions.Edit'}}"><i class="fa-solid fa-pen"></i></button><button type="button" class="cypherv2-icon-action" data-action="clearCharacterOverride" data-override-key="{{entry.key}}" title="{{localize 'CYPHERV2.Overrides.Clear'}}" {{#unless entry.hasOverride}}disabled{{/unless}}><i class="fa-solid fa-rotate-left"></i></button></span>{{/if}}
             </div>
           {{/each}}
+          <div class="character-override-row character-compound-override-row">
+            <strong>{{localize "CYPHERV2.Overrides.Wounds"}}</strong>
+            <span><small>{{localize "CYPHERV2.Overrides.Calculated"}}</small> MIN {{woundOverride.calculated.minor}} · MOD {{woundOverride.calculated.moderate}} · MAJ {{woundOverride.calculated.major}}</span>
+            <span><small>{{localize "CYPHERV2.Overrides.Override"}}</small> {{#if woundOverride.hasOverride}}MIN {{woundOverride.modifierLabels.minor}} · MOD {{woundOverride.modifierLabels.moderate}} · MAJ {{woundOverride.modifierLabels.major}}{{else}}{{localize "CYPHERV2.Common.None"}}{{/if}}</span>
+            <span><small>{{localize "CYPHERV2.Overrides.Effective"}}</small> MIN {{woundOverride.effective.minor}} · MOD {{woundOverride.effective.moderate}} · MAJ {{woundOverride.effective.major}}</span>
+            {{#if editable}}<span class="character-settings-row-actions"><button type="button" class="cypherv2-icon-action" data-action="editWoundCapacityOverride" title="{{localize 'CYPHERV2.Actions.Edit'}}"><i class="fa-solid fa-pen"></i></button><button type="button" class="cypherv2-icon-action" data-action="resetWoundCapacityOverride" title="{{localize 'CYPHERV2.Overrides.Clear'}}" {{#unless woundOverride.hasOverride}}disabled{{/unless}}><i class="fa-solid fa-rotate-left"></i></button></span>{{/if}}
+          </div>
+          <div class="character-override-row character-compound-override-row">
+            <strong>{{localize "CYPHERV2.Overrides.Recovery"}}</strong>
+            <span><small>{{localize "CYPHERV2.Overrides.Calculated"}}</small> {{recoveryOverride.calculatedSlots}} {{localize "CYPHERV2.Overrides.Slots"}} · {{recoveryOverride.calculatedFormula}}</span>
+            <span><small>{{localize "CYPHERV2.Overrides.Override"}}</small> {{#if recoveryOverride.hasOverride}}{{localize "CYPHERV2.Overrides.Custom"}}{{else}}{{localize "CYPHERV2.Common.None"}}{{/if}}</span>
+            <span><small>{{localize "CYPHERV2.Overrides.Effective"}}</small> {{recoveryOverride.effectiveSlots}} {{localize "CYPHERV2.Overrides.Slots"}} · {{recoveryOverride.effectiveFormula}}</span>
+            {{#if editable}}<span class="character-settings-row-actions"><button type="button" class="cypherv2-icon-action" data-action="editRecoveryOverride" title="{{localize 'CYPHERV2.Actions.Edit'}}"><i class="fa-solid fa-pen"></i></button><button type="button" class="cypherv2-icon-action" data-action="resetRecoveryOverride" title="{{localize 'CYPHERV2.Overrides.Clear'}}" {{#unless recoveryOverride.hasOverride}}disabled{{/unless}}><i class="fa-solid fa-rotate-left"></i></button></span>{{/if}}
+          </div>
         </div>
       </details>
 
       <section class="character-settings-section character-header-appearance-settings">
         <header class="character-settings-section-header">
-          <h2>{{localize "CYPHERV2.Settings.Character.HeaderAppearance"}}</h2>
+          <h2>{{localize "CYPHERV2.Settings.Character.CharacterAppearance"}}</h2>
           {{#if editable}}<button type="button" class="compact-inline-action" data-action="resetHeaderAppearance"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> {{localize "CYPHERV2.Settings.Character.ResetToTheme"}}</button>{{/if}}
         </header>
         <div class="character-header-appearance-grid">

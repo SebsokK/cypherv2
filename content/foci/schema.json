@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/content/foci/schema.json",
+  "title": "Cypher V2 Focus import catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "source", "abilities", "foci"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schemaVersion": {"const": 1},
+    "source": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "title", "version", "license"],
+          "properties": {
+            "id": {"$ref": "#/$defs/stableId"},
+            "title": {"$ref": "#/$defs/nonBlankString"},
+            "version": {"$ref": "#/$defs/nonBlankString"},
+            "license": {"$ref": "#/$defs/nonBlankString"}
+          }
+        }
+      ]
+    },
+    "abilities": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/ability"}
+    },
+    "foci": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/focus"}
+    }
+  },
+  "$defs": {
+    "nonBlankString": {"type": "string", "minLength": 1},
+    "stableId": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "tier": {"type": "integer", "minimum": 1, "maximum": 6},
+    "reviewStatus": {"enum": ["verified", "manual-review", "ambiguous"]},
+    "reviewIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issueType", "reviewStatus", "note"],
+      "properties": {
+        "issueType": {
+          "enum": [
+            "ambiguous-graph-edge",
+            "duplicate-name-different-rules",
+            "complex-cost",
+            "later-tier-upgrade",
+            "repeatable-ability",
+            "prerequisite",
+            "unsupported-automation",
+            "source-ambiguity"
+          ]
+        },
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "note": {"$ref": "#/$defs/nonBlankString"}
+      }
+    },
+    "fixedCost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "amount", "allowedPools", "ignoresEdge"],
+      "properties": {
+        "kind": {"const": "fixed"},
+        "amount": {"type": "integer", "minimum": 0},
+        "allowedPools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["might", "speed", "intellect"]}
+        },
+        "ignoresEdge": {"type": "boolean"}
+      }
+    },
+    "complexCost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "text"],
+      "properties": {
+        "kind": {"const": "complex"},
+        "text": {"$ref": "#/$defs/nonBlankString"}
+      }
+    },
+    "automation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "activation": {"enum": ["action", "passive", "reaction", "special"]},
+        "roll": {"enum": ["none", "task", "attack", "defense"]},
+        "rollModifier": {"type": "integer", "minimum": -10, "maximum": 10},
+        "attackModifier": {"type": "integer", "minimum": -10, "maximum": 10},
+        "damage": {"type": "integer", "minimum": 0},
+        "woundSeverity": {"enum": ["none", "minor", "moderate", "major"]},
+        "range": {"type": "string"},
+        "targetMode": {"enum": ["none", "single", "multiple"]}
+      }
+    },
+    "ability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "name", "tier", "fullRulesDescription", "sourcePage",
+        "actionClassification", "cost", "repeatability", "prerequisiteAbilityId",
+        "laterTierChanges", "reviewStatus", "reviewNote"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "name": {"$ref": "#/$defs/nonBlankString"},
+        "tier": {"$ref": "#/$defs/tier"},
+        "fullRulesDescription": {"$ref": "#/$defs/nonBlankString"},
+        "sourcePage": {"$ref": "#/$defs/nonBlankString"},
+        "actionClassification": {
+          "oneOf": [
+            {"type": "null"},
+            {"enum": ["action", "first-action", "last-action", "enabler", "extra-action", "special"]}
+          ]
+        },
+        "cost": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/fixedCost"},
+            {"$ref": "#/$defs/complexCost"}
+          ]
+        },
+        "repeatability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["canTakeMultipleTimes", "maximumSelections"],
+          "properties": {
+            "canTakeMultipleTimes": {"type": "boolean"},
+            "maximumSelections": {"oneOf": [{"type": "null"}, {"type": "integer", "minimum": 2}]}
+          }
+        },
+        "prerequisiteAbilityId": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/stableId"}]},
+        "laterTierChanges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tier", "text"],
+            "properties": {
+              "tier": {"$ref": "#/$defs/tier"},
+              "text": {"$ref": "#/$defs/nonBlankString"}
+            }
+          }
+        },
+        "automation": {"$ref": "#/$defs/automation"},
+        "deduplicationNote": {"type": "string"},
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "reviewNote": {"type": "string"},
+        "reviewIssues": {"type": "array", "items": {"$ref": "#/$defs/reviewIssue"}}
+      }
+    },
+    "focusNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "abilityId", "tier", "order", "reviewStatus", "reviewNote"],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "abilityId": {"$ref": "#/$defs/stableId"},
+        "tier": {"$ref": "#/$defs/tier"},
+        "order": {"type": "integer", "minimum": 0},
+        "position": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "x": {"type": ["number", "null"]},
+            "y": {"type": ["number", "null"]}
+          }
+        },
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "reviewNote": {"type": "string"}
+      }
+    },
+    "focusEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from", "to", "reviewStatus", "reviewNote"],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "from": {"$ref": "#/$defs/stableId"},
+        "to": {"$ref": "#/$defs/stableId"},
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "reviewNote": {"type": "string"}
+      }
+    },
+    "focus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "name", "description", "sourcePage", "genreThemes",
+        "gmIntrusionSuggestions", "additionalEquipment", "associatedAbilities",
+        "graph", "reviewStatus", "reviewNote"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/stableId"},
+        "name": {"$ref": "#/$defs/nonBlankString"},
+        "description": {"$ref": "#/$defs/nonBlankString"},
+        "sourcePage": {"$ref": "#/$defs/nonBlankString"},
+        "genreThemes": {"type": "array", "items": {"$ref": "#/$defs/nonBlankString"}},
+        "gmIntrusionSuggestions": {"type": "array", "items": {"$ref": "#/$defs/nonBlankString"}},
+        "additionalEquipment": {"type": "string"},
+        "associatedAbilities": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/stableId"}},
+        "graph": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["nodes", "edges"],
+          "properties": {
+            "nodes": {"type": "array", "items": {"$ref": "#/$defs/focusNode"}},
+            "edges": {"type": "array", "items": {"$ref": "#/$defs/focusEdge"}}
+          }
+        },
+        "reviewStatus": {"$ref": "#/$defs/reviewStatus"},
+        "reviewNote": {"type": "string"},
+        "reviewIssues": {"type": "array", "items": {"$ref": "#/$defs/reviewIssue"}}
+      }
+    }
+  }
+}

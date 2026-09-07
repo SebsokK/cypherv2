@@ -60,6 +60,20 @@ foreach ($relativePath in $requiredRuntimePaths) {
   }
 }
 
+$requiredGeneratedPacks = @(
+  "packs/focus-abilities",
+  "packs/foci",
+  "packs/cyphers",
+  "packs/cypher-tables"
+)
+
+foreach ($relativePath in $requiredGeneratedPacks) {
+  $packPath = Join-Path $projectRoot $relativePath
+  if (-not (Test-Path -LiteralPath $packPath -PathType Container)) {
+    throw "Required generated Foundry pack is missing: $relativePath. Run pnpm build first."
+  }
+}
+
 if (Test-Path -LiteralPath $releaseRoot) {
   Remove-Item -LiteralPath $releaseRoot -Recurse -Force
 }
@@ -84,7 +98,11 @@ $forbiddenPrefixes = @(
   "src/",
   "tests/",
   "docs/",
+  "content/",
+  "scripts/",
   "_reference/",
+  ".generated/",
+  ".reports/",
   "node_modules/",
   ".pnpm-store/",
   "coverage/",

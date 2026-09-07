@@ -68,6 +68,18 @@ describe("Character Header HUD V1.1", () => {
     }).sentence).toBe("I AM AN HONORABLE ELF MAGE WHO QUELLS EVIL");
   });
 
+  it("can hide the complete Focus clause without discarding the Focus reference", () => {
+    const identity = characterHeaderIdentity({
+      descriptors: [{id: "clever", name: "Clever", role: "primary"}],
+      type: {id: "warrior", name: "Warrior"},
+      focus: {uuid: "Item.focus", name: "Commands Mental Powers"},
+      hideFocus: true
+    });
+    expect(identity.sentence).toBe("I AM A CLEVER WARRIOR");
+    expect(identity.showFocus).toBe(false);
+    expect(identity.focus.uuid).toBe("Item.focus");
+  });
+
   it("generates exactly the dynamic Wound capacity and fill count", () => {
     expect(headerPips(2, 5)).toHaveLength(5);
     expect(headerPips(2, 5).filter((pip) => pip.filled)).toHaveLength(2);
@@ -165,9 +177,11 @@ describe("Character Header HUD V1.1", () => {
     expect(template).toContain('class="character-hud-recovery-formula">{{header.recoveryFormulaLabel}}');
     expect(sheet).toContain("recoveryFormulaLabel: coreSystem.derived.recovery.formula");
     expect(sheet).toContain("if (!game.user.isGM) return");
-    expect(sheet).toContain('"system.recovery.used": createRecoveryUsage(false)');
+    expect(sheet).toContain('"system.recovery.slots": slots');
+    expect(sheet).toContain('"system.recovery.used": recoveryUsageFromSlots(slots)');
     expect(recoveryDialog).toContain("selectedType?: RecoveryType");
-    expect(recoveryDialog).toContain("let type = selectedType");
+    expect(recoveryDialog).toContain("selectedSlotId?: string");
+    expect(template).toContain('data-recovery-slot-id="{{recovery.id}}"');
     expect(template).toContain("{{#if header.shield}}");
     expect(template).toContain("header.shield.broken");
     expect(template).toContain("header.wounds.rows");

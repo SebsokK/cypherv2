@@ -105,4 +105,13 @@ describe("native Application V2 rich-text controls", () => {
     expect(styles).toMatch(/> li\.concurrent-users\s*\{[\s\S]*display:\s*none/);
     expect(styles).not.toMatch(/> li\.concurrent-users\s*\{[^}]*!important/);
   });
+
+  it("keeps semantic rich-text headings compact only in Item prose and embedded Character Item details", () => {
+    expect(styles).toContain(".cypherv2-sheet.cypherv2-item .cypherv2-rich-description :is(.editor-content, .ProseMirror)");
+    expect(styles).toContain(".cypherv2-sheet.cypherv2-character :is(.ability-description, .compact-inventory-details)");
+    expect(styles).toMatch(/h1\s*\{[\s\S]*font-size:\s*0\.9rem/);
+    expect(styles).toMatch(/h2\s*\{[\s\S]*font-size:\s*0\.82rem/);
+    expect(styles).toMatch(/h3\s*\{[\s\S]*font-size:\s*0\.76rem/);
+    expect(styles).not.toContain(".journal-sheet");
+  });
 });

@@ -1,10 +1,11 @@
-import {RECOVERY_TYPES, type RecoveryType, type WoundSeverity} from "../../constants/system";
+import {type RecoveryType, type WoundSeverity} from "../../constants/system";
 import {
-  RECOVERY_USAGE_KEYS,
+  type RecoverySlotData,
   type RecoveryUsage,
   type WoundCapacities
 } from "../../rules/core/core-types";
 import type {PackageRole} from "../../packages/package-types";
+import {defaultRecoverySlots} from "../../rules/core/recovery-track";
 
 export interface HeaderIdentityReference {
   readonly id?: string;
@@ -32,10 +33,12 @@ export interface HeaderWoundTrack {
   readonly severity: WoundSeverity;
   readonly count: number;
   readonly capacity: number;
+  readonly overCapacity: number;
   readonly pips: readonly HeaderPip[];
 }
 
 export interface HeaderRecoveryButton {
+  readonly id: string;
   readonly type: RecoveryType;
   readonly used: boolean;
   readonly available: boolean;
@@ -124,6 +127,7 @@ export interface CharacterHeaderIdentityInput {
   readonly species?: HeaderIdentityReference;
   readonly type?: HeaderIdentityReference;
   readonly focus?: HeaderIdentityReference;
+  readonly hideFocus?: boolean;
 }
 
 export function characterHeaderIdentity(input: CharacterHeaderIdentityInput = {}): {
@@ -132,6 +136,7 @@ export function characterHeaderIdentity(input: CharacterHeaderIdentityInput = {}
   readonly species: HeaderIdentitySlot | null;
   readonly type: HeaderIdentitySlot;
   readonly focus: HeaderIdentitySlot;
+  readonly showFocus: boolean;
   readonly sentence: string;
 } {
   const orderedDescriptors = orderedHeaderDescriptors(input.descriptors);
@@ -142,6 +147,7 @@ export function characterHeaderIdentity(input: CharacterHeaderIdentityInput = {}
   const speciesSlot = input.species ? identitySlot("species", input.species) : null;
   const typeSlot = identitySlot("type", input.type);
   const focusSlot = identitySlot("focus", input.focus);
+  const showFocus = input.hideFocus !== true;
   const article = indefiniteArticle(descriptorSlots[0]!.displayName);
   const descriptorText = descriptorSlots.map((descriptor) => descriptor.displayName).join(" AND ");
   const identityText = [descriptorText, speciesSlot?.displayName, typeSlot.displayName].filter(Boolean).join(" ");
@@ -151,7 +157,10 @@ export function characterHeaderIdentity(input: CharacterHeaderIdentityInput = {}
     species: speciesSlot,
     type: typeSlot,
     focus: focusSlot,
-    sentence: `I AM ${article} ${identityText} WHO ${focusSlot.displayName}`
+    showFocus,
+    sentence: showFocus
+      ? `I AM ${article} ${identityText} WHO ${focusSlot.displayName}`
+      : `I AM ${article} ${identityText}`
   };
 }
 
@@ -173,14 +182,20 @@ export function headerWoundTracks(
     severity,
     count: counts[severity],
     capacity: capacities[severity],
+    overCapacity: Math.max(0, counts[severity] - capacities[severity]),
     pips: headerPips(counts[severity], capacities[severity])
   }));
 }
 
-export function headerRecoveries(usage: RecoveryUsage): readonly HeaderRecoveryButton[] {
-  return RECOVERY_TYPES.map((type) => {
-    const used = usage[RECOVERY_USAGE_KEYS[type]];
-    return {type, used, available: !used, shortLabel: RECOVERY_SHORT_LABELS[type]};
+export function headerRecoveries(
+  source: RecoveryUsage | readonly RecoverySlotData[]
+): readonly HeaderRecoveryButton[] {
+  const slots = Array.isArray(source)
+    ? source as readonly RecoverySlotData[]
+    : defaultRecoverySlots(source as RecoveryUsage);
+  return slots.map((slot) => {
+    const used = slot.used;
+    return {id: slot.id, type: slot.type, used, available: !used, shortLabel: RECOVERY_SHORT_LABELS[slot.type]};
   });
 }
 

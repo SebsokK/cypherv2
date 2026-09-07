@@ -8,6 +8,7 @@ import type {
   WoundCollection,
   WoundRecordData
 } from "../../src/rules/core/core-types";
+import {defaultRecoverySlots} from "../../src/rules/core/recovery-track";
 
 export function wound(id: string): WoundRecordData {
   return {id, label: id, description: "", sourceUuid: "test", treated: false};
@@ -84,7 +85,15 @@ export function character(options: {
     proficiencies: {weaponCategories: [], armorCategories: [], freelyUse: []},
     stats: Object.assign(stats, {effortBase: options.effortBase ?? 1}),
     wounds: currentWounds,
-    recovery: {bonus: 0, used, history: []},
+    recovery: {
+      bonus: 0,
+      used,
+      slots: defaultRecoverySlots(used),
+      customized: false,
+      rollModifier: 0,
+      history: []
+    },
+    presentation: {hideFocusInSentence: false},
     rest: {lastType: "", history: []},
     derived: deriveCharacterData(stats, currentWounds, used, {}, [], undefined, 0, undefined, 2, options.tier ?? 1)
   };
@@ -111,7 +120,9 @@ export function character(options: {
         undefined,
         this.system.cypherLimitBase,
         this.system.tier,
-        this.system.overrides
+        this.system.overrides,
+        this.system.recovery.rollModifier,
+        this.system.recovery.slots
       );
       return this;
     }

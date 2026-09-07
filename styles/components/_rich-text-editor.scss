@@ -163,3 +163,45 @@
   }
 
 }
+
+// Rulebook prose uses semantic headings to preserve its source structure. In
+// compact document sheets those headings are subsections, not page titles.
+// Keep the scale local to Item prose and embedded Item details so headings in
+// journals and unrelated Foundry applications retain their native hierarchy.
+.cypherv2 .cypherv2-sheet.cypherv2-item .cypherv2-rich-description :is(.editor-content, .ProseMirror),
+.cypherv2 .cypherv2-sheet.cypherv2-character :is(.ability-description, .compact-inventory-details) {
+  h1,
+  h2,
+  h3 {
+    color: var(--cypherv2-text-primary);
+    font-family: var(--cypherv2-font-heading);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h1 {
+    margin: 0.68rem 0 0.28rem;
+    padding-bottom: 0.16rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.035em;
+    border-bottom: 1px solid color-mix(in srgb, var(--cypherv2-border) 65%, transparent);
+  }
+
+  h2 {
+    margin: 0.58rem 0 0.24rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.025em;
+  }
+
+  h3 {
+    margin: 0.5rem 0 0.2rem;
+    color: color-mix(in srgb, var(--cypherv2-text-primary) 84%, var(--cypherv2-text-muted));
+    font-size: 0.76rem;
+    letter-spacing: 0.018em;
+  }
+}

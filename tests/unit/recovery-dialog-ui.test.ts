@@ -43,7 +43,7 @@ describe("Recovery dialog presentation", () => {
     expect(resolveRecoveryDialogMode("one-action", "normal")).toEqual({kind: "normal", lastAction: false});
     expect(resolveRecoveryDialogMode("one-action", "lastAction")).toEqual({kind: "normal", lastAction: true});
     expect(resolveRecoveryDialogMode("one-action", "nonRest")).toEqual({kind: "nonRest", lastAction: false});
-    expect(dialogSource).toContain("completeNonRest(actor, type)");
+    expect(dialogSource).toContain("completeNonRest(actor, type, slotId)");
     expect(dialogSource).toContain("resolution.lastAction");
   });
 

@@ -38,13 +38,35 @@ describe("compact Character Settings UI", () => {
   });
 
   it("renders Genre as a compact open, replace, remove, add, and drop row", () => {
-    expect(settings).toContain('class="character-settings-section character-genre-settings"');
+    expect(settings).toContain('class="character-source-subsection character-genre-settings"');
     expect(settings).toContain('data-hud-drop="genre"');
     expect(settings).toContain('data-action="inspectGenre"');
     expect(settings).toContain('data-action="addGenre"');
     expect(settings).toContain('data-action="removeGenre"');
     expect(settings).toContain("genre.totalEffortCapLabel");
     expect(settings).toContain("character-genre-dropzone");
+  });
+
+  it("uses the requested top-level Settings section order and nests Genre in Character Sources", () => {
+    const familiarities = settings.indexOf("character-familiarity-settings");
+    const sources = settings.indexOf("character-packages");
+    const genre = settings.indexOf("character-genre-settings");
+    const base = settings.indexOf("character-base-values");
+    const overrides = settings.indexOf("character-override-settings");
+    const appearance = settings.indexOf("character-header-appearance-settings");
+    expect([familiarities, sources, base, overrides, appearance]).toEqual(
+      [...[familiarities, sources, base, overrides, appearance]].sort((left, right) => left - right)
+    );
+    expect(genre).toBeGreaterThan(sources);
+    expect(genre).toBeLessThan(base);
+  });
+
+  it("provides Focus sentence, Wound capacity, and Recovery manual configuration", () => {
+    expect(settings).toContain('name="system.presentation.hideFocusInSentence"');
+    expect(settings).toContain('data-action="editWoundCapacityOverride"');
+    expect(settings).toContain('data-action="resetWoundCapacityOverride"');
+    expect(settings).toContain('data-action="editRecoveryOverride"');
+    expect(settings).toContain('data-action="resetRecoveryOverride"');
   });
 
   it("keeps every package relationship and action in compact source rows", () => {
@@ -114,7 +136,7 @@ describe("compact Character Settings UI", () => {
     expect(sheet).toContain("#onDeleteWound");
   });
 
-  it("places Header Appearance last after gameplay and the collapsed value sections", () => {
+  it("places Character Appearance last after gameplay and the collapsed value sections", () => {
     const appearance = settings.indexOf('class="character-settings-section character-header-appearance-settings"');
     const familiarities = settings.indexOf('class="character-settings-section character-familiarity-settings"');
     const genre = settings.indexOf('class="character-settings-section character-genre-settings"');
@@ -128,5 +150,7 @@ describe("compact Character Settings UI", () => {
     expect(appearance).toBeGreaterThan(baseValues);
     expect(appearance).toBeGreaterThan(overrides);
     expect(settings.slice(appearance + 1)).not.toContain('class="character-settings-section ');
+    expect(settings).toContain("CYPHERV2.Settings.Character.CharacterAppearance");
+    expect(settings).not.toContain("CYPHERV2.Settings.Character.HeaderAppearance");
   });
 });

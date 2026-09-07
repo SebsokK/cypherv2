@@ -40,7 +40,8 @@ export function emptyCharacterOverrides(): CharacterOverrides {
       might: {max: null, edge: null},
       speed: {max: null, edge: null},
       intellect: {max: null, edge: null}
-    }
+    },
+    wounds: {minor: 0, moderate: 0, major: 0}
   };
 }
 
