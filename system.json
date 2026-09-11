@@ -2,9 +2,9 @@
   "id": "cypherv2",
   "title": "Cypher V2",
   "description": "A modern, extensible implementation of Cypher V2 for Foundry Virtual Tabletop.",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "manifest": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/system.json",
-  "download": "https://github.com/SebsokK/cypherv2/releases/download/v0.1.0-beta.2/cypherv2.zip",
+  "download": "https://github.com/SebsokK/cypherv2/releases/download/v0.1.0-beta.3/cypherv2.zip",
   "compatibility": {
     "minimum": "14",
     "verified": "14.360"
