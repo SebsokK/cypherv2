@@ -6,12 +6,16 @@ export const PACKAGE_ROLES = ["primary", "additional", "speciesGranted", "custom
 export const EDGE_GRANT_MODES = ["none", "fixed", "choice"] as const;
 export const GRANT_KINDS = ["type", "descriptor", "focus", "genre", "species", "other"] as const;
 export const GRANT_STATUSES = ["active", "retained"] as const;
+export const PACKAGE_CHOICE_SOURCE_MODES = ["fixed", "catalog"] as const;
+export const PACKAGE_CHOICE_CATALOG_ITEM_TYPES = ["none", "descriptor"] as const;
 
 export type PackageGenre = (typeof PACKAGE_GENRES)[number];
 export type PackageRole = (typeof PACKAGE_ROLES)[number];
 export type EdgeGrantMode = (typeof EDGE_GRANT_MODES)[number];
 export type GrantKind = (typeof GRANT_KINDS)[number];
 export type GrantStatus = (typeof GRANT_STATUSES)[number];
+export type PackageChoiceSourceMode = (typeof PACKAGE_CHOICE_SOURCE_MODES)[number];
+export type PackageChoiceCatalogItemType = (typeof PACKAGE_CHOICE_CATALOG_ITEM_TYPES)[number];
 
 export interface ItemSnapshot {
   readonly name: string;
@@ -22,6 +26,7 @@ export interface ItemSnapshot {
 export interface AbilityGrant {
   readonly id: string;
   readonly abilityUuid: string;
+  readonly notes?: string;
   readonly snapshot: ItemSnapshot;
   readonly alternatives?: readonly GrantAlternative[];
 }
@@ -45,10 +50,19 @@ export interface DescriptorGrant {
   readonly snapshot: ItemSnapshot;
 }
 
+export interface DescriptorChoiceGroup {
+  readonly id: string;
+  readonly choose: number;
+  readonly sourceMode?: PackageChoiceSourceMode;
+  readonly catalogItemType?: PackageChoiceCatalogItemType;
+  readonly options: readonly DescriptorGrant[];
+}
+
 export interface SkillGrantOption {
   readonly id: string;
   readonly skillUuid: string;
   readonly customName: string;
+  readonly notes?: string;
   readonly snapshot: ItemSnapshot;
 }
 
@@ -78,9 +92,12 @@ export interface PackageInstanceData {
   readonly attachedAt: number;
   readonly selections: {
     readonly edgePool: PoolKey | "none";
+    readonly superheroicsPool?: PoolKey | "none";
+    readonly powerShifts?: readonly string[];
     readonly poolChoices: readonly {readonly groupId: string; readonly pools: readonly PoolKey[]}[];
     readonly skillChoices: readonly {readonly groupId: string; readonly optionIds: readonly string[]}[];
     readonly abilityChoices: readonly {readonly groupId: string; readonly optionIds: readonly string[]}[];
+    readonly descriptorChoices?: readonly {readonly groupId: string; readonly optionIds: readonly string[]}[];
     readonly suppressedGrantIds: readonly string[];
   };
   readonly parent: GrantedByData;
@@ -111,12 +128,20 @@ export interface CharacterTypeSystemData {
   readonly woundBonuses: {readonly minor: number; readonly moderate: number; readonly major: number};
   readonly edgeGrant: {readonly mode: EdgeGrantMode; readonly pool: PoolKey | "none"; readonly amount: number};
   readonly weaponUse: {readonly light: boolean; readonly medium: boolean; readonly heavy: boolean};
+  readonly weaponFamilies?: readonly string[];
+  /** @deprecated Unreleased beta.3 compatibility; migrated to weaponFamilies. */
+  readonly weaponFamilyUse?: Readonly<Record<string, boolean>>;
   readonly armorUse: {readonly light: boolean; readonly medium: boolean; readonly heavy: boolean};
   readonly abilityGrants: readonly AbilityGrant[];
   readonly abilityChoiceGroups: readonly AbilityChoiceGroup[];
   readonly skillGrants: readonly SkillGrant[];
   readonly choiceGroups: readonly SkillChoiceGroup[];
   readonly genre: PackageGenre;
+  readonly superhero?: {
+    readonly rank: number;
+    readonly powerShiftCount: number;
+    readonly superheroics: {readonly enabled: boolean; readonly poolBonus: number};
+  };
   readonly customGenreId: string;
   readonly backgroundOptions: string;
   readonly equipmentNotes: string;
@@ -139,6 +164,9 @@ export interface SpeciesSystemData {
   readonly woundBonuses: {readonly minor: number; readonly moderate: number; readonly major: number};
   readonly edgeGrant: {readonly mode: EdgeGrantMode; readonly pool: PoolKey | "none"; readonly amount: number};
   readonly weaponUse: {readonly light: boolean; readonly medium: boolean; readonly heavy: boolean};
+  readonly weaponFamilies?: readonly string[];
+  /** @deprecated Unreleased beta.3 compatibility; migrated to weaponFamilies. */
+  readonly weaponFamilyUse?: Readonly<Record<string, boolean>>;
   readonly armorUse: {readonly light: boolean; readonly medium: boolean; readonly heavy: boolean};
   readonly cypherLimitBonus: number;
   readonly skillGrants: readonly SkillGrant[];
@@ -146,6 +174,7 @@ export interface SpeciesSystemData {
   readonly abilityGrants: readonly AbilityGrant[];
   readonly abilityChoiceGroups: readonly AbilityChoiceGroup[];
   readonly descriptorGrants: readonly DescriptorGrant[];
+  readonly descriptorChoiceGroups: readonly DescriptorChoiceGroup[];
   readonly instance: PackageInstanceData;
   readonly description: string;
 }

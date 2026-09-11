@@ -119,10 +119,21 @@ import {formatStepModifier} from "../../rolls/step-modifier";
 import {parseWoundCountActionData} from "./wound-count-action";
 import {
   parseFamiliarityActionData,
+  promptAddManualWeaponFamily,
+  removeManualWeaponFamily,
   toggleManualFamiliarity,
   type FamiliarityActorLike,
   type FamiliarityFamily
 } from "./character-familiarity";
+import {legacyWeaponFamilyFlags, normalizeWeaponFamilies, weaponFamilyLabel} from "../../combat/weapon-family";
+import {
+  availablePowerShifts,
+  effectivePowerShiftAllocations,
+  powerShiftSummary,
+  type PowerShiftAllocation,
+  type PowerShiftTypeLike
+} from "../../packages/power-shifts";
+import {promptPowerShiftAllocation, removePowerShiftAllocation} from "../dialogs/power-shift-dialog";
 import {
   promptAttachGenre,
   promptGenreAbilityBrowser,
@@ -206,7 +217,7 @@ async function resolveFocus(actor: Actor, uuid: string): Promise<FocusDocumentLi
 }
 
 const CHARACTER_MUTATING_ACTIONS = new Set([
-  "applyWound", "setCharacterWoundCount", "setShieldWoundCount", "toggleFamiliarity",
+  "applyWound", "setCharacterWoundCount", "setShieldWoundCount", "toggleFamiliarity", "addWeaponFamily", "removeWeaponFamily",
   "editWound", "deleteWound", "poolDamage", "recovery", "recoveryType", "resetRecoveries", "rally",
   "editCharacterOverride", "clearCharacterOverride", "rollPool",
   "editWoundCapacityOverride", "resetWoundCapacityOverride",
@@ -220,7 +231,7 @@ const CHARACTER_MUTATING_ACTIONS = new Set([
   "beginCoreSetup", "skipCoreSetup", "markCoreInitialized", "restoreFocusAbility",
   "addType", "addDescriptor", "addSpecies", "addGenre", "removeGenre", "acquireGenreAbility",
   "browseGenreAbilities", "removePackage", "createAbility", "useAbility", "payAbilityCost",
-  "toggleAbilityArchived", "deleteAbility",
+  "toggleAbilityArchived", "deleteAbility", "addPowerShift", "editPowerShift", "deletePowerShift",
   "sendItemToChat", "createInventoryItem", "deleteInventoryItem", "rollInventoryDepletion", "rollArtifactLevel",
   "playerIntrusion"
 ]);
@@ -246,6 +257,8 @@ export class CharacterSheet extends ActorSheetV2 {
       setCharacterWoundCount: CharacterSheet.#onSetCharacterWoundCount,
       setShieldWoundCount: CharacterSheet.#onSetShieldWoundCount,
       toggleFamiliarity: CharacterSheet.#onToggleFamiliarity,
+      addWeaponFamily: CharacterSheet.#onAddWeaponFamily,
+      removeWeaponFamily: CharacterSheet.#onRemoveWeaponFamily,
       editWound: CharacterSheet.#onEditWound,
       deleteWound: CharacterSheet.#onDeleteWound,
       poolDamage: CharacterSheet.#onPoolDamage,
@@ -316,6 +329,9 @@ export class CharacterSheet extends ActorSheetV2 {
       toggleAbilityDetails: CharacterSheet.#onToggleAbilityDetails,
       inspectAbility: CharacterSheet.#onInspectAbility,
       deleteAbility: CharacterSheet.#onDeleteAbility,
+      addPowerShift: CharacterSheet.#onAddPowerShift,
+      editPowerShift: CharacterSheet.#onEditPowerShift,
+      deletePowerShift: CharacterSheet.#onDeletePowerShift,
       sendItemToChat: CharacterSheet.#onSendItemToChat,
       createInventoryItem: CharacterSheet.#onCreateInventoryItem,
       openInventoryItem: CharacterSheet.#onOpenInventoryItem,
@@ -777,6 +793,63 @@ export class CharacterSheet extends ActorSheetV2 {
     const {family, category} = parseFamiliarityActionData(target.dataset);
     await toggleManualFamiliarity(this.actor as unknown as FamiliarityActorLike, family, category);
     await this.render({force: true});
+  }
+
+  static async #onAddWeaponFamily(this: CharacterSheet): Promise<void> {
+    await promptAddManualWeaponFamily(this.actor as unknown as FamiliarityActorLike);
+    await this.render({force: true});
+  }
+
+  static async #onRemoveWeaponFamily(
+    this: CharacterSheet,
+    event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    await removeManualWeaponFamily(
+      this.actor as unknown as FamiliarityActorLike,
+      target.dataset.weaponFamily
+    );
+    await this.render({force: true});
+  }
+
+  static #effectivePowerShifts(sheet: CharacterSheet): PowerShiftAllocation[] {
+    const system = sheet.actor.system as unknown as CharacterDocumentLike["system"];
+    const types = [...sheet.actor.items].filter((item) => item.type === "characterType") as unknown as PowerShiftTypeLike[];
+    return effectivePowerShiftAllocations(system.powerShifts ?? [], types);
+  }
+
+  static async #onAddPowerShift(this: CharacterSheet): Promise<void> {
+    await promptPowerShiftAllocation(
+      this.actor as unknown as CharacterDocumentLike,
+      CharacterSheet.#effectivePowerShifts(this)
+    );
+  }
+
+  static async #onEditPowerShift(
+    this: CharacterSheet,
+    _event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    const allocations = CharacterSheet.#effectivePowerShifts(this);
+    const current = allocations.find((entry) => entry.id === target.dataset.powerShiftId);
+    if (!current) return;
+    await promptPowerShiftAllocation(this.actor as unknown as CharacterDocumentLike, allocations, current);
+  }
+
+  static async #onDeletePowerShift(
+    this: CharacterSheet,
+    _event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    const id = target.dataset.powerShiftId;
+    if (!id) return;
+    await removePowerShiftAllocation(
+      this.actor as unknown as CharacterDocumentLike,
+      CharacterSheet.#effectivePowerShifts(this),
+      id
+    );
   }
 
   static async #onEditWound(
@@ -1459,7 +1532,8 @@ export class CharacterSheet extends ActorSheetV2 {
           pair: game.i18n.localize("CYPHERV2.Ability.CostDisplay.Or"),
           middle: game.i18n.localize("CYPHERV2.Ability.CostDisplay.Separator"),
           final: game.i18n.localize("CYPHERV2.Ability.CostDisplay.FinalOr")
-        }
+        },
+        presentation.cost.scalable
       );
       const enrichedDescription = presentation.description
         ? await foundry.applications.ux.TextEditor.implementation.enrichHTML(
@@ -1627,8 +1701,8 @@ export class CharacterSheet extends ActorSheetV2 {
       this.actor as unknown as AdvancementCharacterLike,
       currentEnabledRuleModuleIds()
     );
-    const typeItems = [...this.actor.items]
-      .filter((item) => item.type === "characterType")
+    const typeDocuments = [...this.actor.items].filter((item) => item.type === "characterType");
+    const typeItems = typeDocuments
       .map((item) => ({id: item.id, name: item.name}));
     const speciesItems = [...this.actor.items]
       .filter((item) => item.type === "species")
@@ -1679,6 +1753,25 @@ export class CharacterSheet extends ActorSheetV2 {
         };
       });
     const coreSystem = this.actor.system as unknown as CharacterDocumentLike["system"];
+    const powerShiftAllocations = effectivePowerShiftAllocations(
+      coreSystem.powerShifts ?? [],
+      typeDocuments as unknown as PowerShiftTypeLike[]
+    );
+    const powerShiftBudget = powerShiftSummary(
+      powerShiftAllocations,
+      availablePowerShifts(typeDocuments as unknown as PowerShiftTypeLike[])
+    );
+    const powerShifts = {
+      enabled: coreSystem.presentation.powerShiftsEnabled,
+      allocated: powerShiftBudget.allocated,
+      available: powerShiftBudget.available,
+      overBudget: powerShiftBudget.overBudget,
+      legacy: (coreSystem.powerShifts ?? []).length === 0 && powerShiftAllocations.some((entry) => entry.id.startsWith("legacy-")),
+      entries: powerShiftAllocations.map((entry) => ({
+        ...entry,
+        categoryWarning: powerShiftBudget.categoryWarnings.has(entry.category.trim().toLocaleLowerCase("en-US"))
+      }))
+    };
     const activeGenreDocument = await game.cypherv2.services.genres.active(
       this.actor as unknown as GenreCharacterLike
     );
@@ -1912,7 +2005,30 @@ export class CharacterSheet extends ActorSheetV2 {
         ARMOR_CATEGORIES,
         coreSystem.proficiencies.armorCategories,
         coreSystem.derived.packages.armorCategories
-      )
+      ),
+      weaponFamilies: normalizeWeaponFamilies([
+        ...coreSystem.proficiencies.weaponFamilies,
+        ...(coreSystem.derived.packages.weaponFamilies ?? [])
+      ]).map((family) => {
+        const sources = [...this.actor.items].filter((item) => item.type === "characterType").filter((item) => {
+          const system = item.system as unknown as {weaponFamilies?: readonly string[]; weaponFamilyUse?: Record<string, boolean>};
+          return normalizeWeaponFamilies([
+            ...(system.weaponFamilies ?? []),
+            ...legacyWeaponFamilyFlags(system.weaponFamilyUse)
+          ]).includes(family);
+        }).map((item) => item.name);
+        const manual = coreSystem.proficiencies.weaponFamilies.includes(family);
+        return {
+          id: family,
+          label: weaponFamilyLabel(family),
+          manual,
+          packageGranted: sources.length > 0,
+          canRemove: this.isEditable && manual,
+          sourceHint: sources.length > 0
+            ? game.i18n.format("CYPHERV2.Settings.Character.FamiliarityGranted", {sources: sources.join(", ")})
+            : game.i18n.localize("CYPHERV2.Settings.Character.FamiliarityManual")
+        };
+      })
     };
     const overrideLabelKeys: Record<CharacterOverrideKey, string> = {
       tier: "CYPHERV2.Character.Tier",
@@ -1971,6 +2087,7 @@ export class CharacterSheet extends ActorSheetV2 {
       editable: this.isEditable,
       enriched: {notes: enrichedNotes},
       familiarities,
+      powerShifts,
       characterOverrides,
       woundOverride,
       recoveryOverride,

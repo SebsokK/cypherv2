@@ -36,7 +36,11 @@ describe("Character Package UI", () => {
     expect(dialogs).toContain("replaceItemId");
     expect(dialogs).toContain("attachSpecies");
     expect(dialogs).toContain("promptPoolBonusChoices");
+    expect(dialogs).toContain("prepareDescriptorChoiceGroups");
+    expect(dialogs).toContain("resolvedDescriptorChoiceGroups: descriptorChoiceGroups");
     expect(dialogs).toContain("promptPackageChoice");
+    expect(dialogs).toContain("promptSuperheroicsPool");
+    expect(dialogs).toContain("superheroicsPool");
     expect(dialogs).not.toContain('select name="optionIds"');
     expect(dialogs).not.toMatch(/Packages\.ChoosePools[\s\S]{0,500}<select/);
   });

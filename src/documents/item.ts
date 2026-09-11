@@ -10,10 +10,13 @@ function changesPoolBonus(changes: Record<string, unknown>): boolean {
     || path.startsWith("system.poolBonusChoiceGroups.")
     || path === "system.instance.selections.poolChoices"
     || path.startsWith("system.instance.selections.poolChoices.")
+    || path === "system.instance.selections.superheroicsPool"
+    || path === "system.superhero.superheroics.poolBonus"
     || (path === "system" && typeof changes.system === "object" && changes.system !== null
       && (
         "poolBonuses" in changes.system
         || "poolBonusChoiceGroups" in changes.system
+        || "superhero" in changes.system
         || (
           "instance" in changes.system
           && typeof changes.system.instance === "object"
@@ -21,7 +24,10 @@ function changesPoolBonus(changes: Record<string, unknown>): boolean {
           && "selections" in changes.system.instance
           && typeof changes.system.instance.selections === "object"
           && changes.system.instance.selections !== null
-          && "poolChoices" in changes.system.instance.selections
+          && (
+            "poolChoices" in changes.system.instance.selections
+            || "superheroicsPool" in changes.system.instance.selections
+          )
         )
       ))
   ));

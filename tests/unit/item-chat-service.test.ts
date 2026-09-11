@@ -128,6 +128,13 @@ describe("Item Send to Chat", () => {
     expect(itemChatProperties(item("ability", {
       cost: {amount: 0, ignoresEdge: false, allowedPools: []}, pool: "none"
     }))).toEqual([]);
+    expect(itemChatProperties(item("ability", {
+      pool: "intellect",
+      cost: {amount: 2, scalable: true, ignoresEdge: false, allowedPools: ["intellect"]}
+    }))).toEqual([{
+      label: "CYPHERV2.Ability.Cost",
+      value: "2+ CYPHERV2.Pools.Intellect"
+    }]);
   });
 
   it("renders every supported Item family through the common readable card structure", () => {

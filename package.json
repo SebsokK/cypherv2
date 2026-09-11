@@ -6,7 +6,7 @@
   "packageManager": "pnpm@11.19.0",
   "description": "A modern Foundry VTT v14 system for Cypher V2.",
   "scripts": {
-    "build": "vite build && pnpm import:core-packs && pnpm import:foci && pnpm import:cyphers",
+    "build": "vite build && pnpm import:core-packs && pnpm import:types && pnpm import:species && pnpm import:genres && pnpm import:foci && pnpm import:cyphers",
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -16,7 +16,20 @@
     "promote:core-packs": "node scripts/promote-reviewed-core-packs.mjs",
     "import:foci": "node scripts/import-foci.mjs",
     "promote:foci": "node scripts/promote-reviewed-foci.mjs",
-    "import:cyphers": "node scripts/import-cyphers.mjs"
+    "import:types": "node scripts/import-types.mjs",
+    "promote:types": "node scripts/promote-reviewed-types.mjs",
+    "validate:types": "node scripts/validate-reviewed-types.mjs --packs-root packs",
+    "import:species": "node scripts/import-species.mjs",
+    "promote:species": "node scripts/promote-reviewed-species.mjs",
+    "validate:species": "node scripts/validate-reviewed-species.mjs --packs-root packs",
+    "import:genres": "node scripts/import-genres.mjs",
+    "promote:genres": "node scripts/promote-reviewed-genres.mjs",
+    "validate:genres": "node scripts/validate-reviewed-genres.mjs --packs-root packs",
+    "import:cyphers": "node scripts/import-cyphers.mjs",
+    "validate:type-candidates": "node scripts/type-candidate-validator.mjs",
+    "validate:species-candidates": "node scripts/species-candidate-validator.mjs",
+    "validate:genre-ability-candidates": "node scripts/genre-ability-candidate-validator.mjs",
+    "validate:genre-candidates": "node scripts/genre-candidate-validator.mjs"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "3.0.4",

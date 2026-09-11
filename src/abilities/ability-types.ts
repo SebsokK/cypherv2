@@ -20,6 +20,7 @@ export interface AbilityItemLike {
     readonly pool: AbilityPool;
     readonly cost: {
       readonly amount: number;
+      readonly scalable?: boolean;
       readonly ignoresEdge: boolean;
       readonly allowedPools?: readonly PoolKey[];
     };

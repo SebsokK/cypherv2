@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/content/genres/schema.json",
+  "title": "Cypher V2 candidate Genres",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "source", "target", "inventory", "counts", "review", "genres"],
+  "properties": {
+    "$schema": {"const": "./schema.json"},
+    "schemaVersion": {"const": 1},
+    "source": {
+      "type": "object",
+      "required": ["kind", "title", "file", "sha256", "license", "note"],
+      "properties": {
+        "kind": {"const": "official-reference-document-extraction"},
+        "title": {"const": "Cypher Reference Document (2026)"},
+        "file": {"const": "Cypher-Reference-Document-2026-07-29.docx"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "license": {"const": "2026 Cypher Open License"},
+        "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["systemId", "futurePackId", "abilityPackId"],
+      "properties": {
+        "systemId": {"const": "cypherv2"},
+        "futurePackId": {"const": "genres"},
+        "abilityPackId": {"const": "genre-abilities"}
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["key", "name", "heading", "pages", "subgenres", "progressionCatalog", "originCatalog"]
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["genres", "progressionRelations", "originRelations", "catalogRelations"],
+      "properties": {
+        "genres": {"const": 4},
+        "progressionRelations": {"const": 89},
+        "originRelations": {"const": 26},
+        "catalogRelations": {"const": 115}
+      }
+    },
+    "review": {"type": "object"},
+    "genres": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/genreItem"}
+    }
+  },
+  "$defs": {
+    "foundryId": {"type": "string", "pattern": "^[A-Za-z0-9]{16}$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "catalogEntry": {
+      "type": "object",
+      "required": ["id", "abilityUuid", "minimumTier", "catalog", "minimumSuperheroRank", "snapshot"],
+      "properties": {
+        "id": {"$ref": "#/$defs/foundryId"},
+        "abilityUuid": {"type": "string", "pattern": "^Compendium\\.cypherv2\\.genre-abilities\\.Item\\.[A-Za-z0-9]{16}$"},
+        "minimumTier": {"type": "integer", "minimum": 1, "maximum": 6},
+        "catalog": {"enum": ["progression", "origin"]},
+        "minimumSuperheroRank": {"type": "integer", "minimum": 0, "maximum": 5},
+        "snapshot": {"type": "object"}
+      }
+    },
+    "genreItem": {
+      "type": "object",
+      "required": ["name", "type", "_id", "img", "system", "effects", "sort", "ownership", "_key"],
+      "properties": {
+        "name": {"enum": ["The Real World", "Fantasy", "Science Fiction", "Superheroes"]},
+        "type": {"const": "genre"},
+        "_id": {"$ref": "#/$defs/foundryId"},
+        "img": {"type": "string", "minLength": 1},
+        "effects": {"type": "array", "maxItems": 0},
+        "sort": {"type": "integer"},
+        "ownership": {"type": "object"},
+        "_key": {"type": "string", "pattern": "^!items![A-Za-z0-9]{16}$"},
+        "system": {
+          "type": "object",
+          "required": ["slug", "description", "source", "automation", "ruleElements", "tags", "grantedBy", "abilityCatalog", "options", "legacyKey"],
+          "properties": {
+            "slug": {"$ref": "#/$defs/slug"},
+            "description": {"type": "string", "minLength": 1},
+            "ruleElements": {"type": "array", "maxItems": 0},
+            "abilityCatalog": {"type": "array", "items": {"$ref": "#/$defs/catalogEntry"}},
+            "options": {
+              "type": "object",
+              "required": ["totalEffortCapMode"],
+              "properties": {"totalEffortCapMode": {"enum": ["core", "unlimited"]}}
+            },
+            "legacyKey": {"enum": ["realWorld", "fantasy", "scienceFiction", "superhero"]}
+          }
+        }
+      }
+    }
+  }
+}

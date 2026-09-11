@@ -38,6 +38,8 @@ import {
   type CharacterAppearanceData
 } from "../../themes/character-appearance";
 import {defaultRecoverySlots} from "../../rules/core/recovery-track";
+import {normalizeWeaponFamilies} from "../../combat/weapon-family";
+import type {PowerShiftAllocation} from "../../packages/power-shifts";
 
 function advancementPurchaseField(): unknown {
   return new fields.SchemaField({
@@ -165,7 +167,8 @@ export class CharacterDataModel extends ActorDataModelBase {
   declare focusProgress: FocusProgress[];
   declare genre: GenreAssociationData;
   declare appearance: CharacterAppearanceData;
-  declare presentation: {hideFocusInSentence: boolean};
+  declare presentation: {hideFocusInSentence: boolean; powerShiftsEnabled: boolean};
+  declare powerShifts: PowerShiftAllocation[];
   declare advancement: CharacterAdvancementData;
   declare derived: CharacterDerivedData;
 
@@ -301,8 +304,16 @@ export class CharacterDataModel extends ActorDataModelBase {
         })
       }),
       presentation: new fields.SchemaField({
-        hideFocusInSentence: new fields.BooleanField({required: true, nullable: false, initial: false})
+        hideFocusInSentence: new fields.BooleanField({required: true, nullable: false, initial: false}),
+        powerShiftsEnabled: new fields.BooleanField({required: true, nullable: false, initial: false})
       }),
+      powerShifts: new fields.ArrayField(new fields.SchemaField({
+        id: new fields.StringField({required: true, nullable: false, blank: false}),
+        category: new fields.StringField({required: true, nullable: false, blank: false}),
+        shifts: integerField(1, 1),
+        specification: new fields.StringField({required: true, nullable: false, initial: ""}),
+        description: new fields.StringField({required: true, nullable: false, initial: ""})
+      }), {required: true, nullable: false, initial: []}),
       advancement: new fields.SchemaField({
         cycle: integerField(1, 1),
         purchases: new fields.ArrayField(advancementPurchaseField(), {
@@ -340,6 +351,7 @@ export class CharacterDataModel extends ActorDataModelBase {
       }),
       proficiencies: new fields.SchemaField({
         weaponCategories: stringArrayField(["light"]),
+        weaponFamilies: stringArrayField(),
         armorCategories: stringArrayField(),
         freelyUse: stringArrayField()
       }),
@@ -412,6 +424,7 @@ export class CharacterDataModel extends ActorDataModelBase {
           }),
           packages: new fields.SchemaField({
             weaponCategories: stringArrayField(),
+            weaponFamilies: stringArrayField(),
             armorCategories: stringArrayField(),
             genre: new fields.StringField({required: true, nullable: false, initial: "none"}),
             genreUuid: new fields.StringField({required: true, nullable: false, initial: ""}),
@@ -455,12 +468,14 @@ export class CharacterDataModel extends ActorDataModelBase {
         }
       }));
     const proficiencies = (this as unknown as {
-      proficiencies: {armorCategories: string[]; freelyUse: string[]};
+      proficiencies: {weaponCategories: string[]; weaponFamilies: string[]; armorCategories: string[]; freelyUse: string[]};
     }).proficiencies;
     const packages = collectPackageDerivedData(
       allItems.filter((item) => item.type === "characterType" || item.type === "descriptor" || item.type === "species") as unknown as CharacterPackageItemLike[],
-      (proficiencies as unknown as {weaponCategories: string[]}).weaponCategories,
-      proficiencies.armorCategories
+      proficiencies.weaponCategories,
+      proficiencies.armorCategories,
+      [],
+      normalizeWeaponFamilies(proficiencies.weaponFamilies)
     );
     const activeGenre = effectiveGenre(this.genre, (uuid) => {
       if (typeof fromUuidSync !== "function") return null;
@@ -480,6 +495,7 @@ export class CharacterDataModel extends ActorDataModelBase {
       this.recovery.bonus,
       {
         weaponCategories: [...packages.weaponCategories],
+        weaponFamilies: [...packages.weaponFamilies],
         armorCategories: [...packages.armorCategories],
         genre: activeGenre?.name ?? "none",
         genreUuid: activeGenre?.sourceUuid ?? "",

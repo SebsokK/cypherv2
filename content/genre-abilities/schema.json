@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/content/genre-abilities/schema.json",
+  "title": "Cypher V2 candidate Genre Abilities",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "source", "target", "inventory", "counts", "catalogs", "review", "abilities"],
+  "properties": {
+    "$schema": {"const": "./schema.json"},
+    "schemaVersion": {"const": 1},
+    "source": {
+      "type": "object",
+      "required": ["kind", "title", "file", "sha256", "license", "note"],
+      "properties": {
+        "kind": {"const": "official-reference-document-extraction"},
+        "title": {"const": "Cypher Reference Document (2026)"},
+        "file": {"const": "Cypher-Reference-Document-2026-07-29.docx"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "license": {"const": "2026 Cypher Open License"},
+        "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["systemId", "futurePackId"],
+      "properties": {"systemId": {"const": "cypherv2"}, "futurePackId": {"const": "genre-abilities"}}
+    },
+    "inventory": {"type": "object"},
+    "counts": {
+      "type": "object",
+      "required": ["abilities", "progression", "origin", "relations"],
+      "properties": {
+        "abilities": {"const": 69}, "progression": {"const": 43},
+        "origin": {"const": 26}, "relations": {"const": 74}
+      }
+    },
+    "catalogs": {
+      "type": "object",
+      "required": ["realWorld", "fantasy", "scienceFiction", "superhero"],
+      "properties": {
+        "realWorld": {"$ref": "#/$defs/catalog"},
+        "fantasy": {"$ref": "#/$defs/catalog"},
+        "scienceFiction": {"$ref": "#/$defs/catalog"},
+        "superhero": {"$ref": "#/$defs/catalog"}
+      }
+    },
+    "review": {"type": "object"},
+    "abilities": {
+      "type": "array", "minItems": 69, "maxItems": 69,
+      "items": {"$ref": "#/$defs/ability"}
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9]{16}$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "relation": {
+      "type": "object",
+      "required": ["id", "abilityUuid", "minimumTier", "catalog", "minimumSuperheroRank", "snapshot"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "abilityUuid": {"type": "string", "pattern": "^Compendium\\.cypherv2\\.genre-abilities\\.Item\\.[A-Za-z0-9]{16}$"},
+        "minimumTier": {"type": "integer", "minimum": 1, "maximum": 6},
+        "catalog": {"enum": ["progression", "origin"]},
+        "minimumSuperheroRank": {"type": "integer", "minimum": 0, "maximum": 5},
+        "snapshot": {"type": "object"}
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "required": ["catalog", "entries"],
+      "properties": {
+        "catalog": {"enum": ["progression", "origin"]},
+        "eligibility": {"enum": ["genre"]},
+        "typeWhitelist": {"type": "array", "maxItems": 0},
+        "entries": {"type": "array", "items": {"$ref": "#/$defs/relation"}}
+      }
+    },
+    "ability": {
+      "type": "object",
+      "required": ["name", "type", "_id", "img", "system", "effects", "sort", "ownership", "flags", "_key"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "type": {"const": "ability"},
+        "_id": {"$ref": "#/$defs/id"},
+        "img": {"type": "string", "minLength": 1},
+        "effects": {"type": "array", "maxItems": 0},
+        "sort": {"type": "integer"},
+        "ownership": {"type": "object"},
+        "flags": {"type": "object"},
+        "_key": {"type": "string", "pattern": "^!items![A-Za-z0-9]{16}$"},
+        "system": {
+          "type": "object",
+          "required": ["slug", "description", "source", "tier", "category", "activation", "cost", "roll", "ruleElements"],
+          "properties": {
+            "slug": {"$ref": "#/$defs/slug"},
+            "description": {"type": "string", "minLength": 1},
+            "tier": {"type": "integer", "minimum": 1, "maximum": 6},
+            "category": {"enum": ["genre-progression", "origin"]},
+            "activation": {"enum": ["action", "firstAction", "lastAction", "enabler", "reaction", "timed", "perpetual", "passive", "special"]},
+            "cost": {
+              "type": "object",
+              "required": ["amount", "scalable", "ignoresEdge", "allowedPools"],
+              "properties": {
+                "amount": {"type": "integer", "minimum": 0},
+                "scalable": {"type": "boolean"},
+                "ignoresEdge": {"const": false},
+                "allowedPools": {"type": "array", "uniqueItems": true, "items": {"enum": ["might", "speed", "intellect"]}}
+              }
+            },
+            "roll": {"enum": ["none", "task", "attack", "defense"]},
+            "ruleElements": {"type": "array", "maxItems": 0}
+          }
+        }
+      }
+    }
+  }
+}

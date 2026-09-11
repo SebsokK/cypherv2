@@ -40,7 +40,13 @@ describe("Ability accordion presentation", () => {
       ? ["might", "speed", "intellect"] as const
       : pool === "none" ? [] as const : [expectedPool];
     expect(abilityListPresentation(ability({pool, cost: {amount, ignoresEdge: false, allowedPools}})).cost)
-      .toEqual({amount, pools: allowedPools, payable});
+      .toEqual({amount, scalable: false, pools: allowedPools, payable});
+  });
+
+  it("preserves scalable cost metadata for compact presentation", () => {
+    expect(abilityListPresentation(ability({
+      cost: {amount: 2, scalable: true, ignoresEdge: false, allowedPools: ["intellect"]}
+    })).cost).toEqual({amount: 2, scalable: true, pools: ["intellect"], payable: true});
   });
 
   it("does not classify passive or roll behavior in the normal presentation", () => {
@@ -51,7 +57,7 @@ describe("Ability accordion presentation", () => {
       range: "long",
       targetMode: "single"
     }));
-    expect(view.cost).toEqual({amount: 5, pools: ["intellect"], payable: true});
+    expect(view.cost).toEqual({amount: 5, scalable: false, pools: ["intellect"], payable: true});
     expect(view).not.toHaveProperty("passive");
     expect(view).not.toHaveProperty("summary");
     expect(view).not.toHaveProperty("tags");

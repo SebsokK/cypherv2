@@ -43,6 +43,7 @@ import {
   type ShieldWoundApplication
 } from "./shield-service";
 import {WeaponService} from "./weapon-service";
+import {normalizeWeaponFamily} from "../combat/weapon-family";
 
 export interface CombatCharacterLike extends RollCharacterDocumentLike {
   readonly items: Iterable<unknown>;
@@ -243,7 +244,10 @@ export class CombatService {
   weaponFreelyUsed(actor: CombatCharacterLike, weapon: WeaponItemLike): boolean {
     const effectiveCategories = actor.system.derived.packages?.weaponCategories
       ?? actor.system.proficiencies.weaponCategories;
-    return effectiveCategories.includes(weapon.system.category);
+    const effectiveFamilies = actor.system.derived.packages?.weaponFamilies ?? [];
+    const family = normalizeWeaponFamily(weapon.system.family);
+    return effectiveCategories.includes(weapon.system.category)
+      || (family !== "" && effectiveFamilies.some((entry) => normalizeWeaponFamily(entry) === family));
   }
 
   armorFreelyUsed(actor: CombatCharacterLike, armor: import("../combat/combat-types").ArmorItemLike): boolean {

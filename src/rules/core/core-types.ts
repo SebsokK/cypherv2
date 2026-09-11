@@ -140,6 +140,7 @@ export interface CharacterDerivedData {
   };
   packages: {
     weaponCategories: string[];
+    weaponFamilies?: string[];
     armorCategories: string[];
     genre: string;
     genreUuid: string;
@@ -193,6 +194,7 @@ export interface CharacterCoreSystemData {
   advancement: CharacterAdvancementData;
   proficiencies: {
     weaponCategories: string[];
+    weaponFamilies: string[];
     armorCategories: string[];
     freelyUse: string[];
   };
@@ -209,7 +211,9 @@ export interface CharacterCoreSystemData {
   };
   presentation: {
     hideFocusInSentence: boolean;
+    powerShiftsEnabled: boolean;
   };
+  powerShifts: import("../../packages/power-shifts").PowerShiftAllocation[];
   rest: {
     lastType: string;
     history: RestHistoryEntry[];

@@ -33,7 +33,7 @@ import {
   type FocusEditorScrollState
 } from "./focus-editor-scroll";
 import {SystemTooltip} from "../tooltips/system-tooltip";
-import type {AbilityGrant, CharacterTypeSystemData, DescriptorGrant, DescriptorSystemData, PoolBonusChoiceGroup, SkillChoiceGroup, SkillGrant, SkillGrantOption, SpeciesSystemData} from "../../packages/package-types";
+import type {AbilityGrant, CharacterTypeSystemData, DescriptorChoiceGroup, DescriptorGrant, DescriptorSystemData, PoolBonusChoiceGroup, SkillChoiceGroup, SkillGrant, SkillGrantOption, SpeciesSystemData} from "../../packages/package-types";
 import {
   ShieldCapacityBelowWoundsError,
   type ShieldItemLike
@@ -64,6 +64,11 @@ import {
   type ItemSheetUiState
 } from "./item-sheet-ui-state";
 import {enforceReadOnlySheetPresentation, guardEditableActions} from "./sheet-permissions";
+import {
+  BUILT_IN_WEAPON_FAMILIES,
+  normalizeWeaponFamilies,
+  weaponFamilyLabel
+} from "../../combat/weapon-family";
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => ({
@@ -89,7 +94,7 @@ const ITEM_MUTATING_ACTIONS = new Set([
   "selectFocusEditorNode", "moveFocusNode", "setFocusNodeTier",
   "startFocusConnection", "completeFocusConnection", "cancelFocusConnection",
   "deleteFocusConnection", "clearFocusConnections", "refreshFocusSnapshot", "deleteFocusNode",
-  "addPackageGrant", "addChoiceGroup", "addChoiceOption", "refreshPackageGrant", "removePackageGrant",
+  "addPackageGrant", "addChoiceGroup", "addChoiceOption", "editSkillGrantNote", "refreshPackageGrant", "removePackageGrant",
   "addPoolBonusChoiceGroup", "editPoolBonusChoiceGroup", "removePoolBonusChoiceGroup",
   "setShieldWoundCount", "editShieldWound", "deleteShieldWound",
   "addGenreAbility", "refreshGenreAbility", "removeGenreAbility"
@@ -102,6 +107,7 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
   #abilityPoolBindings: AbortController | null = null;
   #genreCatalogBindings: AbortController | null = null;
   #typeGenreBindings: AbortController | null = null;
+  #weaponFamilyBindings: AbortController | null = null;
   #focusTreeEditor: FocusTreeEditorSession | null = null;
   #pendingFocusEditorScroll: FocusEditorScrollState | null = null;
   #focusEditorKeyBindings: AbortController | null = null;
@@ -193,6 +199,7 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
       addPackageGrant: CypherV2ItemSheet.#onAddPackageGrant,
       addChoiceGroup: CypherV2ItemSheet.#onAddChoiceGroup,
       addChoiceOption: CypherV2ItemSheet.#onAddChoiceOption,
+      editSkillGrantNote: CypherV2ItemSheet.#onEditSkillGrantNote,
       inspectPackageGrant: CypherV2ItemSheet.#onInspectPackageGrant,
       refreshPackageGrant: CypherV2ItemSheet.#onRefreshPackageGrant,
       removePackageGrant: CypherV2ItemSheet.#onRemovePackageGrant,
@@ -249,6 +256,7 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     this.#bindAbilityAllowedPools();
     this.#bindGenreCatalog();
     this.#bindTypeGenreVisibility();
+    this.#bindWeaponFamilies();
     this.#bindPersistentDisclosures();
     this.#bindWeaponResources();
     this.#bindShieldCapacities();
@@ -263,6 +271,8 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     this.#genreCatalogBindings = null;
     this.#typeGenreBindings?.abort();
     this.#typeGenreBindings = null;
+    this.#weaponFamilyBindings?.abort();
+    this.#weaponFamilyBindings = null;
     this.#disclosureBindings?.abort();
     this.#disclosureBindings = null;
     this.#weaponResourceBindings?.abort();
@@ -428,14 +438,36 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     if (this.item.type !== "characterType") return;
     const select = this.element.querySelector<HTMLSelectElement>("select[data-type-genre-select]");
     const field = this.element.querySelector<HTMLElement>("[data-type-custom-genre]");
+    const superhero = this.element.querySelector<HTMLElement>("[data-type-superhero]");
     if (!select || !field) return;
     const controller = new AbortController();
     this.#typeGenreBindings = controller;
     const synchronize = (): void => {
       field.hidden = select.value !== "custom";
+      if (superhero) superhero.hidden = select.value !== "superhero";
     };
     select.addEventListener("change", synchronize, {signal: controller.signal});
     synchronize();
+  }
+
+  #bindWeaponFamilies(): void {
+    this.#weaponFamilyBindings?.abort();
+    this.#weaponFamilyBindings = null;
+    if ((this.item.type !== "characterType" && this.item.type !== "species") || !this.isEditable) return;
+    const input = this.element.querySelector<HTMLInputElement>("input[data-package-weapon-families]");
+    if (!input) return;
+    const controller = new AbortController();
+    this.#weaponFamilyBindings = controller;
+    input.addEventListener("change", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        await this.item.update({"system.weaponFamilies": normalizeWeaponFamilies(input.value)});
+      } catch (error) {
+        notifyError(error);
+        await this.render({force: true});
+      }
+    }, {signal: controller.signal});
   }
 
   override _canDragDrop(_selector: string): boolean {
@@ -491,17 +523,17 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     }
     const data = await foundry.applications.api.DialogV2.input({
       window: {title: game.i18n.localize(expected === "ability" ? "CYPHERV2.Packages.AddAbility" : expected === "skill" ? "CYPHERV2.Packages.AddFixedSkill" : "CYPHERV2.Species.AddDescriptorGrant")},
-      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.Source")}<select name="uuid">${custom}${sources.map((item) => `<option value="${escapeHtml(item.uuid)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>${expected === "skill" ? `<label>${game.i18n.localize("CYPHERV2.Packages.CustomSkillName")}<input name="customName" type="text"></label><label>${game.i18n.localize("CYPHERV2.Skill.Rank")}<select name="rank">${SKILL_RANKS.map((rank) => `<option value="${rank}" ${rank === "trained" ? "selected" : ""}>${game.i18n.localize(`CYPHERV2.Skill.Ranks.${rank}`)}</option>`).join("")}</select></label>` : ""}</div>`,
+      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.Source")}<select name="uuid">${custom}${sources.map((item) => `<option value="${escapeHtml(item.uuid)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>${expected === "skill" ? `<label>${game.i18n.localize("CYPHERV2.Packages.CustomSkillName")}<input name="customName" type="text"></label><label>${game.i18n.localize("CYPHERV2.Skill.Rank")}<select name="rank">${SKILL_RANKS.map((rank) => `<option value="${rank}" ${rank === "trained" ? "selected" : ""}>${game.i18n.localize(`CYPHERV2.Skill.Ranks.${rank}`)}</option>`).join("")}</select></label><label>${game.i18n.localize("CYPHERV2.Packages.SkillContextNote")}<textarea name="notes" rows="2"></textarea></label>` : ""}</div>`,
       ok: {label: game.i18n.localize("CYPHERV2.Actions.Add")}
     }) as Record<string, unknown> | null;
     if (!data) return;
     if (data.uuid === "custom") {
       const name = String(data.customName ?? "").trim();
       if (!name) return;
-      await this.#addCustomSkill(name, String(data.rank ?? "trained") as SkillRank);
+      await this.#addCustomSkill(name, String(data.rank ?? "trained") as SkillRank, String(data.notes ?? ""));
     } else {
       const source = await fromUuid(String(data.uuid ?? "")) as Item | null;
-      if (source) await this.#addPackageDocument(source, "fixed", String(data.rank ?? "trained") as SkillRank);
+      if (source) await this.#addPackageDocument(source, "fixed", String(data.rank ?? "trained") as SkillRank, String(data.notes ?? ""));
     }
   }
 
@@ -562,10 +594,12 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
 
   static async #onAddChoiceGroup(this: CypherV2ItemSheet, _event: PointerEvent, target: HTMLElement): Promise<void> {
     if (this.item.type !== "characterType" && this.item.type !== "descriptor" && this.item.type !== "species") return;
-    const abilityChoice = this.item.type !== "descriptor" && target.dataset.choiceKind === "ability";
+    const choiceKind = target.dataset.choiceKind ?? "skill";
+    const abilityChoice = this.item.type !== "descriptor" && choiceKind === "ability";
+    const descriptorChoice = this.item.type === "species" && choiceKind === "descriptor";
     const data = await foundry.applications.api.DialogV2.input({
       window: {title: game.i18n.localize("CYPHERV2.Packages.AddChoiceGroup")},
-      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.ChooseCount")}<input name="choose" type="number" min="1" value="1"></label>${abilityChoice ? "" : `<label>${game.i18n.localize("CYPHERV2.Skill.Rank")}<select name="rank">${SKILL_RANKS.map((rank) => `<option value="${rank}" ${rank === "trained" ? "selected" : ""}>${game.i18n.localize(`CYPHERV2.Skill.Ranks.${rank}`)}</option>`).join("")}</select></label>`}</div>`,
+      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.ChooseCount")}<input name="choose" type="number" min="1" value="1"></label>${descriptorChoice ? `<label>${game.i18n.localize("CYPHERV2.Packages.ChoiceSource")}<select name="sourceMode"><option value="fixed">${game.i18n.localize("CYPHERV2.Packages.FixedOptions")}</option><option value="catalog">${game.i18n.localize("CYPHERV2.Packages.AllAvailableDescriptors")}</option></select></label>` : abilityChoice ? "" : `<label>${game.i18n.localize("CYPHERV2.Skill.Rank")}<select name="rank">${SKILL_RANKS.map((rank) => `<option value="${rank}" ${rank === "trained" ? "selected" : ""}>${game.i18n.localize(`CYPHERV2.Skill.Ranks.${rank}`)}</option>`).join("")}</select></label>`}</div>`,
       ok: {label: game.i18n.localize("CYPHERV2.Actions.Add")}
     }) as Record<string, unknown> | null;
     if (!data) return;
@@ -573,6 +607,16 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     if (abilityChoice) {
       const group = {id: crypto.randomUUID(), choose: Math.max(1, Number(data.choose) || 1), options: []};
       await this.item.update({"system.abilityChoiceGroups": [...((system as SpeciesSystemData | CharacterTypeSystemData).abilityChoiceGroups), group]});
+    } else if (descriptorChoice) {
+      const catalogMode = data.sourceMode === "catalog";
+      const group: DescriptorChoiceGroup = {
+        id: crypto.randomUUID(), choose: Math.max(1, Number(data.choose) || 1),
+        sourceMode: catalogMode ? "catalog" : "fixed",
+        catalogItemType: catalogMode ? "descriptor" : "none",
+        options: []
+      };
+      const groups = (system as SpeciesSystemData).descriptorChoiceGroups ?? [];
+      await this.item.update({"system.descriptorChoiceGroups": [...groups, group]});
     } else {
       const group: SkillChoiceGroup = {id: crypto.randomUUID(), choose: Math.max(1, Number(data.choose) || 1), rank: String(data.rank) as SkillRank, options: []};
       await this.item.update({"system.choiceGroups": [...system.choiceGroups, group]});
@@ -647,15 +691,20 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     if (this.item.type !== "characterType" && this.item.type !== "descriptor" && this.item.type !== "species") return;
     const groupId = target.dataset.groupId;
     const system = this.item.system as unknown as DescriptorSystemData | SpeciesSystemData | CharacterTypeSystemData;
-    const abilityChoice = this.item.type !== "descriptor" && target.dataset.choiceKind === "ability";
+    const choiceKind = target.dataset.choiceKind ?? "skill";
+    const abilityChoice = this.item.type !== "descriptor" && choiceKind === "ability";
+    const descriptorChoice = this.item.type === "species" && choiceKind === "descriptor";
     const group = abilityChoice
       ? (system as SpeciesSystemData | CharacterTypeSystemData).abilityChoiceGroups.find((entry) => entry.id === groupId)
-      : system.choiceGroups.find((entry) => entry.id === groupId);
+      : descriptorChoice
+        ? (system as SpeciesSystemData).descriptorChoiceGroups.find((entry) => entry.id === groupId)
+        : system.choiceGroups.find((entry) => entry.id === groupId);
     if (!group) return;
-    const sources = [...game.items].filter((item) => item.type === (abilityChoice ? "ability" : "skill")).sort((a, b) => a.name.localeCompare(b.name));
+    const sourceType = abilityChoice ? "ability" : descriptorChoice ? "descriptor" : "skill";
+    const sources = [...game.items].filter((item) => item.type === sourceType).sort((a, b) => a.name.localeCompare(b.name));
     const data = await foundry.applications.api.DialogV2.input({
-      window: {title: game.i18n.localize("CYPHERV2.Packages.AddSkillOption")},
-      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.Source")}<select name="uuid">${abilityChoice ? "" : `<option value="custom">${game.i18n.localize("CYPHERV2.Packages.CustomSkill")}</option>`}${sources.map((item) => `<option value="${escapeHtml(item.uuid)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>${abilityChoice ? "" : `<label>${game.i18n.localize("CYPHERV2.Packages.CustomSkillName")}<input name="customName" type="text"></label>`}</div>`,
+      window: {title: game.i18n.localize(abilityChoice ? "CYPHERV2.Species.AddAbilityOption" : descriptorChoice ? "CYPHERV2.Species.AddDescriptorOption" : "CYPHERV2.Packages.AddSkillOption")},
+      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.Source")}<select name="uuid">${abilityChoice || descriptorChoice ? "" : `<option value="custom">${game.i18n.localize("CYPHERV2.Packages.CustomSkill")}</option>`}${sources.map((item) => `<option value="${escapeHtml(item.uuid)}">${escapeHtml(item.name)}</option>`).join("")}</select></label>${abilityChoice || descriptorChoice ? "" : `<label>${game.i18n.localize("CYPHERV2.Packages.CustomSkillName")}<input name="customName" type="text"></label><label>${game.i18n.localize("CYPHERV2.Packages.SkillContextNote")}<textarea name="notes" rows="2"></textarea></label>`}</div>`,
       ok: {label: game.i18n.localize("CYPHERV2.Actions.Add")}
     }) as Record<string, unknown> | null;
     if (!data) return;
@@ -665,11 +714,28 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
       const option: AbilityGrant = {id: crypto.randomUUID(), abilityUuid: source.uuid, snapshot: this.#snapshot(source)};
       const groups = (system as SpeciesSystemData | CharacterTypeSystemData).abilityChoiceGroups;
       await this.item.update({"system.abilityChoiceGroups": groups.map((entry) => entry.id === groupId ? {...entry, options: [...entry.options, option]} : entry)});
+    } else if (descriptorChoice) {
+      if (!source) return;
+      const option: DescriptorGrant = {id: crypto.randomUUID(), descriptorUuid: source.uuid, snapshot: this.#snapshot(source)};
+      const groups = (system as SpeciesSystemData).descriptorChoiceGroups;
+      await this.item.update({"system.descriptorChoiceGroups": groups.map((entry) => entry.id === groupId ? {...entry, options: [...entry.options, option]} : entry)});
     } else {
-      const option = this.#skillOption(source, String(data.customName ?? ""));
+      const option = this.#skillOption(source, String(data.customName ?? ""), String(data.notes ?? ""));
       if (!option) return;
       await this.item.update({"system.choiceGroups": system.choiceGroups.map((entry) => entry.id === groupId ? {...entry, options: [...entry.options, option]} : entry)});
     }
+  }
+
+  static async #onEditSkillGrantNote(this: CypherV2ItemSheet, _event: PointerEvent, target: HTMLElement): Promise<void> {
+    const entry = this.#packageEntry(target);
+    if (!entry || !("skillUuid" in entry)) return;
+    const data = await foundry.applications.api.DialogV2.input({
+      window: {title: game.i18n.localize("CYPHERV2.Packages.EditSkillContextNote")},
+      content: `<div class="cypherv2-dialog-fields"><label>${game.i18n.localize("CYPHERV2.Packages.SkillContextNote")}<textarea name="notes" rows="3">${escapeHtml(String(entry.notes ?? ""))}</textarea></label></div>`,
+      ok: {label: game.i18n.localize("CYPHERV2.Actions.Save")}
+    }) as Record<string, unknown> | null;
+    if (!data) return;
+    await this.#replacePackageEntry(target, {...entry, notes: String(data.notes ?? "")});
   }
 
   static async #onInspectPackageGrant(this: CypherV2ItemSheet, _event: PointerEvent, target: HTMLElement): Promise<void> {
@@ -721,6 +787,13 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     } else if (kind === "descriptor") {
       const grants = (this.item.system as unknown as SpeciesSystemData).descriptorGrants;
       await this.item.update({"system.descriptorGrants": grants.filter((grant) => grant.id !== id)});
+    } else if (kind === "descriptorOption") {
+      const groupId = target.dataset.groupId;
+      const groups = (this.item.system as unknown as SpeciesSystemData).descriptorChoiceGroups;
+      await this.item.update({"system.descriptorChoiceGroups": groups.map((group) => group.id === groupId ? {...group, options: group.options.filter((entry) => entry.id !== id)} : group)});
+    } else if (kind === "descriptorGroup") {
+      const groups = (this.item.system as unknown as SpeciesSystemData).descriptorChoiceGroups;
+      await this.item.update({"system.descriptorChoiceGroups": groups.filter((group) => group.id !== id)});
     }
   }
 
@@ -1038,31 +1111,34 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
       id: crypto.randomUUID(),
       abilityUuid: source.uuid,
       minimumTier: normalizeGenreMinimumTier(minimumTier),
+      catalog: "progression",
+      minimumSuperheroRank: 0,
       snapshot: this.#snapshot(source)
     };
     await this.item.update({"system.abilityCatalog": [...system.abilityCatalog, entry]});
   }
 
-  #skillOption(source: Item | null, customName = ""): SkillGrantOption | null {
+  #skillOption(source: Item | null, customName = "", notes = ""): SkillGrantOption | null {
     const name = customName.trim();
     if (!source && !name) return null;
     return {
       id: crypto.randomUUID(),
       skillUuid: source?.uuid ?? "",
       customName: source ? "" : name,
+      notes: notes.trim(),
       snapshot: source ? this.#snapshot(source) : {name, system: {}}
     };
   }
 
-  async #addCustomSkill(name: string, rank: SkillRank): Promise<void> {
+  async #addCustomSkill(name: string, rank: SkillRank, notes = ""): Promise<void> {
     const system = this.item.system as unknown as DescriptorSystemData;
-    const option = this.#skillOption(null, name);
+    const option = this.#skillOption(null, name, notes);
     if (!option) return;
     const grant: SkillGrant = {...option, rank};
     await this.item.update({"system.skillGrants": [...system.skillGrants, grant]});
   }
 
-  async #addPackageDocument(source: Item, mode: "fixed", rank: SkillRank = "trained"): Promise<void> {
+  async #addPackageDocument(source: Item, mode: "fixed", rank: SkillRank = "trained", notes = ""): Promise<void> {
     if (this.item.type === "characterType" && source.type === "ability") {
       const system = this.item.system as unknown as {abilityGrants: AbilityGrant[]};
       const grant: AbilityGrant = {id: crypto.randomUUID(), abilityUuid: source.uuid, snapshot: this.#snapshot(source)};
@@ -1071,14 +1147,14 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     }
     if (this.item.type === "characterType" && source.type === "skill") {
       const system = this.item.system as unknown as CharacterTypeSystemData;
-      const option = this.#skillOption(source);
+      const option = this.#skillOption(source, "", notes);
       if (!option) return;
       await this.item.update({"system.skillGrants": [...system.skillGrants, {...option, rank}]});
       return;
     }
     if (this.item.type === "descriptor" && source.type === "skill") {
       const system = this.item.system as unknown as DescriptorSystemData;
-      const option = this.#skillOption(source);
+      const option = this.#skillOption(source, "", notes);
       if (!option) return;
       await this.item.update({"system.skillGrants": [...system.skillGrants, {...option, rank}]});
       return;
@@ -1091,7 +1167,7 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
         return;
       }
       if (source.type === "skill") {
-        const option = this.#skillOption(source);
+        const option = this.#skillOption(source, "", notes);
         if (!option) return;
         await this.item.update({"system.skillGrants": [...system.skillGrants, {...option, rank}]});
         return;
@@ -1115,6 +1191,7 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     if (kind === "option") return system.choiceGroups.find((group) => group.id === target.dataset.groupId)?.options.find((entry) => entry.id === id) ?? null;
     if (kind === "abilityOption") return (this.item.system as unknown as SpeciesSystemData).abilityChoiceGroups.find((group) => group.id === target.dataset.groupId)?.options.find((entry) => entry.id === id) ?? null;
     if (kind === "descriptor") return (this.item.system as unknown as SpeciesSystemData).descriptorGrants.find((entry) => entry.id === id) ?? null;
+    if (kind === "descriptorOption") return (this.item.system as unknown as SpeciesSystemData).descriptorChoiceGroups.find((group) => group.id === target.dataset.groupId)?.options.find((entry) => entry.id === id) ?? null;
     return null;
   }
 
@@ -1138,6 +1215,10 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     } else if (kind === "descriptor") {
       const grants = (this.item.system as unknown as SpeciesSystemData).descriptorGrants;
       await this.item.update({"system.descriptorGrants": grants.map((entry) => entry.id === id ? replacement : entry)});
+    } else if (kind === "descriptorOption") {
+      const groupId = target.dataset.groupId;
+      const groups = (this.item.system as unknown as SpeciesSystemData).descriptorChoiceGroups;
+      await this.item.update({"system.descriptorChoiceGroups": groups.map((group) => group.id === groupId ? {...group, options: group.options.map((entry) => entry.id === id ? replacement as DescriptorGrant : entry)} : group)});
     }
   }
 
@@ -1169,6 +1250,10 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
     const isCharacterType = this.item.type === "characterType";
     const isDescriptor = this.item.type === "descriptor";
     const isSpecies = this.item.type === "species";
+    const typeSuperheroSelected = isCharacterType && String(system.genre ?? "none") === "superhero";
+    const typeInstance = isCharacterType
+      ? (system.instance as CharacterTypeSystemData["instance"] | undefined)
+      : undefined;
     const usesRichDescription = ["ability", "focus", "genre", "skill", "weapon", "armor", "shield", "equipment", "cypher", "artifact", "characterType", "descriptor", "species"].includes(this.item.type);
     const rawDescription = typeof this.item._source?.system?.description === "string"
       ? this.item._source.system.description
@@ -1204,6 +1289,38 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
             : "CYPHERV2.Ability.RollModifier"
       )
     } : null;
+    const genreAbilityMetadata = isAbility
+      ? ((this.item as unknown as {flags?: {cypherv2?: {genreAbility?: {
+        catalog?: string;
+        genres?: string[];
+        progressionBand?: string;
+        minimumSuperheroRank?: number;
+      }}}}).flags?.cypherv2?.genreAbility)
+      : undefined;
+    const abilityGenreReview = genreAbilityMetadata ? {
+      catalogLabel: game.i18n.localize(`CYPHERV2.Genre.CatalogKind.${genreAbilityMetadata.catalog ?? "progression"}`),
+      genresLabel: (genreAbilityMetadata.genres ?? []).map((genre) => (
+        game.i18n.localize(`CYPHERV2.Packages.Genre.${genre}`)
+      )).join(" · "),
+      progressionBandLabel: genreAbilityMetadata.progressionBand === "origin"
+        ? game.i18n.localize("CYPHERV2.Genre.CatalogKind.origin")
+        : game.i18n.localize(`CYPHERV2.Genre.ProgressionBand.${genreAbilityMetadata.progressionBand ?? "mid-tier"}`),
+      minimumSuperheroRank: Number(genreAbilityMetadata.minimumSuperheroRank ?? 0)
+    } : null;
+    const genreCatalogEntries = isGenre
+      ? (system as unknown as GenreSystemData).abilityCatalog.map((entry) => ({
+        ...entry,
+        catalogLabel: game.i18n.localize(`CYPHERV2.Genre.CatalogKind.${entry.catalog ?? "progression"}`),
+        progressionBandLabel: (entry.catalog ?? "progression") === "progression"
+          ? entry.minimumTier === 3
+            ? game.i18n.localize("CYPHERV2.Genre.ProgressionBand.mid-tier")
+            : entry.minimumTier === 6
+              ? game.i18n.localize("CYPHERV2.Genre.ProgressionBand.high-tier")
+              : ""
+          : "",
+        minimumSuperheroRank: Number(entry.minimumSuperheroRank ?? 0)
+      }))
+      : [];
     const skillOptionalMechanics = isSkill && skillHasOptionalMechanics({
       defaultPool,
       category: String(system.category ?? "general"),
@@ -1248,6 +1365,19 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
       isGenre,
       isCharacterType,
       typeCustomGenreSelected: isCharacterType && String(system.genre ?? "none") === "custom",
+      typeSuperheroSelected,
+      typeSuperheroAttached: typeSuperheroSelected && Boolean(typeInstance?.instanceId),
+      typeSuperheroicsPoolLabel: typeInstance?.selections?.superheroicsPool
+        && typeInstance.selections.superheroicsPool !== "none"
+        ? game.i18n.localize(`CYPHERV2.Pools.${typeInstance.selections.superheroicsPool[0]!.toUpperCase()}${typeInstance.selections.superheroicsPool.slice(1)}`)
+        : game.i18n.localize("CYPHERV2.Common.None"),
+      typeWeaponFamiliesValue: isCharacterType
+        ? normalizeWeaponFamilies((system as unknown as CharacterTypeSystemData).weaponFamilies).map(weaponFamilyLabel).join(", ")
+        : "",
+      speciesWeaponFamiliesValue: isSpecies
+        ? normalizeWeaponFamilies((system as unknown as SpeciesSystemData).weaponFamilies).map(weaponFamilyLabel).join(", ")
+        : "",
+      weaponFamilySuggestions: BUILT_IN_WEAPON_FAMILIES.map((family) => ({value: weaponFamilyLabel(family)})),
       isDescriptor,
       isSpecies,
       isCompactRuleItem: isAbility || isSkill || isWeapon || isArmor || isShield || isEquipment || isCypher || isArtifact || isGenre || isCharacterType || isSpecies,
@@ -1260,7 +1390,9 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
       })) : [],
       genreMinimumTierMin: GENRE_MINIMUM_TIER_MIN,
       genreMinimumTierMax: GENRE_MINIMUM_TIER_MAX,
+      genreCatalogEntries,
       abilityMechanics,
+      abilityGenreReview,
       skillOptionalMechanics,
       hasGrantProvenance,
       packagePoolOptions: ["none", ...POOL_KEYS].map((value) => ({
@@ -1302,6 +1434,13 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
       speciesSkillGrants: isSpecies ? (system.skillGrants as SkillGrant[]).map((grant) => ({...grant, rankLabel: game.i18n.localize(`CYPHERV2.Skill.Ranks.${grant.rank}`)})) : [],
       speciesSkillChoiceGroups: isSpecies ? (system.choiceGroups as SkillChoiceGroup[]).map((group) => ({...group, rankLabel: game.i18n.localize(`CYPHERV2.Skill.Ranks.${group.rank}`)})) : [],
       speciesAbilityChoiceGroups: isSpecies ? (system.abilityChoiceGroups as SpeciesSystemData["abilityChoiceGroups"]) : [],
+      speciesDescriptorChoiceGroups: isSpecies
+        ? (system.descriptorChoiceGroups as SpeciesSystemData["descriptorChoiceGroups"]).map((group) => ({
+          ...group,
+          catalogMode: (group.sourceMode ?? "fixed") === "catalog",
+          catalogLabel: game.i18n.localize("CYPHERV2.Packages.AllAvailableDescriptors")
+        }))
+        : [],
       canEditFocusTree: Boolean(isFocus && game.user.isGM && this.isEditable && !this.#focusTreeEditor),
       focusTreeEditing: Boolean(this.#focusTreeEditor),
       focusEditor: this.#focusTreeEditor ? {
@@ -1411,6 +1550,7 @@ export class CypherV2ItemSheet extends ItemSheetV2 {
         label: game.i18n.localize(`CYPHERV2.Combat.Weapon.Category.${value}`),
         selected: system.category === value
       })) : [],
+      weaponFamilyDisplay: isWeapon ? weaponFamilyLabel(system.family) : "",
       weaponDefaultPoolOptions: isWeapon ? ["none", ...POOL_KEYS].map((value) => ({
         value,
         label: value === "none"

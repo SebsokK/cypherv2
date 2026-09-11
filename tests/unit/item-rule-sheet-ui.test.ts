@@ -10,12 +10,13 @@ const ability = template.slice(abilityStart, skillStart);
 const skill = template.slice(skillStart, weaponStart);
 
 describe("compact Ability Item Sheet", () => {
-  it("aligns Cost, Allowed Pools, and ignores Edge in one responsive configuration row", () => {
+  it("aligns Cost, scalable metadata, Allowed Pools, and ignores Edge in one responsive row", () => {
     expect(ability).toContain('class="compact-mechanic-field ability-cost-field"');
+    expect(ability).toContain('name="system.cost.scalable"');
     expect(ability).toContain('class="compact-mechanic-field ability-pool-field"');
     expect(ability).toContain('class="compact-mechanic-field ability-edge-field"');
     expect(ability).toContain('class="ability-edge-control"><input name="system.cost.ignoresEdge"');
-    expect(styles).toContain("grid-template-columns: minmax(5rem, 6rem) minmax(0, 1fr) minmax(8rem, 10rem)");
+    expect(styles).toContain("grid-template-columns: minmax(5rem, 6rem) minmax(6.5rem, auto) minmax(0, 1fr) minmax(8rem, 10rem)");
     expect(styles).not.toContain(".ability-pool-field {\n    grid-column: span 2");
     expect(styles).toMatch(/\.ability-edge-control\s*\{[\s\S]*?justify-content:\s*center;[\s\S]*?min-height:\s*1\.65rem;\s*\}/);
   });
@@ -24,6 +25,7 @@ describe("compact Ability Item Sheet", () => {
     const description = ability.indexOf("compact-rule-description");
     for (const field of [
       "system.cost.amount",
+      "system.cost.scalable",
       "system.cost.ignoresEdge"
     ]) expect(ability.indexOf(`name=\"${field}\"`)).toBeLessThan(description);
     expect(ability.indexOf("data-ability-allowed-pool")).toBeLessThan(description);
@@ -46,6 +48,15 @@ describe("compact Ability Item Sheet", () => {
     for (const field of ["system.activation", "system.roll", "system.rollModifier", "system.damage", "system.targetMode"]) {
       expect(ability.indexOf(`name="${field}"`)).toBeGreaterThan(advanced);
     }
+  });
+
+  it("exposes private Genre review classification in Advanced without changing Ability mechanics", () => {
+    expect(ability).toContain("{{#if abilityGenreReview}}");
+    expect(ability).toContain("genre-ability-review-metadata");
+    expect(ability).toContain("abilityGenreReview.catalogLabel");
+    expect(ability).toContain("abilityGenreReview.genresLabel");
+    expect(ability).toContain("abilityGenreReview.progressionBandLabel");
+    expect(ability).toContain("abilityGenreReview.minimumSuperheroRank");
   });
 
   it("keeps the rich Description large and leaves only technical metadata in Advanced", () => {

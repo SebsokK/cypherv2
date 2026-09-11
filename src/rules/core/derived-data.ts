@@ -75,7 +75,7 @@ export function deriveCharacterData(
   proficiencies: CharacterProficienciesLike = {armorCategories: [], freelyUse: []},
   recoveryBonus = 0,
   packagePresentation: CharacterDerivedData["packages"] = {
-    weaponCategories: [], armorCategories: [], genre: "none", genreUuid: "", totalEffortCapMode: "core",
+    weaponCategories: [], weaponFamilies: [], armorCategories: [], genre: "none", genreUuid: "", totalEffortCapMode: "core",
     typeNames: [], descriptorNames: [], speciesNames: [], characterSentence: ""
   },
   cypherLimitBase = 2,

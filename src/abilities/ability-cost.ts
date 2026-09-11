@@ -47,8 +47,9 @@ export function formatAbilityCost(
   amount: number,
   pools: readonly PoolKey[],
   poolLabel: (pool: PoolKey) => string,
-  separators: AbilityPoolListSeparators
+  separators: AbilityPoolListSeparators,
+  scalable = false
 ): string {
   if (!Number.isInteger(amount) || amount <= 0 || pools.length === 0) return "";
-  return `${amount} ${formatAbilityPoolList(pools, poolLabel, separators)}`;
+  return `${amount}${scalable ? "+" : ""} ${formatAbilityPoolList(pools, poolLabel, separators)}`;
 }

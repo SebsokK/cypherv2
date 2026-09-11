@@ -9,6 +9,7 @@ const styles = readFileSync(resolve(root, "styles/components/_skill-list.scss"),
 const skillsStart = template.indexOf('data-tab="skills"');
 const skillsEnd = template.indexOf('data-tab="abilities"');
 const skills = template.slice(skillsStart, skillsEnd);
+const skillsControls = skills.slice(skills.indexOf('<header class="skills-header">'), skills.indexOf('<ol class="compact-skill-list">'));
 
 describe("Skills UI V1", () => {
   it("renders dense rows without a table header or a separate Roll button", () => {
@@ -46,7 +47,7 @@ describe("Skills UI V1", () => {
     expect(skills).toContain('fa-solid fa-trash');
     expect(skills).not.toContain(">{{localize \"CYPHERV2.Actions.Edit\"}}</button>");
     expect(skills).not.toContain(">{{localize \"CYPHERV2.Actions.Delete\"}}</button>");
-    expect(skills).not.toContain("<h2>");
+    expect(skillsControls).not.toContain("<h2>");
     expect(styles).toContain("justify-content: flex-end");
   });
 

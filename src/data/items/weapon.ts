@@ -5,9 +5,11 @@ import {
   WEAPON_CATEGORIES,
   type RangeCategory,
   type SkillRank,
-  type WeaponCategory
+  type WeaponCategory,
+  type WeaponFamily
 } from "../../constants/system";
 import {POOL_KEYS, type PoolKey} from "../../rules/core/core-types";
+import {normalizeWeaponFamily} from "../../combat/weapon-family";
 import {depletionRuleField, fields, integerField} from "../common/schema";
 import {ItemDataModelBase} from "./item-base";
 
@@ -19,6 +21,7 @@ export class WeaponDataModel extends ItemDataModelBase {
   declare bonusDamage: number;
   declare skillLevel: SkillRank;
   declare defaultPool: PoolKey | "none";
+  declare family: WeaponFamily;
 
   static override defineSchema(): Record<string, unknown> {
     return {
@@ -29,6 +32,7 @@ export class WeaponDataModel extends ItemDataModelBase {
         initial: "medium",
         choices: [...WEAPON_CATEGORIES]
       }),
+      family: new fields.StringField({required: true, nullable: false, blank: true, initial: ""}),
       attackType: new fields.StringField({
         required: true,
         nullable: false,
@@ -103,6 +107,9 @@ export class WeaponDataModel extends ItemDataModelBase {
     options: {readonly partial?: boolean} = {}
   ): Record<string, unknown> {
     const migrated = super.migrateData(source, options);
+    if (!options.partial || Object.hasOwn(migrated, "family")) {
+      migrated.family = normalizeWeaponFamily(migrated.family);
+    }
     const includesDefaultPool = Object.hasOwn(migrated, "defaultPool");
     if ((!options.partial || includesDefaultPool)
       && migrated.defaultPool !== "none"

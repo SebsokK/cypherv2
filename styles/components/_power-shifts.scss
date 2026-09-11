@@ -1,0 +1,107 @@
+.cypherv2 .character-power-shifts {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  margin-bottom: 0.55rem;
+  padding: 0.35rem 0.45rem;
+  background: color-mix(in srgb, var(--cypherv2-surface-raised) 36%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cypherv2-border) 65%, transparent);
+  border-radius: 0.3rem;
+
+  .power-shift-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.4rem;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+      color: var(--cypherv2-text-primary);
+      font-size: 0.72rem;
+      letter-spacing: 0.045em;
+      text-transform: uppercase;
+    }
+
+    > strong {
+      color: var(--cypherv2-text-primary);
+      font-size: 0.72rem;
+    }
+  }
+
+  .power-shift-warning,
+  .power-shift-legacy-note,
+  .power-shift-empty {
+    margin: 0;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.66rem;
+  }
+
+  .power-shift-warning,
+  .power-shift-row-warning {
+    color: var(--cypherv2-color-warning);
+  }
+
+  .power-shift-list {
+    display: grid;
+    gap: 0.12rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .power-shift-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2rem auto;
+    gap: 0.3rem;
+    align-items: center;
+    min-width: 0;
+    padding: 0.12rem 0.18rem;
+    border-radius: 0.2rem;
+
+    &:hover,
+    &:focus-within {
+      background: color-mix(in srgb, var(--cypherv2-surface-raised) 55%, transparent);
+    }
+
+    &.has-category-warning {
+      box-shadow: inset 2px 0 color-mix(in srgb, var(--cypherv2-color-warning) 75%, transparent);
+    }
+  }
+
+  .power-shift-identity {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    align-items: baseline;
+    min-width: 0;
+    color: var(--cypherv2-text-muted);
+    font-size: 0.68rem;
+
+    strong {
+      color: var(--cypherv2-text-primary);
+      text-transform: uppercase;
+    }
+
+    small {
+      flex-basis: 100%;
+      overflow-wrap: anywhere;
+      color: var(--cypherv2-text-muted);
+      font-size: 0.63rem;
+    }
+  }
+
+  .power-shift-value {
+    color: var(--cypherv2-text-primary);
+    text-align: center;
+  }
+
+  .power-shift-actions {
+    display: inline-flex;
+    gap: 0.05rem;
+  }
+
+  .power-shift-row-warning {
+    grid-column: 1 / -1;
+    font-size: 0.62rem;
+  }
+}

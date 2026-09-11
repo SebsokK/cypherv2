@@ -84,6 +84,24 @@ function setup(naturalRoll = 12, edge = 0, poolValue = 20) {
 }
 
 describe("AbilityService", () => {
+  it("preserves direct-use behavior across expanded CRD activation metadata", () => {
+    const {service} = setup();
+    for (const activation of ["action", "firstAction", "lastAction", "reaction", "timed", "special"] as const) {
+      expect(service.canUse(ability({activation}))).toBe(true);
+    }
+    for (const activation of ["passive", "enabler", "perpetual"] as const) {
+      expect(service.canUse(ability({activation}))).toBe(false);
+    }
+  });
+
+  it("treats scalable cost as descriptive metadata and preserves existing payment math", async () => {
+    const {actor, service} = setup(12, 1, 10);
+    const result = await service.payCost(actor, ability({
+      cost: {amount: 2, scalable: true, ignoresEdge: false, allowedPools: ["might"]}
+    }), "might");
+    expect(result).toMatchObject({listedCost: 2, edgeApplied: 1, costPaid: 1, currentAfter: 9});
+  });
+
   it("pays a single allowed Pool immediately through the existing Edge cost math", async () => {
     const {actor, roller, service} = setup(12, 2, 10);
     const result = await service.payCost(actor, ability({

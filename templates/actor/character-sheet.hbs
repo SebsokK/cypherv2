@@ -126,7 +126,8 @@
     <div class="character-settings-panel">
       <section class="character-settings-section character-familiarity-settings" title="{{localize 'CYPHERV2.Settings.Character.FamiliarityHint'}}">
         <header class="character-settings-section-header"><h2>{{localize "CYPHERV2.Settings.Character.Familiarities"}}</h2></header>
-        <div class="character-familiarity-family"><h3>{{localize "CYPHERV2.Combat.Weapons"}}</h3><div class="character-familiarity-buttons">{{#each familiarities.weapons as |entry|}}<button type="button" class="character-familiarity-toggle {{#if entry.effective}}is-effective{{/if}} {{#if entry.manual}}is-manual{{/if}} {{#if entry.packageGranted}}is-package-granted{{/if}}" data-action="toggleFamiliarity" data-family="weapon" data-category="{{entry.category}}" aria-pressed="{{entry.manual}}" title="{{entry.sourceHint}}" {{#unless entry.canToggle}}disabled aria-disabled="true"{{/unless}}><span>{{entry.label}}</span>{{#if entry.effective}}<i class="fa-solid fa-check" aria-hidden="true"></i>{{/if}}</button>{{/each}}</div></div>
+        <div class="character-familiarity-family"><h3>{{localize "CYPHERV2.Settings.Character.WeaponCategories"}}</h3><div class="character-familiarity-buttons">{{#each familiarities.weapons as |entry|}}<button type="button" class="character-familiarity-toggle {{#if entry.effective}}is-effective{{/if}} {{#if entry.manual}}is-manual{{/if}} {{#if entry.packageGranted}}is-package-granted{{/if}}" data-action="toggleFamiliarity" data-family="weapon" data-category="{{entry.category}}" aria-pressed="{{entry.manual}}" title="{{entry.sourceHint}}" {{#unless entry.canToggle}}disabled aria-disabled="true"{{/unless}}><span>{{entry.label}}</span>{{#if entry.effective}}<i class="fa-solid fa-check" aria-hidden="true"></i>{{/if}}</button>{{/each}}</div></div>
+        <div class="character-familiarity-family character-weapon-family-settings"><h3>{{localize "CYPHERV2.Settings.Character.WeaponFamilies"}}</h3><div class="character-familiarity-tags">{{#each familiarities.weaponFamilies as |entry|}}<span class="character-familiarity-tag {{#if entry.packageGranted}}is-package-granted{{/if}}" title="{{entry.sourceHint}}"><span>{{entry.label}}</span>{{#if entry.canRemove}}<button type="button" class="cypherv2-icon-action" data-action="removeWeaponFamily" data-weapon-family="{{entry.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}} {{entry.label}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{entry.label}}"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>{{/if}}</span>{{else}}<span class="empty-list">{{localize "CYPHERV2.Common.None"}}</span>{{/each}}{{#if editable}}<button type="button" class="compact-inline-action" data-action="addWeaponFamily"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "CYPHERV2.Settings.Character.AddWeaponFamily"}}</button>{{/if}}</div></div>
         <div class="character-familiarity-family"><h3>{{localize "CYPHERV2.Combat.Armors"}}</h3><div class="character-familiarity-buttons">{{#each familiarities.armor as |entry|}}<button type="button" class="character-familiarity-toggle {{#if entry.effective}}is-effective{{/if}} {{#if entry.manual}}is-manual{{/if}} {{#if entry.packageGranted}}is-package-granted{{/if}}" data-action="toggleFamiliarity" data-family="armor" data-category="{{entry.category}}" aria-pressed="{{entry.manual}}" title="{{entry.sourceHint}}" {{#unless entry.canToggle}}disabled aria-disabled="true"{{/unless}}><span>{{entry.label}}</span>{{#if entry.effective}}<i class="fa-solid fa-check" aria-hidden="true"></i>{{/if}}</button>{{/each}}</div></div>
       </section>
 
@@ -151,6 +152,10 @@
         <label class="character-focus-sentence-setting">
           <input type="checkbox" name="system.presentation.hideFocusInSentence" {{checked system.presentation.hideFocusInSentence}} {{#unless editable}}disabled{{/unless}}>
           <span>{{localize "CYPHERV2.Settings.Character.HideFocusInSentence"}}</span>
+        </label>
+        <label class="character-focus-sentence-setting character-power-shift-setting">
+          <input type="checkbox" name="system.presentation.powerShiftsEnabled" {{checked system.presentation.powerShiftsEnabled}} {{#unless editable}}disabled{{/unless}}>
+          <span>{{localize "CYPHERV2.PowerShifts.Activate"}}</span>
         </label>
         <div class="character-source-list">
           <div class="character-source-row"><strong>{{localize "CYPHERV2.Packages.Types"}}</strong><div class="character-source-values">{{#each typeItems as |package|}}<span class="character-source-item"><button type="button" class="link-button" data-action="inspectPackage" data-item-id="{{package.id}}">{{package.name}}</button>{{#if ../editable}}<button type="button" class="cypherv2-icon-action" data-action="removePackage" data-item-id="{{package.id}}" title="{{localize 'CYPHERV2.Actions.Remove'}}" aria-label="{{localize 'CYPHERV2.Actions.Remove'}} {{package.name}}"><i class="fa-solid fa-xmark"></i></button>{{/if}}</span>{{else}}<span class="empty-list">{{localize "CYPHERV2.Common.None"}}</span>{{/each}}</div>{{#if editable}}<button type="button" class="compact-inline-action character-source-add" data-action="addType"><i class="fa-solid fa-plus"></i> {{localize "CYPHERV2.Actions.Add"}}</button>{{/if}}</div>
@@ -219,6 +224,23 @@
 
   <div class="tab {{tabs.skills.cssClass}}" data-group="primary" data-tab="skills">
     <section class="skills-section">
+      {{#if powerShifts.enabled}}
+        <section class="character-power-shifts {{#if powerShifts.overBudget}}has-budget-warning{{/if}}">
+          <header class="power-shift-header"><h2>{{localize "CYPHERV2.PowerShifts.Title"}}</h2><strong>{{powerShifts.allocated}} / {{powerShifts.available}}</strong>{{#if editable}}<button type="button" class="compact-inline-action" data-action="addPowerShift"><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "CYPHERV2.PowerShifts.Add"}}</button>{{/if}}</header>
+          {{#if powerShifts.overBudget}}<p class="power-shift-warning"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{localize "CYPHERV2.PowerShifts.OverBudget"}}</p>{{/if}}
+          {{#if powerShifts.legacy}}<p class="power-shift-legacy-note">{{localize "CYPHERV2.PowerShifts.LegacySlots"}}</p>{{/if}}
+          <ol class="power-shift-list">
+            {{#each powerShifts.entries as |shift|}}
+              <li class="power-shift-row {{#if shift.categoryWarning}}has-category-warning{{/if}}">
+                <span class="power-shift-identity"><strong>{{shift.category}}</strong>{{#if shift.specification}}<span>— {{shift.specification}}</span>{{/if}}{{#if shift.description}}<small>{{shift.description}}</small>{{/if}}</span>
+                <strong class="power-shift-value">{{shift.shifts}}</strong>
+                {{#if ../editable}}<span class="power-shift-actions"><button type="button" class="cypherv2-icon-action" data-action="editPowerShift" data-power-shift-id="{{shift.id}}" title="{{localize 'CYPHERV2.Actions.Edit'}}" aria-label="{{localize 'CYPHERV2.Actions.Edit'}} {{shift.category}}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button type="button" class="cypherv2-icon-action" data-action="deletePowerShift" data-power-shift-id="{{shift.id}}" title="{{localize 'CYPHERV2.Actions.Delete'}}" aria-label="{{localize 'CYPHERV2.Actions.Delete'}} {{shift.category}}"><i class="fa-solid fa-trash" aria-hidden="true"></i></button></span>{{/if}}
+                {{#if shift.categoryWarning}}<small class="power-shift-row-warning">{{localize "CYPHERV2.PowerShifts.CategoryWarning"}}</small>{{/if}}
+              </li>
+            {{else}}<li class="power-shift-empty">{{localize "CYPHERV2.PowerShifts.Empty"}}</li>{{/each}}
+          </ol>
+        </section>
+      {{/if}}
       <header class="skills-header">
         <div class="skills-sort" aria-label="{{localize 'CYPHERV2.Skill.Sort.Label'}}">
           <span>{{localize "CYPHERV2.Skill.Sort.Label"}}</span>

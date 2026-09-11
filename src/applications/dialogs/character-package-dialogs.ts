@@ -2,6 +2,7 @@ import {POOL_KEYS, type PoolKey} from "../../rules/core/core-types";
 import type {
   CharacterPackageItemLike,
   CharacterTypeSystemData,
+  DescriptorGrant,
   DescriptorSystemData,
   PackageRole,
   PoolBonusChoiceGroup,
@@ -19,6 +20,7 @@ import type {GenreDocumentLike} from "../../genre/genre-types";
 import type {GenreCharacterLike} from "../../services/genre-service";
 import {promptAttachGenre} from "./genre-dialogs";
 import {promptPackageChoice, type PackageChoiceOption} from "./package-choice-dialog";
+import {prepareDescriptorChoiceGroups} from "../../packages/package-choice-catalog";
 
 type DialogData = Record<string, unknown>;
 
@@ -88,6 +90,18 @@ async function promptEdgePool(title: string): Promise<PoolKey | null> {
   return POOL_KEYS.includes(pool as PoolKey) ? pool as PoolKey : null;
 }
 
+async function promptSuperheroicsPool(title: string): Promise<PoolKey | null> {
+  const result = await promptPackageChoice({
+    title,
+    prompt: game.i18n.localize("CYPHERV2.Packages.SuperheroicsPoolPrompt"),
+    ariaLabel: game.i18n.localize("CYPHERV2.Packages.SuperheroicsPool"),
+    choose: 1,
+    options: poolChoiceOptions(POOL_KEYS)
+  });
+  const pool = result?.[0];
+  return POOL_KEYS.includes(pool as PoolKey) ? pool as PoolKey : null;
+}
+
 export async function promptAttachType(actor: PackageCharacterLike, dropped?: PackageSourceLike): Promise<void> {
   const source = dropped ?? await selectWorldPackage("characterType");
   if (!source) return;
@@ -112,6 +126,11 @@ export async function promptAttachType(actor: PackageCharacterLike, dropped?: Pa
     edgePool = await promptEdgePool(source.name) ?? undefined;
     if (!edgePool) return;
   }
+  let superheroicsPool: PoolKey | undefined;
+  if (system.genre === "superhero" && system.superhero?.superheroics?.enabled) {
+    superheroicsPool = await promptSuperheroicsPool(source.name) ?? undefined;
+    if (!superheroicsPool) return;
+  }
   const skillChoices = await promptGroupChoices(source.name, system.choiceGroups ?? [], game.i18n.localize("CYPHERV2.Packages.SkillChoice"));
   if (skillChoices === null) return;
   const abilityChoices = await promptGroupChoices(source.name, system.abilityChoiceGroups ?? [], game.i18n.localize("CYPHERV2.Species.AbilityChoice"));
@@ -122,6 +141,7 @@ export async function promptAttachType(actor: PackageCharacterLike, dropped?: Pa
       skillChoices,
       abilityChoices,
       ...(edgePool ? {edgePool} : {}),
+      ...(superheroicsPool ? {superheroicsPool} : {}),
       ...(replaceItemId ? {replaceItemId} : {}),
       ...(replaceGrantedItemsMode ? {replaceGrantedItemsMode} : {})
     });
@@ -276,9 +296,21 @@ export async function promptAttachSpecies(actor: PackageCharacterLike, dropped?:
   if (skillChoices === null) return;
   const abilityChoices = await promptGroupChoices(source.name, system.abilityChoiceGroups ?? [], game.i18n.localize("CYPHERV2.Species.AbilityChoice"));
   if (abilityChoices === null) return;
+  const descriptorChoiceGroups = await prepareDescriptorChoiceGroups(system.descriptorChoiceGroups ?? []);
+  const descriptorChoices = await promptGroupChoices(
+    source.name,
+    descriptorChoiceGroups,
+    game.i18n.localize("CYPHERV2.Species.DescriptorChoice")
+  );
+  if (descriptorChoices === null) return;
+  const selectedDescriptors: DescriptorGrant[] = descriptorChoiceGroups.flatMap((group) => (
+    group.options
+      .filter((option) => descriptorChoices[group.id]?.includes(option.id))
+      .map((option) => ({...option, id: `${group.id}:${option.id}`}))
+  ));
   const descriptorSkillChoices: Record<string, Record<string, string[]>> = {};
   const descriptorPoolChoices: Record<string, Record<string, PoolKey[]>> = {};
-  for (const grant of system.descriptorGrants ?? []) {
+  for (const grant of [...(system.descriptorGrants ?? []), ...selectedDescriptors]) {
     const descriptor = grant.descriptorUuid ? await fromUuid(grant.descriptorUuid) as PackageSourceLike | null : null;
     const descriptorSystem = (descriptor?.system ?? grant.snapshot.system) as unknown as DescriptorSystemData;
     const poolSelections = await promptPoolBonusChoices(
@@ -293,7 +325,8 @@ export async function promptAttachSpecies(actor: PackageCharacterLike, dropped?:
   }
   try {
     await game.cypherv2.services.characterPackages.attachSpecies(actor, source, {
-      ...(edgePool ? {edgePool} : {}), skillChoices, abilityChoices, descriptorSkillChoices, descriptorPoolChoices,
+      ...(edgePool ? {edgePool} : {}), skillChoices, abilityChoices, descriptorChoices,
+      resolvedDescriptorChoiceGroups: descriptorChoiceGroups, descriptorSkillChoices, descriptorPoolChoices,
       conflictResolver: resolveGrantConflictWithDialog,
       ...(replaceItemId ? {replaceItemId} : {}),
       ...(replaceGrantedItemsMode ? {replaceGrantedItemsMode} : {})

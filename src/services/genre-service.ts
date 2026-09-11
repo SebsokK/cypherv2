@@ -176,7 +176,8 @@ export class GenreService {
     choice: PendingGenreChoice
   ): readonly GenreAbilityEntry[] {
     return genre.system.abilityCatalog.filter((entry) => (
-      entry.minimumTier <= effectiveTier(actor.system) && entry.minimumTier <= choice.grantTier
+      (entry.catalog ?? "progression") === "progression"
+      && entry.minimumTier <= effectiveTier(actor.system) && entry.minimumTier <= choice.grantTier
     ));
   }
 
@@ -184,7 +185,9 @@ export class GenreService {
     actor: GenreCharacterLike,
     genre: GenreDocumentLike
   ): readonly GenreManualCatalogEntry[] {
-    return genre.system.abilityCatalog.map((entry) => ({
+    return genre.system.abilityCatalog.filter((entry) => (
+      (entry.catalog ?? "progression") === "progression"
+    )).map((entry) => ({
       id: entry.id,
       name: entry.snapshot.name || entry.id,
       minimumTier: entry.minimumTier,
@@ -206,6 +209,9 @@ export class GenreService {
       if (!genre || genre.type !== "genre") throw new GenreChoiceError("genre-unavailable", "The active Genre source is unavailable.");
       const entry = genre.system.abilityCatalog.find((candidate) => candidate.id === entryId);
       if (!entry) throw new GenreChoiceError("entry-missing", "The Genre Ability is no longer in the active Genre catalog.");
+      if ((entry.catalog ?? "progression") !== "progression") {
+        throw new GenreChoiceError("entry-ineligible", "Origin Abilities are not part of Genre progression.");
+      }
 
       const active = this.#provenanceAbility(actor, genre, association, entry, "active");
       if (active) return {entry, abilityCreated: false, conflictOverridden: false};

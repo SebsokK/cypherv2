@@ -68,7 +68,7 @@ class PersistentCharacter {
 
   constructor() {
     this.system.creation = {coreInitialized: false, mode: "uninitialized", initializedAt: 0};
-    this.system.proficiencies = {weaponCategories: ["light"], armorCategories: [], freelyUse: []};
+    this.system.proficiencies = {weaponCategories: ["light"], weaponFamilies: [], armorCategories: [], freelyUse: []};
     (this.system.advancement as unknown as {guidanceCompletedTiers: number[]})
       .guidanceCompletedTiers = [];
   }

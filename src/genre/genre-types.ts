@@ -2,9 +2,11 @@ import type {ItemSnapshot} from "../packages/package-types";
 
 export const GENRE_EFFORT_CAP_MODES = ["core", "unlimited"] as const;
 export const GENRE_ASSOCIATION_PROVENANCES = ["manual", "typeSuggestion", "migration"] as const;
+export const GENRE_ABILITY_CATALOGS = ["progression", "origin"] as const;
 
 export type GenreEffortCapMode = (typeof GENRE_EFFORT_CAP_MODES)[number];
 export type GenreAssociationProvenance = (typeof GENRE_ASSOCIATION_PROVENANCES)[number];
+export type GenreAbilityCatalog = (typeof GENRE_ABILITY_CATALOGS)[number];
 
 export interface GenreAssociationData {
   readonly sourceUuid: string;
@@ -17,6 +19,8 @@ export interface GenreAbilityEntry {
   readonly id: string;
   readonly abilityUuid: string;
   readonly minimumTier: number;
+  readonly catalog?: GenreAbilityCatalog;
+  readonly minimumSuperheroRank?: number;
   readonly snapshot: ItemSnapshot;
 }
 

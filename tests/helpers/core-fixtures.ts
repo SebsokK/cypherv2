@@ -82,7 +82,7 @@ export function character(options: {
       pendingGenreChoices: [],
       notes: ""
     },
-    proficiencies: {weaponCategories: [], armorCategories: [], freelyUse: []},
+    proficiencies: {weaponCategories: [], weaponFamilies: [], armorCategories: [], freelyUse: []},
     stats: Object.assign(stats, {effortBase: options.effortBase ?? 1}),
     wounds: currentWounds,
     recovery: {
@@ -93,7 +93,8 @@ export function character(options: {
       rollModifier: 0,
       history: []
     },
-    presentation: {hideFocusInSentence: false},
+    presentation: {hideFocusInSentence: false, powerShiftsEnabled: false},
+    powerShifts: [],
     rest: {lastType: "", history: []},
     derived: deriveCharacterData(stats, currentWounds, used, {}, [], undefined, 0, undefined, 2, options.tier ?? 1)
   };

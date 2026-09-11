@@ -94,6 +94,7 @@ export interface WeaponItemLike {
   readonly system: {
     readonly slug?: string;
     readonly category: WeaponCategory;
+    readonly family?: string;
     readonly attackType: WeaponAttackType;
     readonly rangeCategory: string;
     readonly rangeNotes: string;

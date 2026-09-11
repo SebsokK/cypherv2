@@ -46,6 +46,41 @@
       "system": "cypherv2"
     },
     {
+      "name": "type-abilities",
+      "label": "Type Abilities",
+      "path": "packs/type-abilities",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "types",
+      "label": "Types",
+      "path": "packs/types",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "species",
+      "label": "Species",
+      "path": "packs/species",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "genre-abilities",
+      "label": "Genre Abilities",
+      "path": "packs/genre-abilities",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
+      "name": "genres",
+      "label": "Genres",
+      "path": "packs/genres",
+      "type": "Item",
+      "system": "cypherv2"
+    },
+    {
       "name": "focus-abilities",
       "label": "Focus Abilities",
       "path": "packs/focus-abilities",

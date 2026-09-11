@@ -85,7 +85,7 @@ function rawItemChatProperties(item: Item): ItemProperty[] {
       pair: game.i18n.localize("CYPHERV2.Ability.CostDisplay.Or"),
       middle: game.i18n.localize("CYPHERV2.Ability.CostDisplay.Separator"),
       final: game.i18n.localize("CYPHERV2.Ability.CostDisplay.FinalOr")
-    });
+    }, ability.system.cost.scalable === true);
     return cost ? [{label: game.i18n.localize("CYPHERV2.Ability.Cost"), value: cost}] : [];
   }
   return [];

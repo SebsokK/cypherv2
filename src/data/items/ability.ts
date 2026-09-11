@@ -33,6 +33,7 @@ export class AbilityDataModel extends ItemDataModelBase {
       }),
       cost: new fields.SchemaField({
         amount: integerField(),
+        scalable: new fields.BooleanField({required: true, nullable: false, initial: false}),
         ignoresEdge: new fields.BooleanField({required: true, nullable: false, initial: false}),
         allowedPools: new fields.ArrayField(
           new fields.StringField({required: true, nullable: false, choices: [...POOL_KEYS]}),
@@ -102,7 +103,6 @@ export class AbilityDataModel extends ItemDataModelBase {
           )
         };
       }
-      if (migrated.activation === "enabler") migrated.activation = "passive";
       return migrated;
     }
     if (migrated.pool === undefined) {
@@ -114,13 +114,13 @@ export class AbilityDataModel extends ItemDataModelBase {
     migrated.archived = Boolean(migrated.archived ?? false);
     migrated.cost = {
       amount: Number(legacyCost.amount ?? 0),
+      scalable: Boolean(legacyCost.scalable ?? false),
       ignoresEdge: Boolean(legacyCost.ignoresEdge ?? false),
       allowedPools: normalizeAbilityAllowedPools(
         legacyCost.allowedPools,
         migrated.pool ?? legacyCost.pool
       )
     };
-    if (migrated.activation === "enabler") migrated.activation = "passive";
     if (migrated.roll === undefined) migrated.roll = "none";
     if (migrated.targetMode === undefined) migrated.targetMode = "none";
     return migrated;

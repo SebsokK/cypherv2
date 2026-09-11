@@ -37,6 +37,16 @@ describe("compact Character Settings UI", () => {
     expect(styles).toContain("grid-template-columns: 5rem minmax(0, 1fr)");
   });
 
+  it("separates Weapon Categories from extensible Weapon Family tags", () => {
+    expect(settings).toContain("CYPHERV2.Settings.Character.WeaponCategories");
+    expect(settings).toContain("CYPHERV2.Settings.Character.WeaponFamilies");
+    expect(settings).toContain('class="character-familiarity-tags"');
+    expect(settings).toContain('data-action="addWeaponFamily"');
+    expect(settings).toContain('data-action="removeWeaponFamily"');
+    expect(settings).not.toContain('data-family="axes"');
+    expect(styles).toContain(".character-familiarity-tag");
+  });
+
   it("renders Genre as a compact open, replace, remove, add, and drop row", () => {
     expect(settings).toContain('class="character-source-subsection character-genre-settings"');
     expect(settings).toContain('data-hud-drop="genre"');
@@ -67,6 +77,11 @@ describe("compact Character Settings UI", () => {
     expect(settings).toContain('data-action="resetWoundCapacityOverride"');
     expect(settings).toContain('data-action="editRecoveryOverride"');
     expect(settings).toContain('data-action="resetRecoveryOverride"');
+  });
+
+  it("keeps optional Power Shifts disabled by default and controlled by a Character setting", () => {
+    expect(settings).toContain('name="system.presentation.powerShiftsEnabled"');
+    expect(settings).toContain("CYPHERV2.PowerShifts.Activate");
   });
 
   it("keeps every package relationship and action in compact source rows", () => {

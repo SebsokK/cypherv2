@@ -54,9 +54,10 @@ function speciesSource(overrides: Record<string, unknown> = {}): PackageSourceLi
       woundBonuses: {minor: 1, moderate: 0, major: 1},
       edgeGrant: {mode: "choice", pool: "none", amount: 1},
       weaponUse: {light: false, medium: true, heavy: false},
+      weaponFamilies: [],
       armorUse: {light: true, medium: false, heavy: false},
       cypherLimitBonus: 1,
-      skillGrants: [], choiceGroups: [], abilityGrants: [], abilityChoiceGroups: [], descriptorGrants: [],
+      skillGrants: [], choiceGroups: [], abilityGrants: [], abilityChoiceGroups: [], descriptorGrants: [], descriptorChoiceGroups: [],
       instance: {
         sourceUuid: "", instanceId: "", role: "primary", attachedAt: 0,
         selections: {edgePool: "none", skillChoices: [], abilityChoices: [], suppressedGrantIds: []}
@@ -85,13 +86,20 @@ function actor(): PackageCharacterLike & {documents: any[]; creation: {coreIniti
   const creation = {coreInitialized: true, mode: "completed"};
   const system: any = {
     stats, wounds: {minor: [], moderate: [], major: []}, recovery: {used: {oneAction: false, tenMinutes: false, oneHour: false, tenHours: false}},
-    proficiencies: {weaponCategories: ["light"], armorCategories: [], freelyUse: []}, creation,
+    proficiencies: {weaponCategories: ["light"], weaponFamilies: [], armorCategories: [], freelyUse: []},
+    presentation: {hideFocusInSentence: false, powerShiftsEnabled: false}, powerShifts: [], creation,
     derived: deriveCharacterData(stats, {minor: [], moderate: [], major: []}, {oneAction: false, tenMinutes: false, oneHour: false, tenHours: false})
   };
   const recalculate = (): void => {
-    const packages = collectPackageDerivedData(documents.filter((item) => item.type === "characterType" || item.type === "descriptor" || item.type === "species"), system.proficiencies.weaponCategories, system.proficiencies.armorCategories);
+    const packages = collectPackageDerivedData(
+      documents.filter((item) => item.type === "characterType" || item.type === "descriptor" || item.type === "species"),
+      system.proficiencies.weaponCategories,
+      system.proficiencies.armorCategories,
+      [],
+      system.proficiencies.weaponFamilies
+    );
     system.derived = deriveCharacterData(stats, system.wounds, system.recovery.used, packages.extensions, [], {armorCategories: packages.armorCategories, freelyUse: []}, 0, {
-      weaponCategories: [...packages.weaponCategories], armorCategories: [...packages.armorCategories], genre: "none",
+      weaponCategories: [...packages.weaponCategories], weaponFamilies: [...packages.weaponFamilies], armorCategories: [...packages.armorCategories], genre: "none",
       genreUuid: "", totalEffortCapMode: "core",
       typeNames: [...packages.typeNames], descriptorNames: [...packages.descriptorNames], speciesNames: [...packages.speciesNames], characterSentence: packages.characterSentence
     });
@@ -126,6 +134,127 @@ describe("CharacterPackageService", () => {
     expect(target.creation).toEqual({coreInitialized: true, mode: "completed"});
   });
 
+  it("requires and persists a Superheroics Pool, derives its bonus, and creates guided Power Shift slots", async () => {
+    const target = actor();
+    const superhero = typeSource({
+      genre: "superhero",
+      poolBonuses: {might: 0, speed: 0, intellect: 0},
+      superhero: {
+        rank: 3,
+        powerShiftCount: 4,
+        superheroics: {enabled: true, poolBonus: 4}
+      }
+    });
+    const service = new CharacterPackageService(async () => null, () => "hero-instance");
+    await expect(service.attachType(target, superhero, {edgePool: "might"}))
+      .rejects.toThrow("requires a Superheroics Pool choice");
+    expect(target.documents).toHaveLength(0);
+
+    await service.attachType(target, superhero, {
+      edgePool: "might",
+      superheroicsPool: "speed",
+      powerShifts: ["Strength", "Flight"]
+    });
+    const embedded = target.documents.find((item) => item.type === "characterType");
+    expect(embedded.system.superhero).toMatchObject({rank: 3, powerShiftCount: 4});
+    expect(embedded.system.instance.selections).toMatchObject({
+      superheroicsPool: "speed",
+      powerShifts: ["Strength", "Flight", "", ""]
+    });
+    expect(target.system.derived.pools.speed.max).toBe(14);
+
+    await service.remove(target, embedded.id, "delete");
+    expect(target.system.derived.pools.speed.max).toBe(10);
+  });
+
+  it("keeps ordinary Types neutral and preserves Superhero selections across explicit replacement", async () => {
+    const target = actor();
+    const ids = ["ordinary-instance", "hero-instance"];
+    const service = new CharacterPackageService(async () => null, () => ids.shift()!);
+    await service.attachType(target, typeSource(), {edgePool: "might"});
+    const ordinary = target.documents.find((item) => item.type === "characterType");
+    expect(ordinary.system.instance.selections).toMatchObject({
+      superheroicsPool: "none",
+      powerShifts: []
+    });
+    expect(target.system.derived.pools.intellect.max).toBe(10);
+
+    const replacement = {
+      ...typeSource({
+        genre: "superhero",
+        poolBonuses: {might: 0, speed: 0, intellect: 0},
+        superhero: {rank: 2, powerShiftCount: 3, superheroics: {enabled: true, poolBonus: 2}}
+      }),
+      id: "hero-type",
+      uuid: "Item.hero-type",
+      name: "Enhanced Hero"
+    };
+    await service.attachType(target, replacement, {
+      edgePool: "might",
+      superheroicsPool: "intellect",
+      powerShifts: ["Armor", "Strength", "Speed"],
+      replaceItemId: ordinary.id,
+      replaceGrantedItemsMode: "delete"
+    });
+    expect(target.documents.filter((item) => item.type === "characterType")).toHaveLength(1);
+    expect(target.documents.find((item) => item.type === "characterType").system.instance.selections)
+      .toMatchObject({superheroicsPool: "intellect", powerShifts: ["Armor", "Strength", "Speed"]});
+    expect(target.system.derived.pools.intellect.max).toBe(12);
+  });
+
+  it("preserves Character-owned Power Shift allocations when a Type is replaced or removed", async () => {
+    const target = actor();
+    (target.system as any).powerShifts = [{
+      id: "shift-1", category: "Accuracy", shifts: 2, specification: "", description: "Guide only"
+    }];
+    const ids = ["hero-one", "hero-two"];
+    const service = new CharacterPackageService(async () => null, () => ids.shift()!);
+    const first = typeSource({
+      genre: "superhero",
+      superhero: {rank: 2, powerShiftCount: 4, superheroics: {enabled: false, poolBonus: 0}}
+    });
+    await service.attachType(target, first, {edgePool: "might"});
+    const firstId = target.documents.find((item) => item.type === "characterType").id;
+    await service.attachType(target, {
+      ...first, id: "replacement", uuid: "Item.replacement", name: "Replacement Hero",
+      system: {...first.system, superhero: {rank: 1, powerShiftCount: 2, superheroics: {enabled: false, poolBonus: 0}}}
+    }, {edgePool: "might", replaceItemId: firstId});
+    expect((target.system as any).powerShifts).toEqual([{
+      id: "shift-1", category: "Accuracy", shifts: 2, specification: "", description: "Guide only"
+    }]);
+    const replacementId = target.documents.find((item) => item.type === "characterType").id;
+    await service.remove(target, replacementId, "delete");
+    expect((target.system as any).powerShifts).toEqual([{
+      id: "shift-1", category: "Accuracy", shifts: 2, specification: "", description: "Guide only"
+    }]);
+  });
+
+  it("preserves assignment notes, snapshots, and provenance while granting a shared Ability", async () => {
+    const target = actor();
+    const shared = source("shared", "ability", "Shared Ability");
+    const service = new CharacterPackageService(async () => shared, () => "notes-instance");
+    await service.attachType(target, typeSource({
+      abilityGrants: [{
+        id: "shared-grant",
+        abilityUuid: shared.uuid,
+        notes: "Use the Type-specific defensive reading.",
+        snapshot: {name: shared.name, system: shared.system}
+      }]
+    }), {edgePool: "might"});
+    const embeddedType = target.documents.find((item) => item.type === "characterType");
+    const granted = target.documents.find((item) => item.type === "ability");
+    expect(embeddedType.system.abilityGrants[0]).toMatchObject({
+      notes: "Use the Type-specific defensive reading.",
+      snapshot: {name: "Shared Ability"}
+    });
+    expect(granted.system.grantedBy).toMatchObject({
+      kind: "type",
+      instanceId: "notes-instance",
+      grantId: "shared-grant",
+      contentUuid: shared.uuid
+    });
+  });
+
   it("derives Pools, Wounds, chosen Edge and familiarity without making the Type Genre authoritative", async () => {
     const target = actor();
     const result = await new CharacterPackageService(async () => null, () => "instance-monk", () => 10).attachType(target, typeSource(), {edgePool: "speed"});
@@ -140,6 +269,25 @@ describe("CharacterPackageService", () => {
     expect(derived).not.toHaveProperty("genre");
     expect(target.system.stats.might.value).toBe(10);
     expect(target.system.derived.pools.might.max).toBe(12);
+  });
+
+  it("preserves extensible and legacy Type Weapon-family grants on attachment", async () => {
+    const extensible = actor();
+    await new CharacterPackageService(async () => null, () => "energy-instance").attachType(
+      extensible,
+      typeSource({weaponFamilies: ["energy-blades"]}),
+      {edgePool: "might"}
+    );
+    expect(extensible.documents[0].system.weaponFamilies).toEqual(["energy-blades"]);
+    expect((extensible.system.derived as any).packages.weaponFamilies).toEqual(["energy-blades"]);
+
+    const legacy = actor();
+    await new CharacterPackageService(async () => null, () => "axe-instance").attachType(
+      legacy,
+      typeSource({weaponFamilyUse: {axes: true, knives: false, swords: false}}),
+      {edgePool: "might"}
+    );
+    expect((legacy.system.derived as any).packages.weaponFamilies).toEqual(["axes"]);
   });
 
   it("supports a fixed Edge Pool independently from a chosen Edge Pool", async () => {
@@ -406,6 +554,177 @@ describe("CharacterPackageService", () => {
       skillChoices: [{groupId: "skill-choice", optionIds: ["skill-b"]}],
       abilityChoices: [{groupId: "ability-choice", optionIds: ["ability-a"]}]
     });
+  });
+
+  it("derives extensible Species Weapon families and recalculates them on replacement and removal", async () => {
+    const target = actor();
+    const ids = ["first-species", "replacement-species"];
+    const service = new CharacterPackageService(async () => null, () => ids.shift()!);
+    await service.attachSpecies(target, speciesSource({
+      weaponFamilies: ["axes", "energy-blades"]
+    }), {edgePool: "might"});
+    expect((target.system.derived as any).packages.weaponFamilies).toEqual(["axes", "energy-blades"]);
+    expect((target.system.derived as any).packages.weaponCategories).toEqual(["light", "medium"]);
+
+    const firstId = target.documents.find((item) => item.type === "species").id;
+    const replacement = {
+      ...speciesSource({weaponFamilies: ["swords"], weaponUse: {light: false, medium: false, heavy: true}}),
+      id: "replacement", uuid: "Item.replacement", name: "Replacement Species"
+    };
+    await service.attachSpecies(target, replacement, {
+      edgePool: "speed", replaceItemId: firstId, replaceGrantedItemsMode: "delete"
+    });
+    expect((target.system.derived as any).packages.weaponFamilies).toEqual(["swords"]);
+    expect((target.system.derived as any).packages.weaponCategories).toEqual(["light", "heavy"]);
+
+    await service.remove(target, target.documents.find((item) => item.type === "species").id, "delete");
+    expect((target.system.derived as any).packages.weaponFamilies).toEqual([]);
+    expect((target.system.derived as any).packages.weaponCategories).toEqual(["light"]);
+  });
+
+  it("persists a Species Descriptor choice and reuses recursive grant provenance and retention", async () => {
+    const target = actor();
+    const fixed = descriptorSource("fixed");
+    const chosen = descriptorSource("chosen");
+    const skipped = descriptorSource("skipped");
+    const definition = speciesSource({
+      descriptorGrants: [{id: "fixed-descriptor", descriptorUuid: fixed.uuid, snapshot: {name: fixed.name, system: fixed.system}}],
+      descriptorChoiceGroups: [{id: "heritage", choose: 1, options: [
+        {id: "chosen", descriptorUuid: chosen.uuid, snapshot: {name: chosen.name, system: chosen.system}},
+        {id: "skipped", descriptorUuid: skipped.uuid, snapshot: {name: skipped.name, system: skipped.system}}
+      ]}]
+    });
+    const ids = ["species-instance", "fixed-instance", "chosen-instance"];
+    const sources = [fixed, chosen, skipped];
+    const service = new CharacterPackageService(
+      async (uuid) => sources.find((entry) => entry.uuid === uuid) ?? null,
+      () => ids.shift()!
+    );
+    await service.attachSpecies(target, definition, {
+      edgePool: "might", descriptorChoices: {heritage: ["chosen"]}
+    });
+
+    const embeddedSpecies = target.documents.find((item) => item.type === "species");
+    const descriptors = target.documents.filter((item) => item.type === "descriptor");
+    expect(embeddedSpecies.system.instance.selections.descriptorChoices)
+      .toEqual([{groupId: "heritage", optionIds: ["chosen"]}]);
+    expect(descriptors).toHaveLength(2);
+    expect(descriptors.map((item) => item.system.instance.sourceUuid)).toEqual([fixed.uuid, chosen.uuid]);
+    expect(descriptors.find((item) => item.system.instance.sourceUuid === chosen.uuid)?.system.instance.parent).toMatchObject({
+      kind: "species", sourceUuid: definition.uuid, instanceId: "species-instance", grantId: "heritage:chosen"
+    });
+    expect(target.documents.some((item) => item.system.instance?.sourceUuid === skipped.uuid)).toBe(false);
+
+    await service.remove(target, embeddedSpecies.id, "keep");
+    expect(target.documents.filter((item) => item.type === "descriptor")).toHaveLength(2);
+    expect(target.documents.filter((item) => item.type === "descriptor")
+      .every((item) => item.system.grantedBy.status === "retained")).toBe(true);
+  });
+
+  it("materializes a catalog Descriptor by UUID/snapshot without freezing runtime options into Species", async () => {
+    const target = actor();
+    const chosen = descriptorSource("catalog-chosen");
+    const definition = speciesSource({
+      descriptorChoiceGroups: [{
+        id: "heritage", choose: 1, sourceMode: "catalog", catalogItemType: "descriptor", options: []
+      }]
+    });
+    const resolvedGroups = [{
+      id: "heritage", choose: 1, sourceMode: "catalog" as const, catalogItemType: "descriptor" as const,
+      options: [{id: chosen.uuid, descriptorUuid: chosen.uuid, snapshot: {name: chosen.name, system: chosen.system}}]
+    }];
+    const ids = ["catalog-species", "catalog-descriptor"];
+    const service = new CharacterPackageService(
+      async (uuid) => uuid === chosen.uuid ? chosen : null,
+      () => ids.shift()!
+    );
+
+    await service.attachSpecies(target, definition, {
+      edgePool: "might",
+      descriptorChoices: {heritage: [chosen.uuid]},
+      resolvedDescriptorChoiceGroups: resolvedGroups
+    });
+
+    const embeddedSpecies = target.documents.find((item) => item.type === "species");
+    const embeddedDescriptor = target.documents.find((item) => item.type === "descriptor");
+    expect(embeddedSpecies.system.descriptorChoiceGroups[0]).toMatchObject({
+      sourceMode: "catalog", catalogItemType: "descriptor", options: []
+    });
+    expect(embeddedSpecies.system.instance.selections.descriptorChoices).toEqual([
+      {groupId: "heritage", optionIds: [chosen.uuid]}
+    ]);
+    expect(embeddedDescriptor).toMatchObject({
+      name: chosen.name,
+      system: {
+        instance: {sourceUuid: chosen.uuid},
+        grantedBy: {
+          kind: "species",
+          sourceUuid: definition.uuid,
+          instanceId: "catalog-species",
+          grantId: `heritage:${chosen.uuid}`
+        }
+      }
+    });
+
+    resolvedGroups[0]!.options.length = 0;
+    expect(target.documents.find((item) => item.id === embeddedDescriptor.id)).toBe(embeddedDescriptor);
+    await service.remove(target, embeddedSpecies.id, "keep");
+    expect(target.documents.find((item) => item.id === embeddedDescriptor.id)?.system.grantedBy.status).toBe("retained");
+  });
+
+  it("removes a selected Species Descriptor when replacing the Species grant tree", async () => {
+    const target = actor();
+    const chosen = descriptorSource("chosen-replacement");
+    const first = speciesSource({
+      descriptorChoiceGroups: [{id: "heritage", choose: 1, options: [{
+        id: "chosen", descriptorUuid: chosen.uuid, snapshot: {name: chosen.name, system: chosen.system}
+      }]}]
+    });
+    const ids = ["first-species", "chosen-descriptor", "second-species"];
+    const service = new CharacterPackageService(
+      async (uuid) => uuid === chosen.uuid ? chosen : null,
+      () => ids.shift()!
+    );
+    await service.attachSpecies(target, first, {
+      edgePool: "might", descriptorChoices: {heritage: ["chosen"]}
+    });
+    const firstId = target.documents.find((item) => item.type === "species").id;
+    await service.attachSpecies(target, {
+      ...speciesSource(), id: "second", uuid: "Item.second", name: "Second Species"
+    }, {edgePool: "speed", replaceItemId: firstId, replaceGrantedItemsMode: "delete"});
+
+    expect(target.documents.filter((item) => item.type === "species")).toHaveLength(1);
+    expect(target.documents.filter((item) => item.type === "descriptor")).toHaveLength(0);
+  });
+
+  it("propagates fixed and choice Skill context notes without modifying canonical Skills", async () => {
+    const target = actor();
+    const stealth = source("forest-stealth", "skill", "Stealth");
+    const navigation = source("mountain-navigation", "skill", "Navigation");
+    const definition = speciesSource({
+      edgeGrant: {mode: "none", pool: "none", amount: 1},
+      skillGrants: [{
+        id: "stealth", skillUuid: stealth.uuid, customName: "", rank: "trained",
+        notes: "Only in forests.", snapshot: {name: stealth.name, system: stealth.system}
+      }],
+      choiceGroups: [{id: "terrain", choose: 1, rank: "trained", options: [{
+        id: "navigation", skillUuid: navigation.uuid, customName: "",
+        notes: "Underground or in mountains.", snapshot: {name: navigation.name, system: navigation.system}
+      }]}]
+    });
+    const sources = [stealth, navigation];
+    await new CharacterPackageService(
+      async (uuid) => sources.find((entry) => entry.uuid === uuid) ?? null,
+      () => "species-notes"
+    ).attachSpecies(target, definition, {skillChoices: {terrain: ["navigation"]}});
+
+    expect(target.documents.find((item) => item.name === "Stealth").system.acquisition.notes).toBe("Only in forests.");
+    expect(target.documents.find((item) => item.name === "Navigation").system.acquisition.notes).toBe("Underground or in mountains.");
+    expect(target.documents.find((item) => item.name === "Navigation").system.grantedBy).toMatchObject({
+      kind: "species", grantId: "terrain:navigation"
+    });
+    expect((stealth.system.acquisition as {notes: string}).notes).toBe("");
+    expect((navigation.system.acquisition as {notes: string}).notes).toBe("");
   });
 
   it("creates a Species-granted Descriptor with an exact recursive provenance chain", async () => {

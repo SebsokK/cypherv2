@@ -1,7 +1,9 @@
 import {describe, expect, it} from "vitest";
 
 import {
+  addManualWeaponFamily,
   parseFamiliarityActionData,
+  removeManualWeaponFamily,
   toggleManualFamiliarity,
   toggledFamiliarityCategories,
   type FamiliarityActorLike
@@ -15,7 +17,11 @@ function actor(): FamiliarityActorLike & {updates: Record<string, unknown>[]} {
       stats: {
         might: {value: 11}, speed: {value: 12}, intellect: {value: 13}
       },
-      proficiencies: {weaponCategories: [] as string[], armorCategories: [] as string[]}
+      proficiencies: {
+        weaponCategories: [] as string[],
+        weaponFamilies: [] as string[],
+        armorCategories: [] as string[]
+      }
     },
     updates: [] as Record<string, unknown>[],
     async update(changes: Record<string, unknown>): Promise<unknown> {
@@ -25,6 +31,9 @@ function actor(): FamiliarityActorLike & {updates: Record<string, unknown>[]} {
       }
       if (changes["system.proficiencies.armorCategories"]) {
         this.system.proficiencies.armorCategories = changes["system.proficiencies.armorCategories"] as string[];
+      }
+      if (changes["system.proficiencies.weaponFamilies"]) {
+        this.system.proficiencies.weaponFamilies = changes["system.proficiencies.weaponFamilies"] as string[];
       }
       return this;
     }
@@ -83,6 +92,20 @@ describe("Character familiarity Settings actions", () => {
     expect(removed.weaponCategories).toEqual([]);
     expect(removed.armorCategories).toEqual([]);
     expect(toggledFamiliarityCategories([], "heavy")).toEqual(["heavy"]);
+  });
+
+  it("adds and removes normalized custom Weapon families without touching category familiarity", async () => {
+    const character = actor();
+    await addManualWeaponFamily(character, "  Energy Blades  ");
+    await addManualWeaponFamily(character, "ENERGY BLADES");
+    expect(character.system.proficiencies.weaponFamilies).toEqual(["energy-blades"]);
+    expect(character.system.proficiencies.weaponCategories).toEqual([]);
+    expect(character.updates).toEqual([
+      {"system.proficiencies.weaponFamilies": ["energy-blades"]},
+      {"system.proficiencies.weaponFamilies": ["energy-blades"]}
+    ]);
+    await removeManualWeaponFamily(character, "Energy Blades");
+    expect(character.system.proficiencies.weaponFamilies).toEqual([]);
   });
 
   it("parses only supported button families and categories", () => {

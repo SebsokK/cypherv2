@@ -4,6 +4,7 @@ import type {
   AbilityGrant,
   CharacterPackageItemLike,
   CharacterTypeSystemData,
+  DescriptorChoiceGroup,
   DescriptorSystemData,
   DescriptorGrant,
   GrantAlternative,
@@ -57,6 +58,8 @@ export interface PackageCharacterLike {
 
 export interface AttachTypeOptions {
   readonly edgePool?: PoolKey;
+  readonly superheroicsPool?: PoolKey;
+  readonly powerShifts?: readonly string[];
   readonly skillChoices?: Readonly<Record<string, readonly string[]>>;
   readonly abilityChoices?: Readonly<Record<string, readonly string[]>>;
   readonly replaceItemId?: string;
@@ -76,6 +79,9 @@ export interface AttachSpeciesOptions {
   readonly edgePool?: PoolKey;
   readonly skillChoices?: Readonly<Record<string, readonly string[]>>;
   readonly abilityChoices?: Readonly<Record<string, readonly string[]>>;
+  readonly descriptorChoices?: Readonly<Record<string, readonly string[]>>;
+  /** Runtime-resolved catalog options. These are never written back to the Species source. */
+  readonly resolvedDescriptorChoiceGroups?: readonly DescriptorChoiceGroup[];
   readonly descriptorSkillChoices?: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>>;
   readonly descriptorPoolChoices?: Readonly<Record<string, Readonly<Record<string, readonly PoolKey[]>>>>;
   readonly replaceItemId?: string;
@@ -208,6 +214,21 @@ export class CharacterPackageService {
     const system = clone(source.system) as unknown as CharacterTypeSystemData;
     const edgePool = system.edgeGrant.mode === "choice" ? options.edgePool : system.edgeGrant.pool;
     if (system.edgeGrant.mode === "choice" && !edgePool) throw new Error("This Type requires an Edge Pool choice.");
+    const requiresSuperheroicsPool = system.genre === "superhero"
+      && system.superhero?.superheroics?.enabled === true;
+    const superheroicsPool = options.superheroicsPool;
+    if (requiresSuperheroicsPool && !superheroicsPool) {
+      throw new Error("This Superhero Type requires a Superheroics Pool choice.");
+    }
+    if (superheroicsPool && !POOL_KEYS.includes(superheroicsPool)) {
+      throw new Error("Invalid Superheroics Pool choice.");
+    }
+    const powerShiftCount = Number.isInteger(system.superhero?.powerShiftCount)
+      ? Math.max(0, Number(system.superhero?.powerShiftCount))
+      : 0;
+    const powerShifts = Array.from({length: powerShiftCount}, (_, index) => (
+      String(options.powerShifts?.[index] ?? "").trim()
+    ));
     const skillSelections = this.#validateChoices(system.choiceGroups ?? [], options.skillChoices ?? {});
     const abilitySelections = this.#validateAbilityChoices(system.abilityChoiceGroups ?? [], options.abilityChoices ?? {});
     const instanceId = this.#idFactory();
@@ -233,9 +254,12 @@ export class CharacterPackageService {
         attachedAt: this.#now(),
         selections: {
           edgePool: edgePool ?? "none",
+          superheroicsPool: requiresSuperheroicsPool ? superheroicsPool! : "none",
+          powerShifts,
           poolChoices: [],
           skillChoices: Object.entries(skillSelections).map(([groupId, optionIds]) => ({groupId, optionIds})),
           abilityChoices: Object.entries(abilitySelections).map(([groupId, optionIds]) => ({groupId, optionIds})),
+          descriptorChoices: [],
           suppressedGrantIds: skippedGrantIds
         },
         parent: emptyProvenance()
@@ -278,9 +302,12 @@ export class CharacterPackageService {
         attachedAt: this.#now(),
         selections: {
           edgePool: "none",
+          superheroicsPool: "none",
+          powerShifts: [],
           poolChoices: Object.entries(poolSelections).map(([groupId, pools]) => ({groupId, pools})),
           skillChoices: Object.entries(selected).map(([groupId, optionIds]) => ({groupId, optionIds})),
           abilityChoices: [],
+          descriptorChoices: [],
           suppressedGrantIds: skippedGrantIds
         },
         parent: options.parent ?? emptyProvenance()
@@ -307,11 +334,28 @@ export class CharacterPackageService {
     if (system.edgeGrant.mode === "choice" && !edgePool) throw new Error("This Species requires an Edge Pool choice.");
     const skillSelections = this.#validateChoices(system.choiceGroups ?? [], options.skillChoices ?? {});
     const abilitySelections = this.#validateAbilityChoices(system.abilityChoiceGroups ?? [], options.abilityChoices ?? {});
+    const runtimeDescriptorGroups = new Map(
+      (options.resolvedDescriptorChoiceGroups ?? []).map((group) => [group.id, group])
+    );
+    const descriptorChoiceGroups = (system.descriptorChoiceGroups ?? []).map((group) => {
+      if ((group.sourceMode ?? "fixed") !== "catalog") return group;
+      const resolved = runtimeDescriptorGroups.get(group.id);
+      return {...group, options: resolved?.options ?? group.options};
+    });
+    const descriptorSelections = this.#validateDescriptorChoices(
+      descriptorChoiceGroups,
+      options.descriptorChoices ?? {}
+    );
     const instanceId = this.#idFactory();
     const sourceUuid = system.instance?.sourceUuid || source.uuid;
     const selectedAbilities = (system.abilityChoiceGroups ?? []).flatMap((group) => (
       group.options
         .filter((option) => abilitySelections[group.id]?.includes(option.id))
+        .map((option) => ({...option, id: `${group.id}:${option.id}`}))
+    ));
+    const selectedDescriptors = descriptorChoiceGroups.flatMap((group) => (
+      group.options
+        .filter((option) => descriptorSelections[group.id]?.includes(option.id))
         .map((option) => ({...option, id: `${group.id}:${option.id}`}))
     ));
     const ownPrepared = [
@@ -329,10 +373,11 @@ export class CharacterPackageService {
       .filter((item) => item.type === "descriptor")
       .map((item) => item.system.instance.sourceUuid || `snapshot:${item.name.trim().toLocaleLowerCase()}`));
 
-    if (!unique((system.descriptorGrants ?? []).map((grant) => grant.id))) {
+    const descriptorGrants = [...(system.descriptorGrants ?? []), ...selectedDescriptors];
+    if (!unique(descriptorGrants.map((grant) => grant.id))) {
       throw new Error("Species Descriptor grant IDs must be unique.");
     }
-    for (const grant of system.descriptorGrants ?? []) {
+    for (const grant of descriptorGrants) {
       const resolved = grant.descriptorUuid ? await this.#resolve(grant.descriptorUuid) : null;
       if (resolved && resolved.type !== "descriptor") throw new Error("A Species Descriptor grant references a non-Descriptor Item.");
       const descriptorData = resolved ? sourceData(resolved) : snapshotPackageData(grant.snapshot, "descriptor");
@@ -390,9 +435,12 @@ export class CharacterPackageService {
           attachedAt: this.#now(),
           selections: {
             edgePool: "none",
+            superheroicsPool: "none",
+            powerShifts: [],
             poolChoices: Object.entries(poolSelected).map(([groupId, pools]) => ({groupId, pools})),
             skillChoices: Object.entries(selected).map(([groupId, optionIds]) => ({groupId, optionIds})),
             abilityChoices: [],
+            descriptorChoices: [],
             suppressedGrantIds: descriptorFiltered.skippedGrantIds
           },
           parent
@@ -411,9 +459,12 @@ export class CharacterPackageService {
         attachedAt: this.#now(),
         selections: {
           edgePool: edgePool ?? "none",
+          superheroicsPool: "none",
+          powerShifts: [],
           poolChoices: [],
           skillChoices: Object.entries(skillSelections).map(([groupId, optionIds]) => ({groupId, optionIds})),
           abilityChoices: Object.entries(abilitySelections).map(([groupId, optionIds]) => ({groupId, optionIds})),
+          descriptorChoices: Object.entries(descriptorSelections).map(([groupId, optionIds]) => ({groupId, optionIds})),
           suppressedGrantIds: speciesSuppressed
         },
         parent: emptyProvenance()
@@ -558,7 +609,17 @@ export class CharacterPackageService {
       : snapshotData(option.snapshot, "skill") ?? (option.customName ? {name: option.customName, type: "skill", system: {}} : null);
     if (!data) throw new Error(`Skill grant '${grantId}' has neither a source, custom name, nor usable snapshot.`);
     const identity = grantIdentity("skill", String(data.name ?? option.customName), option.skillUuid);
-    data.system = {...data.system as Record<string, unknown>, rank, grantedBy: grantProvenance(kind, sourceUuid, instanceId, grantId, identity)};
+    const skillSystem = data.system as Record<string, unknown>;
+    const acquisition = skillSystem.acquisition && typeof skillSystem.acquisition === "object"
+      ? skillSystem.acquisition as Record<string, unknown>
+      : {};
+    const notes = String(option.notes ?? "");
+    data.system = {
+      ...skillSystem,
+      ...(notes ? {acquisition: {...acquisition, notes}} : {}),
+      rank,
+      grantedBy: grantProvenance(kind, sourceUuid, instanceId, grantId, identity)
+    };
     return data;
   }
 
@@ -662,9 +723,19 @@ export class CharacterPackageService {
           originalContentKey: originalProvenance.contentKey
         };
     const replacementIdentity = grantIdentity(type, String(data.name ?? replacement.name), replacement.itemUuid);
+    const replacementSystem = data.system as Record<string, unknown>;
+    const originalAcquisition = originalSystem.acquisition && typeof originalSystem.acquisition === "object"
+      ? originalSystem.acquisition as Record<string, unknown>
+      : {};
+    const replacementAcquisition = replacementSystem.acquisition && typeof replacementSystem.acquisition === "object"
+      ? replacementSystem.acquisition as Record<string, unknown>
+      : {};
     data.system = {
-      ...data.system as Record<string, unknown>,
+      ...replacementSystem,
       ...(type === "skill" ? {rank: originalSystem.rank} : {}),
+      ...(type === "skill" && originalAcquisition.notes
+        ? {acquisition: {...replacementAcquisition, notes: originalAcquisition.notes}}
+        : {}),
       grantedBy: {
         ...originalProvenance,
         contentUuid: replacementIdentity.contentUuid,
@@ -791,6 +862,34 @@ export class CharacterPackageService {
       const selected = selections[group.id] ?? [];
       if (selected.length !== group.choose || !unique(selected) || selected.some((id) => !group.options.some((option) => option.id === id))) {
         throw new Error(`Ability choice '${group.id}' requires exactly ${group.choose} valid option(s).`);
+      }
+      result[group.id] = [...selected];
+    }
+    return result;
+  }
+
+  #validateDescriptorChoices(
+    groups: readonly DescriptorChoiceGroup[],
+    selections: Readonly<Record<string, readonly string[]>>
+  ): Record<string, readonly string[]> {
+    if (!unique(groups.map((group) => group.id))) {
+      throw new Error("Species Descriptor choice group IDs must be unique.");
+    }
+    const result: Record<string, readonly string[]> = {};
+    for (const group of groups) {
+      if (!unique(group.options.map((option) => option.id))) {
+        throw new Error(`Descriptor choice '${group.id}' option IDs must be unique.`);
+      }
+      const selected = selections[group.id] ?? [];
+      if (
+        !Number.isInteger(group.choose)
+        || group.choose < 1
+        || group.choose > group.options.length
+        || selected.length !== group.choose
+        || !unique(selected)
+        || selected.some((id) => !group.options.some((option) => option.id === id))
+      ) {
+        throw new Error(`Descriptor choice '${group.id}' requires exactly ${group.choose} valid option(s).`);
       }
       result[group.id] = [...selected];
     }

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/content/types/schema.json",
+  "title": "Cypher V2 candidate Types and Type Abilities",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "source", "target", "counts", "review", "types", "abilities"],
+  "properties": {
+    "$schema": {"const": "./schema.json"},
+    "schemaVersion": {"const": 1},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title", "file", "sha256", "license", "note"],
+      "properties": {
+        "kind": {"const": "official-reference-document-extraction"},
+        "title": {"type": "string", "minLength": 1},
+        "file": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "license": {"const": "2026 Cypher Open License"},
+        "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["systemId", "typePackId", "abilityPackId"],
+      "properties": {
+        "systemId": {"const": "cypherv2"},
+        "typePackId": {"const": "types"},
+        "abilityPackId": {"const": "type-abilities"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["types", "abilities", "assignments"],
+      "properties": {
+        "types": {"const": 49},
+        "abilities": {"const": 106},
+        "assignments": {"const": 155}
+      }
+    },
+    "review": {"type": "object"},
+    "types": {
+      "type": "array",
+      "minItems": 49,
+      "maxItems": 49,
+      "items": {"$ref": "#/$defs/typeItem"}
+    },
+    "abilities": {
+      "type": "array",
+      "minItems": 106,
+      "maxItems": 106,
+      "items": {"$ref": "#/$defs/abilityItem"}
+    }
+  },
+  "$defs": {
+    "foundryId": {"type": "string", "pattern": "^[A-Za-z0-9]{16}$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "itemBase": {
+      "type": "object",
+      "required": ["name", "type", "_id", "img", "system", "effects", "sort", "ownership", "_key"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "_id": {"$ref": "#/$defs/foundryId"},
+        "img": {"type": "string", "minLength": 1},
+        "effects": {"type": "array"},
+        "sort": {"type": "integer"},
+        "ownership": {"type": "object"},
+        "_key": {"type": "string", "pattern": "^!items![A-Za-z0-9]{16}$"}
+      }
+    },
+    "abilityItem": {
+      "allOf": [
+        {"$ref": "#/$defs/itemBase"},
+        {
+          "properties": {
+            "type": {"const": "ability"},
+            "system": {
+              "type": "object",
+              "required": ["slug", "description", "source", "tier", "category", "activation", "cost", "roll", "ruleElements"],
+              "properties": {
+                "slug": {"$ref": "#/$defs/slug"},
+                "description": {"type": "string", "minLength": 1},
+                "tier": {"const": 1},
+                "category": {"const": "type"},
+                "activation": {"enum": ["action", "firstAction", "lastAction", "enabler", "reaction", "timed", "perpetual", "passive", "special"]},
+                "cost": {
+                  "type": "object",
+                  "required": ["amount", "scalable", "ignoresEdge", "allowedPools"],
+                  "properties": {
+                    "amount": {"type": "integer", "minimum": 0},
+                    "scalable": {"type": "boolean"},
+                    "ignoresEdge": {"type": "boolean"},
+                    "allowedPools": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {"enum": ["might", "speed", "intellect"]}
+                    }
+                  }
+                },
+                "roll": {"enum": ["none", "task", "attack", "defense"]},
+                "ruleElements": {"type": "array"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "typeItem": {
+      "allOf": [
+        {"$ref": "#/$defs/itemBase"},
+        {
+          "properties": {
+            "type": {"const": "characterType"},
+            "system": {
+              "type": "object",
+              "required": ["slug", "description", "source", "poolBonuses", "woundBonuses", "edgeGrant", "weaponUse", "weaponFamilyUse", "armorUse", "superhero", "abilityGrants", "abilityChoiceGroups", "skillGrants", "choiceGroups", "genre", "backgroundOptions", "equipmentNotes", "instance"],
+              "properties": {
+                "slug": {"$ref": "#/$defs/slug"},
+                "description": {"type": "string", "minLength": 1},
+                "genre": {"enum": ["fantasy", "scienceFiction", "superhero"]},
+                "abilityGrants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["id", "abilityUuid", "notes", "snapshot", "alternatives"],
+                    "properties": {
+                      "id": {"$ref": "#/$defs/foundryId"},
+                      "abilityUuid": {"type": "string", "pattern": "^Compendium\\.cypherv2\\.type-abilities\\.Item\\.[A-Za-z0-9]{16}$"},
+                      "notes": {"type": "string"},
+                      "snapshot": {"type": "object"},
+                      "alternatives": {"type": "array"}
+                    }
+                  }
+                },
+                "abilityChoiceGroups": {"type": "array", "maxItems": 0},
+                "skillGrants": {"type": "array"},
+                "choiceGroups": {"type": "array"}
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

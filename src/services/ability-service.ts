@@ -79,7 +79,8 @@ export class AbilityService {
   }
 
   canUse(ability: AbilityItemLike): boolean {
-    return ability.type === "ability" && ability.system.activation !== "passive";
+    return ability.type === "ability"
+      && !["passive", "enabler", "perpetual"].includes(ability.system.activation);
   }
 
   pool(ability: AbilityItemLike, selected?: PoolKey): PoolKey | null {
@@ -143,7 +144,7 @@ export class AbilityService {
     options: AbilityUseOptions = {}
   ): Promise<AbilityNoRollOutcome> {
     this.#assertAbility(ability);
-    if (!this.canUse(ability)) throw new Error("Passive Abilities cannot be used.");
+    if (!this.canUse(ability)) throw new Error("Passive, Enabler, and Perpetual Abilities have no direct Use action.");
     if (ability.system.roll !== "none") throw new Error("This Ability requires a roll.");
     const targets = this.#validatedTargets(ability, options.targets ?? []);
     const pool = this.pool(ability, options.pool);
@@ -179,7 +180,7 @@ export class AbilityService {
     options: AbilityUseOptions = {}
   ): AbilityRollPlan {
     this.#assertAbility(ability);
-    if (!this.canUse(ability)) throw new Error("Passive Abilities cannot be used.");
+    if (!this.canUse(ability)) throw new Error("Passive, Enabler, and Perpetual Abilities have no direct Use action.");
     if (ability.system.roll === "none") throw new Error("This Ability does not require a roll.");
     const pool = this.pool(ability, options.pool);
     if (!pool) throw new Error("Choose a Pool for this Ability roll.");

@@ -1,0 +1,3895 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "kind": "reviewed-world-compendium-export",
+    "worldId": "cypher-v2-test",
+    "title": "Cypher Reference Document (2026)",
+    "sha256": "cbc222b131436fef77b75af80c362a6cf67f0baa70c9380ccac3a3a31964d626",
+    "license": "2026 Cypher Open License",
+    "note": "Human-reviewed Species documents promoted losslessly from the private Working pack."
+  },
+  "target": {
+    "systemId": "cypherv2",
+    "packId": "species"
+  },
+  "counts": {
+    "species": 20
+  },
+  "review": {
+    "status": "reviewed",
+    "manualTreatment": [
+      "Dwarf recovery bonus remains descriptive; no RecoveryService automation is introduced.",
+      "D’nec additional Intellect recovery remains descriptive; no targeted recovery automation is introduced.",
+      "Mutant's adapted tier 1 Focus Ability remains a manual player/GM choice with no Ability catalog.",
+      "Natural-1 exceptions, conditional damage, resistance, movement, telepathy, Assets, and turn denial remain descriptive."
+    ],
+    "human": "One shared Human document covers both Fantasy and Science Fiction appearances and offers one dynamic all-available-Descriptors choice."
+  },
+  "species": [
+    {
+      "name": "Dragonfolk",
+      "type": "species",
+      "_id": "f042637bbdd2b4c4",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "dragonfolk",
+        "description": "<p>Scaled and descended from dragons, you share a kinship with some of the mightiest creatures that ever winged their way across the world. You might have been born of dragonfolk parents, willingly transformed in a magical ceremony, or chosen by a dragon to be their agent or champion—or you might have no idea why you are the way you are. Some claim you have a great destiny, but whether you believe that is up to you.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on a block task.</p></li><li><p>You are trained in intimidation (except against other dragonfolk and dragons).</p></li><li><p>Choose an energy (acid, cold, fire, and so on); you inflict +1 damage when you attack with this energy.</p></li></ul><aside class=\"species-callout\"><p>Work with your GM if you want your dragonfolk character to have a breath weapon. You can easily adapt one of your type or focus abilities, such as Blast, Shroud of Flame, Lightning Hand, or something similar, so the effect is produced from your breath instead of as presented in the ability description.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "100",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "b7bfc3e24ae23b3d",
+            "skillUuid": "Compendium.cypherv2.skills.Item.TxjNz86eOB6UwTGb",
+            "customName": "",
+            "notes": "<p>Except against other dragonfolk and dragons.</p>",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Intimidation",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re good at swaying others with threatening words and/or a fearsome presence.</p><blockquote><h6>Positive and Negative Social Interactions</h6><ul><li><p>Any truthful positive social interaction is covered by charm.</p></li><li><p>Any untruthful positive social interaction is covered by deception.</p></li><li><p>Any negative social interaction is covered by intimidation.</p></li></ul></blockquote>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 0,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!f042637bbdd2b4c4"
+    },
+    {
+      "name": "Dwarf",
+      "type": "species",
+      "_id": "0b6d6a0587878026",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "dwarf",
+        "description": "<p>You’re a stocky, broad-shouldered, bearded native of the mountains and hills. You’re also as stubborn as the stone in which the dwarves carve their homes under the mountains. Tradition, honor, pride in smithcraft and warcraft, and a keen appreciation of the wealth buried under the roots of the world are all part of your heritage. Those who wish you ill should be wary of your temper. When dwarves are wronged, they never forget.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You add +1 on recoveries.</p></li><li><p>You are trained in navigation (if underground or in mountainous areas).</p></li><li><p>You inflict +1 damage with axes.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "101",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "ca0ca7a160852289",
+            "skillUuid": "Compendium.cypherv2.skills.Item.mKV1IKZRS6AnPXuL",
+            "customName": "",
+            "notes": "<p>Only underground or in mountainous areas.</p>",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Navigation",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>Your sense of direction is well honed, and you are familiar with using maps, cues from the environment, and/or tools appropriate to the setting to find your way through an unfamiliar or confusing landscape.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 1000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!0b6d6a0587878026"
+    },
+    {
+      "name": "Elf",
+      "type": "species",
+      "_id": "fe5c06084f9e873a",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "elf",
+        "description": "<p>You haunt the woodlands and deep, natural realms, as your people have for millennia. You are the arrow in the night, the shadow in the glade, and the laughter on the wind. As an elf, you are slender, quick, graceful, and long lived. You manage the sorrows of living much longer than most others with song, wine, and an appreciation for the deep beauties of growing things, especially trees, which can live even longer than you do.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on an Intellect defense roll.</p></li><li><p>You are trained in stealth (if in forested areas).</p></li><li><p>You inflict +1 damage with bows.</p></li></ul><aside class=\"species-callout\"><p>Half-elves gain either the Elf species characteristics or the Human species characteristics, whichever you decide when creating your half-elf character.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "101",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "0e2ce83c15fd58c4",
+            "skillUuid": "Compendium.cypherv2.skills.Item.ZxPyYpNcbki4VN3z",
+            "customName": "",
+            "notes": "<p>Only in forested areas.</p>",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Stealth",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re adept at sneaking and hiding, staying out of sight, and keeping all noise of your presence to a minimum.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 2000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!fe5c06084f9e873a"
+    },
+    {
+      "name": "Gnome",
+      "type": "species",
+      "_id": "9fe135f4b849afc8",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "gnome",
+        "description": "<p>Standing about three and a half feet (100 cm) tall, you are curious and love discovering ways to turn found things into art, tools, or weapons. You might be a sculptor, smith, artist, chef, storyteller, or inventor. Alchemy, magic, and engineering fascinate you. Other beings may see you as a strange mix of a nature-loving elf and a craft-obsessed dwarf, but you and your kind are unique people with a passion for life, exploration, and creation.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on a dodge roll.</p></li><li><p>You are trained in crafting.</p></li><li><p>You inflict +1 damage with light melee weapons.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "102",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "02a257cd81d6000b",
+            "skillUuid": "Compendium.cypherv2.skills.Item.2MqmaRu3v8lwmp2Y",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Crafting",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re well-versed in one aspect of crafting, as appropriate to your game’s setting. Options include cooking; weaving; metalworking or blacksmithing; leatherworking; brewing, vinting, and/or distilling; woodworking; pottery; gun and ammunition smithing; or something else available for the genre.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 3000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!9fe135f4b849afc8"
+    },
+    {
+      "name": "Halfling",
+      "type": "species",
+      "_id": "d700d7ddae31b4b2",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "halfling",
+        "description": "<p>Three feet (1 m) tall and proud of every inch, you are fond of the comforts of home but itching for a little adventure now and then. Small and quick, you have a way of getting along with everyone. You might have been raised in a halfling village, a mixed community where humans and the small folk work and eat side by side as friends, or a less welcoming environment where your people get things done using deception and criminal activity. You and humans have a lot in common—you’re just more compact and efficient about it.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on a stealth task.</p></li><li><p>You are trained in escaping.</p></li><li><p>You inflict +1 damage with light thrown weapons.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "102",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "9fff00b65ddd0e0f",
+            "skillUuid": "Compendium.cypherv2.skills.Item.tVQtb4lURI7PT7jv",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Escaping",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re talented at slipping restraints, squeezing through bars, breaking the grip of a creature holding you, pulling free from sucking quicksand, or some similar circumstance.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 4000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!d700d7ddae31b4b2"
+    },
+    {
+      "name": "Hellborn",
+      "type": "species",
+      "_id": "3bc0398215332d18",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "hellborn",
+        "description": "<p>Part human and part something from another dimension, you might be the orphan of a supernatural dalliance, the result of a magical ritual gone wrong, a scion of a long-established bloodline, or just someone who spiritually “ingested” the demon that tried to possess you. Some of your kind have horns, tails, and pointed teeth. Others are more subtle or more obvious in their differences—a shadow of a knife edge in their face and a touch that withers normal plants, a little too much fire in their eyes and a scent of ash in the air, a forked tongue, goatlike legs, or the inability to cast a shadow. Work with the GM on your particular hellborn appearance.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>Reduce the severity of wounds you receive from fire and heat by one step.</p></li><li><p>You are trained in magic lore.</p></li><li><p>You inflict +1 damage with unarmed attacks.</p></li></ul><aside class=\"species-callout\"><p>Work with your GM if you want your hellborn character to have an inherently magical ability related to your alternate-dimensional heritage. You can easily adapt one of your type or focus abilities, such as Seeds of Fury, Sacred Smite, Tribulation, or something similar, so the effect is something you personally manifest instead of as presented in the ability description.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "102",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "fab16f7fb99e6041",
+            "skillUuid": "Compendium.cypherv2.skills.Item.o4muzrPEpWaPoj8L",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Magic Lore",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’ve studied magical traditions of many different sorts and know something about the different organizations and schools, leading magical practitioners, sources of power, fabled artifacts, and more. Your lore helps you identify magic items, the potential purpose of a strange ritual, or how an active spell is working, or gain some similar insight. By spending a minute concentrating on an object or area, you can determine if there is any magic present; by examining a magical object or area and making a magic lore roll against the target’s level, you can determine the magic’s general purpose or function.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 5000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!3bc0398215332d18"
+    },
+    {
+      "name": "Human",
+      "type": "species",
+      "_id": "691ca370329e2fd4",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "human",
+        "description": "<p>Humans are among the youngest species, and perhaps that’s why—when considered as a whole—they’re more given to explore, conquer, and expand their communities, even if that means taking from other species or other humans. Individually, humans couldn’t be more diverse. Which means you could be under 5 feet (150 cm) tall and barely 100 pounds (45 kg), or well over 6 feet (180 cm) tall and weigh in at 250 pounds (113 kg); have blue eyes or brown, black, green, or some other variation; have no hair, flowing golden locks, amazing dreads, a mohawk, or some other rakish cut; be all about your faith, exploring ancient places, keeping evil at bay, enriching yourself, or some other disposition; and so on. What’s definitely true is that you are not afraid to strive for what you want and believe in.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>Choose a second descriptor and add its benefits to your regular descriptor.</p></li></ul><aside class=\"species-callout\"><p>If you choose Human as your species, your character sentence “I am an adjective species noun who verbs” gains another element: your second descriptor. For example, your sentence might be “I am a Brash and Rugged Human Fighter who Masters Weaponry.”</p></aside><aside class=\"species-callout\"><p>In a game where everyone’s human, using the Human species option may not make sense. Your GM might grant you the option to choose Human as a species only if other species are also part of the game.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "103; 158–159",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [
+          {
+            "id": "f89b20393b460355",
+            "choose": 1,
+            "sourceMode": "catalog",
+            "catalogItemType": "descriptor",
+            "options": []
+          }
+        ],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 6000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!691ca370329e2fd4"
+    },
+    {
+      "name": "Orc",
+      "type": "species",
+      "_id": "e9ac81135b1ab83a",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "orc",
+        "description": "<p>Other species are sometimes prejudiced against orcs, viewing them as misbegotten creatures destined to serve as fodder for more powerful evil overlords. Perhaps that’s true of some; however, you know orcs are a proud (if aggressive) people with a sense of honor. Though they can be deadly enemies, especially to humans and elves, they have been known to ally with others against a larger threat. Whatever your particular upbringing, you’ve ventured out into the wider world looking for new opportunities. How much your heritage affects your outlook is up to you—it might color everything, or it might only come up when someone flinches from your visage.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You can  take one more minor wound than normal.</p></li><li><p>You are trained in intimidation (except against other orcs).</p></li><li><p>You inflict +1 damage with heavy melee weapons.</p></li></ul><aside class=\"species-callout\"><p>Half-orcs gain either the Orc species characteristics or the Human species characteristics, whichever you decide when creating your half-orc character.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "103",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "fantasy"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 1,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "363801c5d5c96ef9",
+            "skillUuid": "Compendium.cypherv2.skills.Item.TxjNz86eOB6UwTGb",
+            "customName": "",
+            "notes": "<p>Except against other orcs.</p>",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Intimidation",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re good at swaying others with threatening words and/or a fearsome presence.</p><blockquote><h6>Positive and Negative Social Interactions</h6><ul><li><p>Any truthful positive social interaction is covered by charm.</p></li><li><p>Any untruthful positive social interaction is covered by deception.</p></li><li><p>Any negative social interaction is covered by intimidation.</p></li></ul></blockquote>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 7000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!e9ac81135b1ab83a"
+    },
+    {
+      "name": "Aarak",
+      "type": "species",
+      "_id": "8ee3669fb6c8b3c0",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "aarak",
+        "description": "<p>Aaraks like you hail from a canyon-carved volcanic world that enjoys an embarrassment of thermals, updrafts from when the wind streams over mountains and ridges, and “cloud streets” of aligned lanes of cumulus clouds running parallel to the wind. Feathered, light-boned, and described as “avian” by certain other species, you’ve left your homeworld, looking for adventures (and thermals!) on other planets and habitats.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>If jumping from a height elevated by at least 30 feet (9 m) from your surroundings, you can glide a long distance before landing at some lower point in range.</p></li><li><p>You reduce your falling damage from a fall by one wound severity.</p></li><li><p>You don’t get a GM intrusion if you roll a 1 on a dodge roll.</p></li></ul><aside class=\"species-callout\"><p>Aarak: You can extend your glide duration and perhaps distance if you find a thermal, a series of thermals, or a low-gravity environment that can keep you aloft longer. Work with your GM to determine what local conditions are like.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "156",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 8000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!8ee3669fb6c8b3c0"
+    },
+    {
+      "name": "Cyborg",
+      "type": "species",
+      "_id": "578a5bddc7402a45",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "cyborg",
+        "description": "<p>You sport a variety of cybernetic implants, some of which replace missing organs you would have had if you were a human, with others designed to enhance whatever biology you still possess. You might have been born of a birthing process all the people of your colony undergo, willingly augmented as part of a stint of military service, or assimilated into a cybernetic collective against your will (from which you later escaped)—or you might be ignorant of why you’re half machine. Most days, you figure it doesn’t matter. It’s not what you’re made of that counts; it’s your actions.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on a Might defense task.</p></li><li><p>You are trained in hacking.</p></li><li><p>You inflict +1 damage with melee attacks via conducted electricity.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "157",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "167debc402086f42",
+            "skillUuid": "Compendium.cypherv2.skills.Item.7V0GzAJ7VKztphYz",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Hacking",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You can exploit weaknesses in a computer or computerized machine to gain unauthorized access, manipulate its intended function, damage it, and/or otherwise contravene its regular operation. Hacking requires a connection and some way to manipulate the system, such as with a keyboard or more advanced interface, and requires at least a few rounds or even minutes of effort, and perhaps much longer, depending on the hack desired.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 9000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!578a5bddc7402a45"
+    },
+    {
+      "name": "Delph",
+      "type": "species",
+      "_id": "157e545cf2e57521",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "delph",
+        "description": "<p>Delphs are welcome almost anywhere, usually because of their skin artistry—your people’s metachrotic ability to create colorful, unique designs and patterns across your entire body, including your luxurious head tendrils. When you really apply yourself, you can make amazingly beautiful patterns (or help camouflage yourself in some environments if you have about ten minutes to create a new design on your skin). What’s less well known is your people’s capacity to produce intraspecies pheromones (usually whether you want to or not) that almost anyone—delphs and other species—find alluring, or at least pleasant.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You can apply an asset to positive social interactions (whether you’re using charm or deception) if your pheromone affects whoever you’re talking to.</p></li><li><p>When you take ten minutes to update your skin design for a certain environment, you gain an asset to stealth tasks in that environment.</p></li></ul><aside class=\"species-callout\"><p>Delph: Your pheromones don’t affect machines and may not affect all alien species. Work with your GM to see who might find your presence pleasant.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "157",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 10000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!157e545cf2e57521"
+    },
+    {
+      "name": "D’nec",
+      "type": "species",
+      "_id": "dd8fffdbc46ab7b3",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "dnec",
+        "description": "<p>Like your fellows, you are a 4-foot (1 m) tall humanoid with glowing eyes. The d’nec are a nomadic species capable of repairing broken or scavenged electronics, engines, robots, and other devices, and then find a market for the reconditioned results. Though raised with the same disciplines as other d’nec, you struck out on your own, hoping to find new opportunities and new experiences the average d’nec can’t even imagine.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You gain 1 extra point to your Intellect Pool each time you use a recovery.</p></li><li><p>You trained in systems operation.</p></li><li><p>You inflict +1 damage with light ranged energy weapons.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "158",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "d2c6318731f759dc",
+            "skillUuid": "Compendium.cypherv2.skills.Item.YX221YoZqvXKxght",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Systems Operation",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You can operate a variety of different complex systems—including computers, robots, spacecraft drives, environmental systems, communication systems, scanning systems, and so on—to achieve their intended functions. This operation could extend to generating simple code for legitimate programming purposes.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 11000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!dd8fffdbc46ab7b3"
+    },
+    {
+      "name": "Drakain",
+      "type": "species",
+      "_id": "95139a0ffdd3d121",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "drakain",
+        "description": "<p>Your skin is ridged with lines of bone and you likely stand at least 6 feet (2 m) tall. Some might compare drakain to humans, but only the foolish would do so aloud. You and other drakain deeply value combat and honor, believing that death in battle is among the most glorious of ends. After all, yours is a proud warrior people, and drakain have parlayed their prowess into great empires in the past. You cherish your birthright, but that doesn’t keep you from befriending beings of other species and exploring opportunities that come your way.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You can take one more minor wound than normal.</p></li><li><p>You are trained in intimidation (except against other drakain).</p></li><li><p>You inflict +1 damage with bladed weapons (or high-tech versions of the same).</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "158",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 1,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "bb3df34fcb0d4fd8",
+            "skillUuid": "Compendium.cypherv2.skills.Item.TxjNz86eOB6UwTGb",
+            "customName": "",
+            "notes": "<p>Except against other drakain.</p>",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Intimidation",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re good at swaying others with threatening words and/or a fearsome presence.</p><blockquote><h6>Positive and Negative Social Interactions</h6><ul><li><p>Any truthful positive social interaction is covered by charm.</p></li><li><p>Any untruthful positive social interaction is covered by deception.</p></li><li><p>Any negative social interaction is covered by intimidation.</p></li></ul></blockquote>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 12000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!95139a0ffdd3d121"
+    },
+    {
+      "name": "Mutant",
+      "type": "species",
+      "_id": "e7f81f8b4adb5c60",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "mutant",
+        "description": "<p>Savage forces strong enough to destroy a world left you transformed. Perhaps through latent mutations passed down from ancestors that survived the apocalypse, or because something about you reacts when exposed to radiation or some other mutagenic source, you’ve gained mutations. You might look relatively similar to others of your species, or you might have one or more obvious physical differences that make it hard to disguise your nature—work with your GM to decide your specific features. Not that you necessarily want to hide what you are; you might wish to proudly display what makes you different and, to your mind, better.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on a Might defense task.</p></li><li><p>Choose any tier 1 ability from any focus; work with your GM to adapt that ability as your mutation.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "159",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 13000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!e7f81f8b4adb5c60"
+    },
+    {
+      "name": "Naron",
+      "type": "species",
+      "_id": "16774b1fa82dd1e6",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "naron",
+        "description": "<p>You are descended from a species of natural telepaths that communicate mind to mind, not via spoken language. Standing about 5 feet (1.5 m) tall, your prominence—usually a subtle glow that faintly silhouettes your bald head—moves in slow waves when you’re relaxed, or flashes and pulses when you’re excited or stressed (unless you consciously suppress it). The naron are generally a peaceful people, but some of you have found the wider galaxy offers interesting opportunities in all walks of society among creatures where psi is a rare to vanishing trait.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You can’t produce vocal sounds but instead telepathically communicate with one, some, or all intelligent creatures within short range as easily as if you were talking back and forth out loud.</p></li><li><p>You are trained in charm or deception.</p></li><li><p>You are trained in recognizing motive.</p></li></ul><aside class=\"species-callout\"><p>Naron telepathy doesn’t allow you to read others’ thoughts or even talk with them if they want to shut you out. But if you are a naron who wants to explore your latent telepathic gifts, choose Psion as your type and/or a psi-heavy focus such as Commands Mental Powers. However, other foci could be adapted or reskinned so the abilities granted are considered to be generated by your latent psi.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "159",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "48f3aa0b1249a9ad",
+            "skillUuid": "Compendium.cypherv2.skills.Item.hKvDCdvYoAm0ee1J",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Recognizing Motive",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re practiced at determining someone else’s lies, motives, and disposition.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [
+          {
+            "id": "fabc2a9936b88191",
+            "choose": 1,
+            "rank": "trained",
+            "options": [
+              {
+                "id": "6bd49bd4960471cb",
+                "skillUuid": "Compendium.cypherv2.skills.Item.99Mq1WuOXmI8UP5N",
+                "customName": "",
+                "notes": "",
+                "snapshot": {
+                  "name": "Charm",
+                  "img": "systems/cypherv2/assets/icons/cypherskill.png",
+                  "system": {
+                    "defaultPool": "choose",
+                    "schemaVersion": 1,
+                    "slug": "",
+                    "description": "<p>You know how to interact with people to get them to react to you positively. In a disagreement, you’re adept at getting them to agree with your position.</p><blockquote><h6>Positive and Negative Social Interactions</h6><ul><li><p>Any truthful positive social interaction is covered by charm.</p></li><li><p>Any untruthful positive social interaction is covered by deception.</p></li><li><p>Any negative social interaction is covered by intimidation.</p></li></ul></blockquote>",
+                    "source": {
+                      "uuid": "",
+                      "book": "",
+                      "page": "",
+                      "license": "original"
+                    },
+                    "automation": {
+                      "mode": "descriptive",
+                      "duration": {
+                        "enabled": false,
+                        "trigger": "recovery"
+                      },
+                      "rollDefaults": {}
+                    },
+                    "ruleElements": [],
+                    "tags": [],
+                    "grantedBy": {
+                      "kind": "other",
+                      "sourceUuid": "",
+                      "instanceId": "",
+                      "grantId": "",
+                      "status": "active",
+                      "contentUuid": "",
+                      "contentKey": "",
+                      "replacement": {
+                        "active": false,
+                        "originalName": "",
+                        "originalContentUuid": "",
+                        "originalContentKey": "",
+                        "replacementName": "",
+                        "replacementContentUuid": "",
+                        "replacementContentKey": "",
+                        "selectionKind": "none"
+                      }
+                    },
+                    "rank": "untrained",
+                    "category": "general",
+                    "contexts": [],
+                    "initiative": false,
+                    "acquisition": {
+                      "minimumTier": 1,
+                      "grantedByUuid": "",
+                      "notes": ""
+                    }
+                  }
+                }
+              },
+              {
+                "id": "32887ccb987d1649",
+                "skillUuid": "Compendium.cypherv2.skills.Item.9NS4fm5VOrlzRwHv",
+                "customName": "",
+                "notes": "",
+                "snapshot": {
+                  "name": "Deception",
+                  "img": "systems/cypherv2/assets/icons/cypherskill.png",
+                  "system": {
+                    "defaultPool": "choose",
+                    "schemaVersion": 1,
+                    "slug": "",
+                    "description": "<p>You are a capable liar, able to use speech and the written word to deceive and misinform others.</p><blockquote><h6>Positive and Negative Social Interactions</h6><ul><li><p>Any truthful positive social interaction is covered by charm.</p></li><li><p>Any untruthful positive social interaction is covered by deception.</p></li><li><p>Any negative social interaction is covered by intimidation.</p></li></ul></blockquote>",
+                    "source": {
+                      "uuid": "",
+                      "book": "",
+                      "page": "",
+                      "license": "original"
+                    },
+                    "automation": {
+                      "mode": "descriptive",
+                      "duration": {
+                        "enabled": false,
+                        "trigger": "recovery"
+                      },
+                      "rollDefaults": {}
+                    },
+                    "ruleElements": [],
+                    "tags": [],
+                    "grantedBy": {
+                      "kind": "other",
+                      "sourceUuid": "",
+                      "instanceId": "",
+                      "grantId": "",
+                      "status": "active",
+                      "contentUuid": "",
+                      "contentKey": "",
+                      "replacement": {
+                        "active": false,
+                        "originalName": "",
+                        "originalContentUuid": "",
+                        "originalContentKey": "",
+                        "replacementName": "",
+                        "replacementContentUuid": "",
+                        "replacementContentKey": "",
+                        "selectionKind": "none"
+                      }
+                    },
+                    "rank": "untrained",
+                    "category": "general",
+                    "contexts": [],
+                    "initiative": false,
+                    "acquisition": {
+                      "minimumTier": 1,
+                      "grantedByUuid": "",
+                      "notes": ""
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 14000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!16774b1fa82dd1e6"
+    },
+    {
+      "name": "Prota",
+      "type": "species",
+      "_id": "3029daa6ca40d4bb",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "prota",
+        "description": "<p>Your flesh is akin to stretchy clay in that you can change your overall shape between a basic sluglike blob (or circular sphere) to a being with up to several pseudopods useful as your arms and legs. Your control over your shape is limited; you’re unable to exactly replicate other creatures or objects, but you can evoke their shapes, though it takes you about ten minutes to achieve a new shape. Prota are rare—your homeworld was destroyed by war long before you were born. You rarely encounter others of your kind, so you’ve learned to get along with other beings, some of whom you’ve come to regard as your friends or found family.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You can  take one more minor wound than normal.</p></li><li><p>You are trained in charm.</p></li><li><p>You gain an asset to a specific task that you’ve shaped your body for.</p></li></ul><aside class=\"species-callout\"><p>Examples of tasks a prota can gain an asset for after spending ten minutes reshaping themselves include hiding in a distinct spot, squeezing through an explicit small aperture, climbing a particular wall, aiming at a specified location, carrying an especially heavy load, and so on.</p></aside>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "160",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 1,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "fb9de1f79c4e6468",
+            "skillUuid": "Compendium.cypherv2.skills.Item.99Mq1WuOXmI8UP5N",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Charm",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You know how to interact with people to get them to react to you positively. In a disagreement, you’re adept at getting them to agree with your position.</p><blockquote><h6>Positive and Negative Social Interactions</h6><ul><li><p>Any truthful positive social interaction is covered by charm.</p></li><li><p>Any untruthful positive social interaction is covered by deception.</p></li><li><p>Any negative social interaction is covered by intimidation.</p></li></ul></blockquote>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 15000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!3029daa6ca40d4bb"
+    },
+    {
+      "name": "Rigellian",
+      "type": "species",
+      "_id": "26f846b76bb37583",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "rigellian",
+        "description": "<p>As a rigellian, you are a 7-foot (2 m) tall humanoid covered in thick fur. Rigellians are renowned for their strength, loyalty, and roaring language. Most rigellians are peaceful and enjoy life on a technologically advanced homeworld orbiting a distant blue supergiant star. While you may share the sense of honor most of your kind possess, you’ve probably left home behind to pursue adventure in the wider galaxy.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on an athletics task.</p></li><li><p>You are trained in systems operation.</p></li><li><p>You inflict +1 damage with ranged projectile weapons.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "160",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "46ab2c004dd1daff",
+            "skillUuid": "Compendium.cypherv2.skills.Item.YX221YoZqvXKxght",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Systems Operation",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You can operate a variety of different complex systems—including computers, robots, spacecraft drives, environmental systems, communication systems, scanning systems, and so on—to achieve their intended functions. This operation could extend to generating simple code for legitimate programming purposes.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 16000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!26f846b76bb37583"
+    },
+    {
+      "name": "Stelan",
+      "type": "species",
+      "_id": "3b235fcd26c3a297",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "stelan",
+        "description": "<p>If not for the angularity of your features compared with humans, outsiders would be hard-pressed to tell you apart. However, your difference in temperament is more obvious. It only takes a few minutes in your presence to understand that stelans prize rational thought above everything, having little use for gut feelings, emotions that cloud sound judgment, and the value of anecdote in the face of compiled data.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on an Intellect defense task.</p></li><li><p>You are trained in gathering information.</p></li><li><p>You can choose to force your target to lose its next turn instead of dealing damage with a successful unarmed attack.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "161",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "f5e8778876c53917",
+            "skillUuid": "Compendium.cypherv2.skills.Item.lHWpNLOlq1KQMmXw",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Gathering information",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You’re adroit at gathering rumors, stories, and other information from locals to discover the news of the day; doing so requires several hours of effort.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 17000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!3b235fcd26c3a297"
+    },
+    {
+      "name": "Vendeer",
+      "type": "species",
+      "_id": "173f8bfcf6234f50",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "vendeer",
+        "description": "<p>You are a vendeer, which means that you are 9 feet (2.5 m) tall, slender, and purple-skinned. Your mane-like “hair” makes you slightly more sensitive to psychic phenomena, especially the thoughts and emotions of other creatures, intelligent or not. Vendeer are native to a lush forest moon, and though not technically advanced, your kin enjoy rich cultural and spiritual lives. But the lure of other planets and stars pulled you far from home, and now you pursue a life far different than that of the hunter-gatherers you left behind.</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>You don’t get a GM intrusion if you roll a 1 on a recognizing motive task.</p></li><li><p>You are trained in perception.</p></li><li><p>You inflict +1 damage with spears (or high-tech versions of the same).</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "161",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "1595d0bd717b6afe",
+            "skillUuid": "Compendium.cypherv2.skills.Item.S9WFjHa5QI83AFQO",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Perception",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You have a better chance to notice what others miss in a physical environment when searching an area, listening closely, or using some other sense to discover what’s hidden or not obvious.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 18000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!173f8bfcf6234f50"
+    },
+    {
+      "name": "Zantari",
+      "type": "species",
+      "_id": "39042b8995c8359a",
+      "img": "systems/cypherv2/assets/icons/cypherspecies.png",
+      "system": {
+        "schemaVersion": 1,
+        "slug": "zantari",
+        "description": "<p>Your antennae give you improved senses and your thick skin helps insulate you against the cold of the icy moon your people call home, but otherwise you appear humanoid. However, appearances can be deceptive, as zantari have five genders, which outsiders find difficult to distinguish. As a zantari, you value honor, ritual combat, and military service, but also artistry. Others sometimes describe you as emotional, but for you that’s a compliment—without intensity of feeling, how could life be worth living?</p><p><strong>You gain the following characteristics:</strong></p><ul><li><p>Reduce the severity of wounds you receive from ice and cold by one step.</p></li><li><p>You are trained in perception.</p></li><li><p>You inflict +1 damage with ranged energy weapons.</p></li></ul>",
+        "source": {
+          "uuid": "",
+          "book": "Cypher Reference Document (2026)",
+          "page": "161",
+          "license": "2026 Cypher Open License"
+        },
+        "automation": {
+          "mode": "descriptive",
+          "duration": {
+            "enabled": false,
+            "trigger": "recovery"
+          },
+          "rollDefaults": {}
+        },
+        "ruleElements": [],
+        "tags": [
+          "species",
+          "science-fiction"
+        ],
+        "grantedBy": {
+          "kind": "other",
+          "sourceUuid": "",
+          "instanceId": "",
+          "grantId": "",
+          "status": "active",
+          "contentUuid": "",
+          "contentKey": "",
+          "replacement": {
+            "active": false,
+            "originalName": "",
+            "originalContentUuid": "",
+            "originalContentKey": "",
+            "replacementName": "",
+            "replacementContentUuid": "",
+            "replacementContentKey": "",
+            "selectionKind": "none"
+          }
+        },
+        "poolBonuses": {
+          "might": 0,
+          "speed": 0,
+          "intellect": 0
+        },
+        "woundBonuses": {
+          "minor": 0,
+          "moderate": 0,
+          "major": 0
+        },
+        "edgeGrant": {
+          "mode": "none",
+          "pool": "none",
+          "amount": 1
+        },
+        "weaponUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "weaponFamilies": [],
+        "armorUse": {
+          "light": false,
+          "medium": false,
+          "heavy": false
+        },
+        "cypherLimitBonus": 0,
+        "skillGrants": [
+          {
+            "id": "fc826d20d8dc1b9f",
+            "skillUuid": "Compendium.cypherv2.skills.Item.S9WFjHa5QI83AFQO",
+            "customName": "",
+            "notes": "",
+            "rank": "trained",
+            "snapshot": {
+              "name": "Perception",
+              "img": "systems/cypherv2/assets/icons/cypherskill.png",
+              "system": {
+                "defaultPool": "choose",
+                "schemaVersion": 1,
+                "slug": "",
+                "description": "<p>You have a better chance to notice what others miss in a physical environment when searching an area, listening closely, or using some other sense to discover what’s hidden or not obvious.</p>",
+                "source": {
+                  "uuid": "",
+                  "book": "",
+                  "page": "",
+                  "license": "original"
+                },
+                "automation": {
+                  "mode": "descriptive",
+                  "duration": {
+                    "enabled": false,
+                    "trigger": "recovery"
+                  },
+                  "rollDefaults": {}
+                },
+                "ruleElements": [],
+                "tags": [],
+                "grantedBy": {
+                  "kind": "other",
+                  "sourceUuid": "",
+                  "instanceId": "",
+                  "grantId": "",
+                  "status": "active",
+                  "contentUuid": "",
+                  "contentKey": "",
+                  "replacement": {
+                    "active": false,
+                    "originalName": "",
+                    "originalContentUuid": "",
+                    "originalContentKey": "",
+                    "replacementName": "",
+                    "replacementContentUuid": "",
+                    "replacementContentKey": "",
+                    "selectionKind": "none"
+                  }
+                },
+                "rank": "untrained",
+                "category": "general",
+                "contexts": [],
+                "initiative": false,
+                "acquisition": {
+                  "minimumTier": 1,
+                  "grantedByUuid": "",
+                  "notes": ""
+                }
+              }
+            },
+            "alternatives": []
+          }
+        ],
+        "choiceGroups": [],
+        "abilityGrants": [],
+        "abilityChoiceGroups": [],
+        "descriptorGrants": [],
+        "descriptorChoiceGroups": [],
+        "instance": {
+          "sourceUuid": "",
+          "instanceId": "",
+          "role": "primary",
+          "attachedAt": 0,
+          "selections": {
+            "edgePool": "none",
+            "superheroicsPool": "none",
+            "powerShifts": [],
+            "poolChoices": [],
+            "skillChoices": [],
+            "abilityChoices": [],
+            "descriptorChoices": [],
+            "suppressedGrantIds": []
+          },
+          "parent": {
+            "kind": "other",
+            "sourceUuid": "",
+            "instanceId": "",
+            "grantId": "",
+            "status": "active",
+            "contentUuid": "",
+            "contentKey": "",
+            "replacement": {
+              "active": false,
+              "originalName": "",
+              "originalContentUuid": "",
+              "originalContentKey": "",
+              "replacementName": "",
+              "replacementContentUuid": "",
+              "replacementContentKey": "",
+              "selectionKind": "none"
+            }
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 19000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {},
+      "_stats": {
+        "coreVersion": "14.360",
+        "systemId": null,
+        "systemVersion": null,
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null,
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "exportSource": null
+      },
+      "_key": "!items!39042b8995c8359a"
+    }
+  ]
+}

@@ -1,7 +1,14 @@
-import {ARMOR_CATEGORIES, WEAPON_CATEGORIES, type ArmorCategory, type WeaponCategory, type WoundSeverity} from "../constants/system";
+import {
+  ARMOR_CATEGORIES,
+  WEAPON_CATEGORIES,
+  type ArmorCategory,
+  type WeaponCategory,
+  type WoundSeverity
+} from "../constants/system";
 import type {CharacterDerivedExtensions} from "../rules/core/derived-data";
 import {POOL_KEYS, type DerivedContribution, type PoolKey} from "../rules/core/core-types";
 import type {CharacterPackageItemLike, CharacterTypeSystemData, DescriptorSystemData, SpeciesSystemData} from "./package-types";
+import {legacyWeaponFamilyFlags, normalizeWeaponFamilies} from "../combat/weapon-family";
 
 export interface ResolvedPoolBonusChoice {
   readonly groupId: string;
@@ -12,6 +19,7 @@ export interface ResolvedPoolBonusChoice {
 export interface PackageDerivedData {
   readonly extensions: CharacterDerivedExtensions;
   readonly weaponCategories: readonly WeaponCategory[];
+  readonly weaponFamilies: readonly string[];
   readonly armorCategories: readonly ArmorCategory[];
   readonly typeNames: readonly string[];
   readonly descriptorNames: readonly string[];
@@ -50,6 +58,16 @@ export function resolvedPoolBonusChoices(item: CharacterPackageItemLike): readon
   });
 }
 
+/** Resolve a Type's persisted Superheroics Pool selection into its configured Pool bonus. */
+export function resolvedSuperheroicsPoolBonus(item: CharacterPackageItemLike): {pool: PoolKey; amount: number} | null {
+  if (item.type !== "characterType") return null;
+  const system = item.system as CharacterTypeSystemData;
+  if (!system.superhero?.superheroics?.enabled) return null;
+  const pool = system.instance?.selections?.superheroicsPool;
+  const amount = positiveInteger(system.superhero.superheroics.poolBonus);
+  return pool && pool !== "none" && POOL_KEYS.includes(pool) && amount > 0 ? {pool, amount} : null;
+}
+
 export function characterSentence(
   descriptorNames: readonly string[],
   typeNames: readonly string[],
@@ -64,12 +82,14 @@ export function collectPackageDerivedData(
   items: readonly CharacterPackageItemLike[],
   baseWeaponCategories: readonly string[] = [],
   baseArmorCategories: readonly string[] = [],
-  focusNames: readonly string[] = []
+  focusNames: readonly string[] = [],
+  baseWeaponFamilies: readonly string[] = []
 ): PackageDerivedData {
   const poolMax: Partial<Record<PoolKey, DerivedContribution[]>> = {};
   const poolEdge: Partial<Record<PoolKey, DerivedContribution[]>> = {};
   const woundCapacity: Partial<Record<WoundSeverity, DerivedContribution[]>> = {};
   const weaponCategories = new Set(baseWeaponCategories.filter((entry): entry is WeaponCategory => WEAPON_CATEGORIES.includes(entry as WeaponCategory)));
+  const weaponFamilies = new Set(normalizeWeaponFamilies(baseWeaponFamilies));
   const armorCategories = new Set(baseArmorCategories.filter((entry): entry is ArmorCategory => ARMOR_CATEGORIES.includes(entry as ArmorCategory)));
   const typeNames: string[] = [];
   const descriptorNames: string[] = [];
@@ -81,12 +101,15 @@ export function collectPackageDerivedData(
       const system = item.system as CharacterTypeSystemData | SpeciesSystemData;
       if (item.type === "characterType") {
         typeNames.push(item.name);
-        const typeSystem = system as CharacterTypeSystemData;
       } else {
         speciesNames.push(item.name);
         const value = positiveInteger((system as SpeciesSystemData).cypherLimitBonus);
         if (value) cypherLimit.push(contribution(item, "cypher-limit", value));
       }
+      for (const family of normalizeWeaponFamilies([
+        ...(system.weaponFamilies ?? []),
+        ...legacyWeaponFamilyFlags(system.weaponFamilyUse)
+      ])) weaponFamilies.add(family);
       for (const severity of ["minor", "moderate", "major"] as const) {
         const value = positiveInteger(system.woundBonuses[severity]);
         if (value) (woundCapacity[severity] ??= []).push(contribution(item, `wound.${severity}`, value));
@@ -115,11 +138,20 @@ export function collectPackageDerivedData(
         selected.amount
       ));
     }
+    const superheroics = resolvedSuperheroicsPoolBonus(item);
+    if (superheroics) {
+      (poolMax[superheroics.pool] ??= []).push(contribution(
+        item,
+        `superheroics.${superheroics.pool}`,
+        superheroics.amount
+      ));
+    }
   }
 
   return {
     extensions: {poolMax, poolEdge, woundCapacity, cypherLimit},
     weaponCategories: [...weaponCategories],
+    weaponFamilies: [...weaponFamilies],
     armorCategories: [...armorCategories],
     typeNames,
     descriptorNames,
@@ -132,6 +164,8 @@ export function packagePoolBonuses(item: CharacterPackageItemLike): Record<PoolK
   const system = item.system as CharacterTypeSystemData | DescriptorSystemData | SpeciesSystemData;
   const bonuses = Object.fromEntries(POOL_KEYS.map((pool) => [pool, positiveInteger(system.poolBonuses[pool])])) as Record<PoolKey, number>;
   for (const selected of resolvedPoolBonusChoices(item)) bonuses[selected.pool] += selected.amount;
+  const superheroics = resolvedSuperheroicsPoolBonus(item);
+  if (superheroics) bonuses[superheroics.pool] += superheroics.amount;
   return bonuses;
 }
 

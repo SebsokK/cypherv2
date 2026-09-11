@@ -93,6 +93,28 @@ function service(activeGenre = genre()): GenreService {
 }
 
 describe("GenreService", () => {
+  it("keeps future Origin entries distinct from ordinary Genre progression", async () => {
+    const character = actor();
+    await character.update({"system.genre.sourceUuid": "Item.genre-1"});
+    const sourceGenre = genre({abilityCatalog: [
+      ...genre().system.abilityCatalog,
+      {
+        id: "origin-armored-body",
+        abilityUuid: "Item.armored-body",
+        minimumTier: 1,
+        catalog: "origin",
+        minimumSuperheroRank: 2,
+        snapshot: {name: "Armored Body", system: {description: "<p>Origin</p>"}}
+      }
+    ]});
+    const genres = service(sourceGenre);
+    expect(genres.eligibleEntries(character, sourceGenre, character.system.advancement.pendingGenreChoices[0]!))
+      .toHaveLength(1);
+    expect(genres.manualCatalog(character, sourceGenre).map((entry) => entry.id)).toEqual(["entry-1"]);
+    await expect(genres.acquireManual(character, "origin-armored-body"))
+      .rejects.toThrow("not part of Genre progression");
+  });
+
   it("attaches exactly one authoritative Genre reference and replaces it explicitly", async () => {
     const character = actor();
     const first = genre();

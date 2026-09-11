@@ -1,4 +1,4 @@
-import {GENRE_EFFORT_CAP_MODES} from "../../genre/genre-types";
+import {GENRE_ABILITY_CATALOGS, GENRE_EFFORT_CAP_MODES} from "../../genre/genre-types";
 import {GENRE_MINIMUM_TIER_MAX, GENRE_MINIMUM_TIER_MIN} from "../../genre/genre-catalog";
 import {fields} from "../common/schema";
 import {ItemDataModelBase} from "./item-base";
@@ -15,6 +15,20 @@ function genreAbilityEntryField(): unknown {
       min: GENRE_MINIMUM_TIER_MIN,
       max: GENRE_MINIMUM_TIER_MAX,
       initial: GENRE_MINIMUM_TIER_MIN
+    }),
+    catalog: new fields.StringField({
+      required: true,
+      nullable: false,
+      initial: "progression",
+      choices: [...GENRE_ABILITY_CATALOGS]
+    }),
+    minimumSuperheroRank: new fields.NumberField({
+      required: true,
+      nullable: false,
+      integer: true,
+      min: 0,
+      max: 5,
+      initial: 0
     }),
     snapshot: itemSnapshotField()
   });

@@ -1,3 +1,5 @@
+import {readFile} from "node:fs/promises";
+import path from "node:path";
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 
 interface FieldOptions {
@@ -105,7 +107,7 @@ describe("Item DataModel creation defaults", () => {
       archived: false,
       activation: "action",
       pool: "none",
-      cost: {amount: 0, ignoresEdge: false, allowedPools: []},
+      cost: {amount: 0, scalable: false, ignoresEdge: false, allowedPools: []},
       roll: "none",
       rollModifier: 0,
       attackModifier: 0,
@@ -124,17 +126,31 @@ describe("Item DataModel creation defaults", () => {
       .toEqual({archived: true});
   });
 
-  it("migrates legacy Ability activation and cost Pool data", async () => {
+  it("preserves legacy Enabler activation and migrates legacy cost Pool data", async () => {
     const {AbilityDataModel} = await import("../../src/data/items/ability");
     const ability = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)({
       activation: "enabler",
       cost: {amount: 2, pool: "intellect", variable: false}
     });
     expect(ability).toMatchObject({
-      activation: "passive",
+      activation: "enabler",
       pool: "intellect",
-      cost: {amount: 2, ignoresEdge: false, allowedPools: ["intellect"]}
+      cost: {amount: 2, scalable: false, ignoresEdge: false, allowedPools: ["intellect"]}
     });
+  });
+
+  it("serializes scalable Ability costs and every CRD activation distinction", async () => {
+    const {AbilityDataModel} = await import("../../src/data/items/ability");
+    const scalable = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)({
+      cost: {amount: 2, scalable: true, allowedPools: ["intellect"]}
+    });
+    expect(scalable.cost).toMatchObject({amount: 2, scalable: true, allowedPools: ["intellect"]});
+    for (const activation of [
+      "action", "firstAction", "lastAction", "enabler", "reaction", "timed", "perpetual", "passive", "special"
+    ]) {
+      const ability = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)({activation});
+      expect(ability.activation).toBe(activation);
+    }
   });
 
   it("migrates legacy Choose Pool to Any Pool and preserves explicit multi-Pool costs", async () => {
@@ -210,6 +226,7 @@ describe("Item DataModel creation defaults", () => {
       bonusDamage: number;
       skillLevel: string;
       defaultPool: string;
+      family: string;
       depleted: boolean;
       damageOverride: number | null;
       depletion: {enabled: boolean; die: string; threshold: number};
@@ -220,6 +237,7 @@ describe("Item DataModel creation defaults", () => {
       bonusDamage: 0,
       skillLevel: "untrained",
       defaultPool: "none",
+      family: "",
       depleted: false,
       damageOverride: null,
       depletion: {enabled: false, die: "d6", formula: "", threshold: 1}
@@ -234,6 +252,24 @@ describe("Item DataModel creation defaults", () => {
         skillLevel: string;
       })({skillLevel});
       expect(weapon.skillLevel).toBe(skillLevel);
+    }
+  );
+
+  it.each([
+    ["none", ""],
+    ["axes", "axes"],
+    [" Knives ", "knives"],
+    ["SWORDS", "swords"],
+    ["Energy Blades", "energy-blades"]
+  ])(
+    "normalizes and round-trips the extensible Weapon family %s",
+    async (family, expected) => {
+      const {WeaponDataModel} = await import("../../src/data/items/weapon");
+      const migrated = WeaponDataModel.migrateData({family}, {partial: true});
+      const weapon = new (WeaponDataModel as unknown as new (source: Record<string, unknown>) => {
+        family: string;
+      })(migrated);
+      expect(weapon.family).toBe(expected);
     }
   );
 
@@ -379,7 +415,11 @@ describe("Item DataModel creation defaults", () => {
         snapshot: {name: "Ability A", system: {description: "A"}}
       }]
     });
-    expect(legacyEntry.abilityCatalog[0].minimumTier).toBe(1);
+    expect(legacyEntry.abilityCatalog[0]).toMatchObject({
+      minimumTier: 1,
+      catalog: "progression",
+      minimumSuperheroRank: 0
+    });
   });
 
   it("never reconstructs a saved Focus graph during partial Description, Name, or technical updates", async () => {
@@ -439,7 +479,9 @@ describe("Item DataModel creation defaults", () => {
       woundBonuses: {minor: 0, moderate: 0, major: 0},
       edgeGrant: {mode: "none", pool: "none", amount: 1},
       weaponUse: {light: false, medium: false, heavy: false},
+      weaponFamilies: [],
       armorUse: {light: false, medium: false, heavy: false},
+      superhero: {rank: 0, powerShiftCount: 0, superheroics: {enabled: false, poolBonus: 0}},
       abilityGrants: [], abilityChoiceGroups: [], skillGrants: [], choiceGroups: [], genre: "none"
     });
     expect(descriptor).toMatchObject({
@@ -452,10 +494,84 @@ describe("Item DataModel creation defaults", () => {
       woundBonuses: {minor: 0, moderate: 0, major: 0},
       edgeGrant: {mode: "none", pool: "none", amount: 1},
       weaponUse: {light: false, medium: false, heavy: false},
+      weaponFamilies: [],
       armorUse: {light: false, medium: false, heavy: false},
       cypherLimitBonus: 0,
-      skillGrants: [], choiceGroups: [], abilityGrants: [], abilityChoiceGroups: [], descriptorGrants: []
+      skillGrants: [], choiceGroups: [], abilityGrants: [], abilityChoiceGroups: [], descriptorGrants: [], descriptorChoiceGroups: []
     });
+  });
+
+  it("normalizes extensible Species Weapon families and preserves Skill/Descriptor choice metadata", async () => {
+    const {SpeciesDataModel} = await import("../../src/data/items/species");
+    const species = new (SpeciesDataModel as unknown as new (source?: Record<string, unknown>) => any)({
+      weaponFamilies: [" Energy Blades ", "AXES", "energy-blades"],
+      skillGrants: [{
+        id: "forest-stealth", skillUuid: "Item.stealth", customName: "", rank: "trained",
+        notes: "Only while moving through forests.", snapshot: {name: "Stealth", system: {}}
+      }],
+      choiceGroups: [{
+        id: "terrain", choose: 1, rank: "trained", options: [{
+          id: "mountains", skillUuid: "Item.navigation", customName: "",
+          notes: "Underground or in mountains.", snapshot: {name: "Navigation", system: {}}
+        }]
+      }],
+      descriptorChoiceGroups: [{
+        id: "heritage", choose: 1, options: [{
+          id: "rugged", descriptorUuid: "Item.rugged", snapshot: {name: "Rugged", system: {}}
+        }]
+      }]
+    });
+    expect(species.weaponFamilies).toEqual(["energy-blades", "axes"]);
+    expect(species.skillGrants[0].notes).toBe("Only while moving through forests.");
+    expect(species.choiceGroups[0].options[0].notes).toBe("Underground or in mountains.");
+    expect(species.descriptorChoiceGroups[0]).toMatchObject({
+      id: "heritage", choose: 1, sourceMode: "fixed", catalogItemType: "none"
+    });
+    const catalogSpecies = new (SpeciesDataModel as unknown as new (source?: Record<string, unknown>) => any)({
+      descriptorChoiceGroups: [{
+        id: "all-descriptors", choose: 1, sourceMode: "catalog", catalogItemType: "descriptor", options: []
+      }]
+    });
+    expect(catalogSpecies.descriptorChoiceGroups[0]).toMatchObject({
+      sourceMode: "catalog", catalogItemType: "descriptor", options: []
+    });
+    expect(SpeciesDataModel.migrateData({weaponFamilyUse: {axes: true, knives: false, swords: true}}, {partial: true}))
+      .toMatchObject({weaponFamilies: ["axes", "swords"]});
+  });
+
+  it("stores Superhero Type metadata, Power Shift slots, and assignment-level notes", async () => {
+    const {CharacterTypeDataModel} = await import("../../src/data/items/character-type");
+    const type = new (CharacterTypeDataModel as unknown as new (source: Record<string, unknown>) => any)({
+      genre: "superhero",
+      superhero: {rank: 4, powerShiftCount: 5, superheroics: {enabled: true, poolBonus: 6}},
+      abilityGrants: [{
+        id: "shared-ability",
+        abilityUuid: "Item.shared",
+        notes: "This Type applies the defensive option only.",
+        snapshot: {name: "Shared Ability", system: {tier: 1}}
+      }],
+      instance: {selections: {superheroicsPool: "might", powerShifts: ["Strength", "Flight"]}}
+    });
+    expect(type.superhero).toEqual({
+      rank: 4,
+      powerShiftCount: 5,
+      superheroics: {enabled: true, poolBonus: 6}
+    });
+    expect(type.instance.selections).toMatchObject({
+      superheroicsPool: "might",
+      powerShifts: ["Strength", "Flight"]
+    });
+    expect(type.abilityGrants[0].notes).toBe("This Type applies the defensive option only.");
+  });
+
+  it("migrates closed beta.3 Type family flags into extensible normalized families", async () => {
+    const {CharacterTypeDataModel} = await import("../../src/data/items/character-type");
+    expect(CharacterTypeDataModel.migrateData({
+      weaponFamilyUse: {axes: true, knives: false, swords: true}
+    }, {partial: true})).toMatchObject({weaponFamilies: ["axes", "swords"]});
+    expect(CharacterTypeDataModel.migrateData({
+      weaponFamilies: [" Energy Blades ", "AXES", "energy-blades"]
+    }, {partial: true})).toMatchObject({weaponFamilies: ["energy-blades", "axes"]});
   });
 
   it("normalizes Descriptor Pool bonus choice groups and persisted selections", async () => {
@@ -625,7 +741,12 @@ describe("Item DataModel creation defaults", () => {
     const focusSource = generated.focusDocuments[0].system as Record<string, unknown>;
     const importedAbility = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)(abilitySource);
     const importedFocus = new (FocusDataModel as unknown as new (source: Record<string, unknown>) => any)(focusSource);
-    expect(importedAbility).toMatchObject({tier: 2, cost: {amount: 2, allowedPools: ["might", "intellect"]}, roll: "attack"});
+    expect(importedAbility).toMatchObject({
+      tier: 2,
+      activation: "action",
+      cost: {amount: 2, scalable: false, allowedPools: ["might", "intellect"]},
+      roll: "attack"
+    });
     expect(importedFocus.graph.nodes[0]).toMatchObject({id: "model-node", tier: 2});
   });
 
@@ -635,12 +756,13 @@ describe("Item DataModel creation defaults", () => {
       tier: number;
       stats: Record<string, unknown> & {might: Record<string, unknown>; speed: Record<string, unknown>; intellect: Record<string, unknown>};
       cypherLimitBase: number;
-      proficiencies: {weaponCategories: string[]; armorCategories: string[]};
+      proficiencies: {weaponCategories: string[]; weaponFamilies: string[]; armorCategories: string[]};
       genre: {sourceUuid: string; instanceId: string; provenance: string; attachedAt: number};
       advancement: {guidanceCompletedTiers: number[]};
       creation: {coreInitialized: boolean; mode: string};
       recovery: {slots: Array<{id: string; type: string; used: boolean}>; customized: boolean; rollModifier: number};
-      presentation: {hideFocusInSentence: boolean};
+      presentation: {hideFocusInSentence: boolean; powerShiftsEnabled: boolean};
+      powerShifts: unknown[];
       overrides: {wounds: Record<string, number>};
       derived: {wounds: {capacities: Record<string, number>}};
     })();
@@ -652,10 +774,12 @@ describe("Item DataModel creation defaults", () => {
       intellect: {value: 8, baseMax: 8, baseEdge: 0}
     });
     expect(character.cypherLimitBase).toBe(2);
-    expect(character.proficiencies).toMatchObject({weaponCategories: ["light"], armorCategories: []});
+    expect(character.proficiencies).toMatchObject({weaponCategories: ["light"], weaponFamilies: [], armorCategories: []});
     expect(character.genre).toEqual({sourceUuid: "", instanceId: "", provenance: "manual", attachedAt: 0});
     expect(character.advancement.guidanceCompletedTiers).toEqual([]);
     expect(character.creation).toMatchObject({coreInitialized: false, mode: "uninitialized"});
+    expect(character.presentation.powerShiftsEnabled).toBe(false);
+    expect(character.powerShifts).toEqual([]);
     expect(character.recovery).toMatchObject({customized: false, rollModifier: 0});
     expect(character.recovery.slots.map(({id, type}) => ({id, type}))).toEqual([
       {id: "core-recovery-action", type: "one-action"},
@@ -698,6 +822,79 @@ describe("Item DataModel creation defaults", () => {
     expect(constructors).toHaveLength(13);
     for (const [, Model] of constructors) {
       expect(() => new (Model as unknown as new () => object)()).not.toThrow();
+    }
+  });
+
+  it("round-trips every beta.3 candidate Type and Type Ability through the current DataModels", async () => {
+    const candidate = JSON.parse(await readFile(
+      path.resolve(import.meta.dirname, "../../content/types/candidate-pack.json"),
+      "utf8"
+    ));
+    const {AbilityDataModel, CharacterTypeDataModel} = await import("../../src/data/items");
+    for (const document of candidate.abilities) {
+      const model = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)(document.system);
+      expect(model).toMatchObject({
+        slug: document.system.slug,
+        tier: 1,
+        category: "type",
+        activation: document.system.activation,
+        cost: document.system.cost
+      });
+    }
+    for (const document of candidate.types) {
+      const model = new (CharacterTypeDataModel as unknown as new (source: Record<string, unknown>) => any)(document.system);
+      expect(model).toMatchObject({
+        slug: document.system.slug,
+        poolBonuses: document.system.poolBonuses,
+        weaponFamilies: Object.entries(document.system.weaponFamilyUse)
+          .filter(([, enabled]) => enabled)
+          .map(([family]) => family),
+        superhero: document.system.superhero
+      });
+      expect(model.abilityGrants).toHaveLength(document.system.abilityGrants.length);
+    }
+  });
+
+  it("round-trips every beta.3 candidate Genre Ability through the existing Ability DataModel", async () => {
+    const candidate = JSON.parse(await readFile(
+      path.resolve(import.meta.dirname, "../../content/genre-abilities/candidate-pack.json"),
+      "utf8"
+    ));
+    const {AbilityDataModel} = await import("../../src/data/items");
+    for (const document of candidate.abilities) {
+      const model = new (AbilityDataModel as unknown as new (source: Record<string, unknown>) => any)(document.system);
+      expect(model).toMatchObject({
+        slug: document.system.slug,
+        tier: document.system.tier,
+        category: document.system.category,
+        activation: document.system.activation,
+        cost: document.system.cost,
+        roll: document.system.roll,
+        damage: document.system.damage,
+        range: document.system.range
+      });
+      expect(model.ruleElements).toEqual([]);
+    }
+  });
+
+  it("round-trips every beta.3 candidate Species through the current Species DataModel", async () => {
+    const candidate = JSON.parse(await readFile(
+      path.resolve(import.meta.dirname, "../../content/species/candidate-pack.json"),
+      "utf8"
+    ));
+    const {SpeciesDataModel} = await import("../../src/data/items");
+    for (const document of candidate.species) {
+      const model = new (SpeciesDataModel as unknown as new (source: Record<string, unknown>) => any)(document.system);
+      expect(model).toMatchObject({
+        slug: document.system.slug,
+        poolBonuses: document.system.poolBonuses,
+        woundBonuses: document.system.woundBonuses,
+        weaponFamilies: document.system.weaponFamilies,
+        cypherLimitBonus: document.system.cypherLimitBonus
+      });
+      expect(model.skillGrants).toHaveLength(document.system.skillGrants.length);
+      expect(model.choiceGroups).toHaveLength(document.system.choiceGroups.length);
+      expect(model.descriptorChoiceGroups).toHaveLength(document.system.descriptorChoiceGroups.length);
     }
   });
 });

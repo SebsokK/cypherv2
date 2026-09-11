@@ -5,6 +5,7 @@ export interface AbilityListPresentation {
   readonly archived: boolean;
   readonly cost: {
     readonly amount: number;
+    readonly scalable: boolean;
     readonly pools: readonly import("../../rules/core/core-types").PoolKey[];
     readonly payable: boolean;
   };
@@ -33,7 +34,12 @@ export function abilityListPresentation(ability: AbilityItemLike): AbilityListPr
 
   return {
     archived: ability.system.archived === true,
-    cost: {amount, pools: allowedPools, payable: amount > 0 && allowedPools.length > 0},
+    cost: {
+      amount,
+      scalable: ability.system.cost.scalable === true,
+      pools: allowedPools,
+      payable: amount > 0 && allowedPools.length > 0
+    },
     description: ability.system.description.trim(),
     canDelete: mayDeleteAbility(ability)
   };

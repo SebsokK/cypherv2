@@ -1,5 +1,7 @@
 import {createRecoveryUsage, type RecoveryUsage} from "../../rules/core/core-types";
 import {normalizeRecoverySlots, recoveryUsageFromSlots} from "../../rules/core/recovery-track";
+import {normalizeWeaponFamilies} from "../../combat/weapon-family";
+import {normalizePowerShiftAllocations} from "../../packages/power-shifts";
 
 export interface CharacterMigrationOptions {
   readonly partial?: boolean;
@@ -221,12 +223,29 @@ export function migrateCharacterSystemData(
     const presentation = source.presentation && typeof source.presentation === "object"
       ? source.presentation as Record<string, unknown>
       : {};
-    source.presentation = {hideFocusInSentence: presentation.hideFocusInSentence === true};
+    source.presentation = {
+      hideFocusInSentence: presentation.hideFocusInSentence === true,
+      powerShiftsEnabled: presentation.powerShiftsEnabled === true
+    };
   } else if (source.presentation && typeof source.presentation === "object") {
     const presentation = source.presentation as Record<string, unknown>;
-    if (hasOwn(presentation, "hideFocusInSentence")) {
-      source.presentation = {hideFocusInSentence: presentation.hideFocusInSentence === true};
+    const normalized = {...presentation};
+    if (hasOwn(presentation, "hideFocusInSentence")) normalized.hideFocusInSentence = presentation.hideFocusInSentence === true;
+    if (hasOwn(presentation, "powerShiftsEnabled")) normalized.powerShiftsEnabled = presentation.powerShiftsEnabled === true;
+    source.presentation = normalized;
+  }
+  if (!partial || (source.proficiencies && typeof source.proficiencies === "object")) {
+    const proficiencies = source.proficiencies && typeof source.proficiencies === "object"
+      ? source.proficiencies as Record<string, unknown>
+      : {};
+    const normalized = {...proficiencies};
+    if (!partial || hasOwn(proficiencies, "weaponFamilies")) {
+      normalized.weaponFamilies = normalizeWeaponFamilies(proficiencies.weaponFamilies);
     }
+    source.proficiencies = normalized;
+  }
+  if (!partial || hasOwn(source, "powerShifts")) {
+    source.powerShifts = normalizePowerShiftAllocations(source.powerShifts);
   }
   if (source.creation && typeof source.creation === "object") {
     source.creation = normalizeCreation(source.creation as Record<string, unknown>, partial);

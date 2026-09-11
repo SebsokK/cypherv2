@@ -40,6 +40,10 @@ describe("Genre UI", () => {
     expect(itemTemplate).toContain('data-action="refreshGenreAbility"');
     expect(itemTemplate).toContain('data-action="removeGenreAbility"');
     expect(itemTemplate).toContain("data-genre-minimum-tier");
+    expect(itemTemplate).toContain("genreCatalogEntries");
+    expect(itemTemplate).toContain("entry.catalogLabel");
+    expect(itemTemplate).toContain("entry.progressionBandLabel");
+    expect(itemTemplate).toContain("entry.minimumSuperheroRank");
     expect(itemTemplate).toContain('data-entry-id="{{entry.id}}"');
     expect(itemTemplate).not.toContain('name="system.abilityCatalog.{{@index}}.minimumTier"');
     expect(itemTemplate).toContain('name="system.options.totalEffortCapMode"');
@@ -63,6 +67,7 @@ describe("Genre UI", () => {
     expect(genreSection).not.toContain('class="section-header"');
     expect(genreSection).not.toContain('class="compact-inline-action"');
     expect(itemStyles).toContain(".genre-catalog-help");
+    expect(itemStyles).toContain(".genre-entry-kind");
     expect(itemStyles).not.toContain(".genre-ability-catalog h2");
   });
 });

@@ -59,4 +59,9 @@ describe("natural Ability cost notation", () => {
     expect(formatAbilityCost(0, ["might"], label, separators)).toBe("");
     expect(formatAbilityCost(4, [], label, separators)).toBe("");
   });
+
+  it("renders scalable cost metadata without changing the base cost", () => {
+    expect(formatAbilityCost(2, ["intellect"], label, separators, true)).toBe("2+ Intellect");
+    expect(formatAbilityCost(2, ["intellect"], label, separators, false)).toBe("2 Intellect");
+  });
 });

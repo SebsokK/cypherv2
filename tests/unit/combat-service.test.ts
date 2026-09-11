@@ -131,6 +131,35 @@ function setWeaponFamiliarity(
 }
 
 describe("CombatService weapon attacks", () => {
+  it.each(["axes", "knives", "swords"] as const)(
+    "treats the lightweight %s Type family grant as Weapon familiarity",
+    (family) => {
+      const {actor, combat} = setup();
+      setWeaponFamiliarity(actor, []);
+      actor.system.derived.packages.weaponFamilies = [family];
+      expect(combat.weaponFreelyUsed(actor, weapon("heavy", {family}))).toBe(true);
+      expect(combat.weaponFamiliarityContribution(actor, weapon("heavy", {
+        family: family === "axes" ? "knives" : "axes"
+      }))).not.toBeNull();
+    }
+  );
+
+  it("matches custom Weapon families by normalized identifier without changing category familiarity", () => {
+    const {actor, combat} = setup();
+    setWeaponFamiliarity(actor, []);
+    actor.system.derived.packages.weaponFamilies = [" energy-blades "];
+    expect(combat.weaponFreelyUsed(actor, weapon("heavy", {family: "Energy Blades"}))).toBe(true);
+    expect(combat.weaponFreelyUsed(actor, weapon("heavy", {family: "Firearms"}))).toBe(false);
+    expect(combat.weaponFamiliarityContribution(actor, weapon("heavy", {family: "Firearms"}))).not.toBeNull();
+  });
+
+  it("keeps category familiarity authoritative even when a Weapon has an unrelated family", () => {
+    const {actor, combat} = setup();
+    setWeaponFamiliarity(actor, ["heavy"]);
+    actor.system.derived.packages.weaponFamilies = ["axes"];
+    expect(combat.weaponFreelyUsed(actor, weapon("heavy", {family: "firearms"}))).toBe(true);
+  });
+
   it.each([["light", 2], ["medium", 4], ["heavy", 6]] as const)(
     "uses Core %s weapon damage %i",
     (category, damage) => {

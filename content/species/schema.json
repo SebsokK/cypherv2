@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SebsokK/cypherv2/main/content/species/schema.json",
+  "title": "Cypher V2 candidate Species",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "source", "target", "inventory", "counts", "review", "species"],
+  "properties": {
+    "$schema": {"const": "./schema.json"},
+    "schemaVersion": {"const": 1},
+    "source": {
+      "type": "object",
+      "required": ["kind", "title", "file", "sha256", "license", "note"],
+      "properties": {
+        "kind": {"const": "official-reference-document-extraction"},
+        "title": {"const": "Cypher Reference Document (2026)"},
+        "file": {"const": "Cypher-Reference-Document-2026-07-29.docx"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "license": {"const": "2026 Cypher Open License"},
+        "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["systemId", "futurePackId"],
+      "properties": {
+        "systemId": {"const": "cypherv2"},
+        "futurePackId": {"const": "species"}
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "required": ["fantasy", "scienceFiction"],
+      "properties": {
+        "fantasy": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"type": "string"}},
+        "scienceFiction": {"type": "array", "minItems": 13, "maxItems": 13, "items": {"type": "string"}}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["species"],
+      "properties": {"species": {"const": 20}}
+    },
+    "review": {"type": "object"},
+    "species": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {"$ref": "#/$defs/speciesItem"}
+    }
+  },
+  "$defs": {
+    "foundryId": {"type": "string", "pattern": "^[A-Za-z0-9]{16}$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "speciesItem": {
+      "type": "object",
+      "required": ["name", "type", "_id", "img", "system", "effects", "sort", "ownership", "_key"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "type": {"const": "species"},
+        "_id": {"$ref": "#/$defs/foundryId"},
+        "img": {"type": "string", "minLength": 1},
+        "effects": {"type": "array", "maxItems": 0},
+        "sort": {"type": "integer"},
+        "ownership": {"type": "object"},
+        "_key": {"type": "string", "pattern": "^!items![A-Za-z0-9]{16}$"},
+        "system": {
+          "type": "object",
+          "required": [
+            "slug", "description", "source", "ruleElements", "poolBonuses", "woundBonuses",
+            "edgeGrant", "weaponUse", "weaponFamilies", "armorUse", "cypherLimitBonus",
+            "skillGrants", "choiceGroups", "abilityGrants", "abilityChoiceGroups",
+            "descriptorGrants", "descriptorChoiceGroups", "instance"
+          ],
+          "properties": {
+            "slug": {"$ref": "#/$defs/slug"},
+            "description": {"type": "string", "minLength": 1},
+            "ruleElements": {"type": "array", "maxItems": 0},
+            "weaponFamilies": {"type": "array", "items": {"type": "string"}},
+            "cypherLimitBonus": {"type": "integer"},
+            "skillGrants": {"type": "array"},
+            "choiceGroups": {"type": "array"},
+            "abilityGrants": {"type": "array", "maxItems": 0},
+            "abilityChoiceGroups": {"type": "array", "maxItems": 0},
+            "descriptorGrants": {"type": "array", "maxItems": 0},
+            "descriptorChoiceGroups": {"type": "array", "items": {"$ref": "#/$defs/descriptorChoiceGroup"}}
+          }
+        }
+      }
+    },
+    "descriptorChoiceGroup": {
+      "type": "object",
+      "required": ["id", "choose", "sourceMode", "catalogItemType", "options"],
+      "properties": {
+        "id": {"$ref": "#/$defs/foundryId"},
+        "choose": {"type": "integer", "minimum": 1},
+        "sourceMode": {"enum": ["fixed", "catalog"]},
+        "catalogItemType": {"enum": ["none", "descriptor"]},
+        "options": {"type": "array"}
+      }
+    }
+  }
+}

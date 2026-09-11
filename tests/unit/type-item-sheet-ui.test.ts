@@ -46,7 +46,7 @@ describe("Type Item Sheet pre-release presentation", () => {
   });
 
   it("uses compact shared headings, add controls, rows, and icon actions", () => {
-    expect(typeSection.match(/class="compact-package-header/g)).toHaveLength(5);
+    expect(typeSection.match(/class="compact-package-header/g)).toHaveLength(6);
     expect(typeSection.match(/class="compact-package-add-action cypherv2-icon-action"/g)).toHaveLength(4);
     expect(typeSection).toContain('class="compact-package-grant-row"');
     expect(typeSection).toContain('class="fa-solid fa-magnifying-glass"');
@@ -68,12 +68,34 @@ describe("Type Item Sheet pre-release presentation", () => {
 
     const binding = sheet.slice(
       sheet.indexOf("#bindTypeGenreVisibility(): void"),
-      sheet.indexOf("override _canDragDrop", sheet.indexOf("#bindTypeGenreVisibility(): void"))
+      sheet.indexOf("#bindWeaponFamilies(): void", sheet.indexOf("#bindTypeGenreVisibility(): void"))
     );
     expect(binding).toContain('select.value !== "custom"');
     expect(binding).toContain('select.addEventListener("change", synchronize');
     expect(binding).not.toContain("item.update");
     expect(binding).not.toContain("customGenreId =");
+  });
+
+  it("shows compact Superhero metadata only for the Superhero genre without Type-owned allocation slots", () => {
+    expect(typeSection).toContain("data-type-superhero {{#unless typeSuperheroSelected}}hidden{{/unless}}");
+    expect(typeSection).toContain('name="system.superhero.rank"');
+    expect(typeSection).toContain('name="system.superhero.powerShiftCount"');
+    expect(typeSection).toContain('name="system.superhero.superheroics.enabled"');
+    expect(typeSection).toContain('name="system.superhero.superheroics.poolBonus"');
+    expect(typeSection).not.toContain('data-power-shift-index="{{shift.index}}"');
+    expect(typeSection).not.toContain('name="system.instance.selections.powerShifts.');
+    expect(sheet).not.toContain('this.item.update({"system.instance.selections.powerShifts": shifts})');
+  });
+
+  it("exposes extensible Weapon families with built-in suggestions and one normalized update path", () => {
+    expect(typeSection).toContain("data-package-weapon-families");
+    expect(typeSection).toContain("cypherv2-type-weapon-family-suggestions");
+    expect(typeSection).not.toContain('name="system.weaponFamilyUse.');
+    expect(sheet).toContain('#bindWeaponFamilies(): void');
+    expect(sheet).toContain('normalizeWeaponFamilies(input.value)');
+    expect(sheet).toContain('this.item.update({"system.weaponFamilies"');
+    expect(sheet).toContain("BUILT_IN_WEAPON_FAMILIES.map");
+    expect(language).toContain('"CYPHERV2.Packages.WeaponFamilyPlaceholder"');
   });
 
   it("preserves the Custom Genre source field and native document-drop fallback", () => {

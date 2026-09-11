@@ -888,6 +888,46 @@
       opacity: 0.5;
     }
   }
+
+  .character-weapon-family-settings {
+    align-items: start;
+
+    > h3 {
+      padding-top: 0.3rem;
+    }
+  }
+
+  .character-familiarity-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.22rem;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .character-familiarity-tag {
+    display: inline-flex;
+    gap: 0.2rem;
+    align-items: center;
+    min-height: 1.4rem;
+    padding: 0.08rem 0.18rem 0.08rem 0.38rem;
+    color: var(--cypherv2-text-primary);
+    background: color-mix(in srgb, var(--cypherv2-surface-raised) 70%, transparent);
+    border: 1px solid var(--cypherv2-border);
+    border-radius: 999px;
+    font-size: 0.65rem;
+
+    &.is-package-granted {
+      border-color: color-mix(in srgb, var(--cypherv2-accent) 45%, var(--cypherv2-border));
+    }
+
+    .cypherv2-icon-action {
+      width: 1rem;
+      height: 1rem;
+      padding: 0;
+      font-size: 0.55rem;
+    }
+  }
 }
 
 .character-genre-settings {

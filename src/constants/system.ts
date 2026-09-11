@@ -48,7 +48,17 @@ export const CYPHER_POWERS = ["low", "medium", "advanced", "high", "ultra"] as c
 
 export const WOUND_SEVERITIES = ["minor", "moderate", "major"] as const;
 
-export const ABILITY_ACTIVATIONS = ["action", "passive", "reaction", "special"] as const;
+export const ABILITY_ACTIVATIONS = [
+  "action",
+  "firstAction",
+  "lastAction",
+  "enabler",
+  "reaction",
+  "timed",
+  "perpetual",
+  "passive",
+  "special"
+] as const;
 
 export const ABILITY_POOLS = ["none", "might", "speed", "intellect", "choose"] as const;
 
@@ -75,6 +85,8 @@ export type ItemType = (typeof ITEM_TYPES)[number];
 export type SkillRank = (typeof SKILL_RANKS)[number];
 export type SkillDefaultPool = (typeof SKILL_DEFAULT_POOLS)[number];
 export type WeaponCategory = (typeof WEAPON_CATEGORIES)[number];
+/** Normalized, open-ended Weapon family identifier. */
+export type WeaponFamily = string;
 export type WeaponAttackType = (typeof WEAPON_ATTACK_TYPES)[number];
 export type RangeCategory = (typeof RANGE_CATEGORIES)[number];
 export type ArmorCategory = (typeof ARMOR_CATEGORIES)[number];

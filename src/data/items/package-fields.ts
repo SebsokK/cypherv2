@@ -1,5 +1,11 @@
 import {SKILL_RANKS} from "../../constants/system";
-import {GRANT_KINDS, GRANT_STATUSES, PACKAGE_ROLES} from "../../packages/package-types";
+import {
+  GRANT_KINDS,
+  GRANT_STATUSES,
+  PACKAGE_CHOICE_CATALOG_ITEM_TYPES,
+  PACKAGE_CHOICE_SOURCE_MODES,
+  PACKAGE_ROLES
+} from "../../packages/package-types";
 import {POOL_KEYS} from "../../rules/core/core-types";
 import {fields, integerField} from "../common/schema";
 
@@ -67,9 +73,15 @@ export function packageInstanceField(): unknown {
     attachedAt: integerField(),
     selections: new fields.SchemaField({
       edgePool: new fields.StringField({required: true, nullable: false, initial: "none", choices: ["none", "might", "speed", "intellect"]}),
+      superheroicsPool: new fields.StringField({required: true, nullable: false, initial: "none", choices: ["none", ...POOL_KEYS]}),
+      powerShifts: new fields.ArrayField(
+        new fields.StringField({required: true, nullable: false, initial: ""}),
+        {required: true, nullable: false, initial: []}
+      ),
       poolChoices: new fields.ArrayField(poolChoiceSelectionField(), {required: true, nullable: false, initial: []}),
       skillChoices: new fields.ArrayField(selectionField(), {required: true, nullable: false, initial: []}),
       abilityChoices: new fields.ArrayField(selectionField(), {required: true, nullable: false, initial: []}),
+      descriptorChoices: new fields.ArrayField(selectionField(), {required: true, nullable: false, initial: []}),
       suppressedGrantIds: new fields.ArrayField(new fields.StringField({required: true, nullable: false, blank: false}), {required: true, nullable: false, initial: []})
     }),
     parent: provenanceField()
@@ -92,6 +104,7 @@ export function abilityGrantField(): unknown {
   return new fields.SchemaField({
     id: new fields.StringField({required: true, nullable: false, blank: false}),
     abilityUuid: new fields.StringField({required: true, nullable: false, initial: ""}),
+    notes: new fields.StringField({required: true, nullable: false, initial: ""}),
     snapshot: itemSnapshotField(),
     alternatives: new fields.ArrayField(grantAlternativeField(), {required: true, nullable: false, initial: []})
   });
@@ -102,6 +115,7 @@ export function skillOptionField(): unknown {
     id: new fields.StringField({required: true, nullable: false, blank: false}),
     skillUuid: new fields.StringField({required: true, nullable: false, initial: ""}),
     customName: new fields.StringField({required: true, nullable: false, initial: ""}),
+    notes: new fields.HTMLField({required: true, nullable: false, initial: ""}),
     snapshot: itemSnapshotField()
   });
 }
@@ -111,6 +125,7 @@ export function skillGrantField(): unknown {
     id: new fields.StringField({required: true, nullable: false, blank: false}),
     skillUuid: new fields.StringField({required: true, nullable: false, initial: ""}),
     customName: new fields.StringField({required: true, nullable: false, initial: ""}),
+    notes: new fields.HTMLField({required: true, nullable: false, initial: ""}),
     rank: new fields.StringField({required: true, nullable: false, initial: "trained", choices: [...SKILL_RANKS]}),
     snapshot: itemSnapshotField(),
     alternatives: new fields.ArrayField(grantAlternativeField(), {required: true, nullable: false, initial: []})
@@ -131,6 +146,34 @@ export function abilityChoiceGroupField(): unknown {
     id: new fields.StringField({required: true, nullable: false, blank: false}),
     choose: integerField(1, 1),
     options: new fields.ArrayField(abilityGrantField(), {required: true, nullable: false, initial: []})
+  });
+}
+
+export function descriptorGrantField(): unknown {
+  return new fields.SchemaField({
+    id: new fields.StringField({required: true, nullable: false, blank: false}),
+    descriptorUuid: new fields.StringField({required: true, nullable: false, initial: ""}),
+    snapshot: itemSnapshotField()
+  });
+}
+
+export function descriptorChoiceGroupField(): unknown {
+  return new fields.SchemaField({
+    id: new fields.StringField({required: true, nullable: false, blank: false}),
+    choose: integerField(1, 1),
+    sourceMode: new fields.StringField({
+      required: true,
+      nullable: false,
+      initial: "fixed",
+      choices: [...PACKAGE_CHOICE_SOURCE_MODES]
+    }),
+    catalogItemType: new fields.StringField({
+      required: true,
+      nullable: false,
+      initial: "none",
+      choices: [...PACKAGE_CHOICE_CATALOG_ITEM_TYPES]
+    }),
+    options: new fields.ArrayField(descriptorGrantField(), {required: true, nullable: false, initial: []})
   });
 }
 
